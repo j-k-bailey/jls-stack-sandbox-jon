@@ -10,7 +10,7 @@ export function LayoutSandbox() {
   return (
     <div className="min-h-screen bg-linear-to-br from-stone-950 via-neutral-900 to-stone-950 text-stone-200 py-12 px-4">
       <div className="max-w-6xl mx-auto space-y-12 px-6">
-        {/* Section 5: Page Title */}
+        {/* Section 1: Page Title */}
         <section className="space-y-3 border-b border-stone-800/50 pb-8">
           <h1 className="text-3xl font-bold tracking-tight bg-linear-to-r from-yellow-400 to-yellow-700 bg-clip-text text-transparent">
             TaskForge Pro
@@ -22,7 +22,7 @@ export function LayoutSandbox() {
           </p>
         </section>
 
-        {/* Section 6: Feature List */}
+        {/* Section 2: Feature List */}
         <section className="space-y-5">
           <h2 className="text-3xl font-semibold text-stone-100">
             Vertical Stack (“Feature List”)
@@ -60,7 +60,7 @@ export function LayoutSandbox() {
           </div>
         </section>
 
-        {/* Section 7: Responsive flex rows */}
+        {/* Section 3: Responsive flex rows */}
         <section className="space-y-5">
           <h2 className="text-3xl font-semibold text-stone-100">
             Responsive Flex Row (“Sidebar + Content”)
@@ -232,7 +232,7 @@ export function LayoutSandbox() {
           </div>
         </section>
 
-        {/* Section 8: Dashboard Stats */}
+        {/* Section 4: Dashboard Stats */}
         <section className="space-y-5">
           <h2 className="text-3xl font-semibold text-stone-100">
             Your Overview (Responsive Grid)
