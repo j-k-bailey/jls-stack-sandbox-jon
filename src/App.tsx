@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { PlaygroundLayout } from "@/components/layout/PlaygroundLayout";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { LayoutSandboxPage } from "@/pages/LayoutSandboxPage";
 import { HelpPage } from "@/pages/HelpPage";
@@ -20,9 +21,12 @@ function App() {
         <Route path="layout-sandbox" element={<LayoutSandboxPage />} />
 
         <Route path="components" element={<ComponentsPage />} />
-        <Route path="playground" element={<PlaygroundPage />}>
+
+        {/* Playground with layout wrapper */}
+        <Route path="playground" element={<PlaygroundLayout />}>
+          <Route index element={<PlaygroundPage />} />
           <Route path="aesthetic" element={<AestheticPage />} />
-          <Route path="form" element={<FormPlaygroundPage />} />
+          <Route path="forms" element={<FormPlaygroundPage />} />
         </Route>
 
         {/* "/help" -> Help page */}
