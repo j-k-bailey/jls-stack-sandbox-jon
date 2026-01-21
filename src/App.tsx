@@ -1,8 +1,13 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { LayoutSandboxPage } from "@/pages/LayoutSandboxPage";
 import { HelpPage } from "@/pages/HelpPage";
+import { ComponentsPage } from "@/pages/ComponentsPage";
+import { PlaygroundPage } from "@/pages/Playground/PlaygroundPage";
+import { AestheticPage } from "@/pages/Playground/AestheticPage";
+import { FormPlaygroundPage } from "@/pages/Playground/FormPlaygroundPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 
 function App() {
   return (
@@ -14,11 +19,17 @@ function App() {
         {/* "/layout-sandbox" → layout sandbox page */}
         <Route path="layout-sandbox" element={<LayoutSandboxPage />} />
 
+        <Route path="components" element={<ComponentsPage />} />
+        <Route path="playground" element={<PlaygroundPage />}>
+          <Route path="aesthetic" element={<AestheticPage />} />
+          <Route path="form" element={<FormPlaygroundPage />} />
+        </Route>
+
         {/* "/help" -> Help page */}
         <Route path="help" element={<HelpPage />} />
 
         {/* Catch-all route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

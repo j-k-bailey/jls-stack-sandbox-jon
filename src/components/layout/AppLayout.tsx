@@ -50,6 +50,34 @@ export function AppLayout() {
             </NavLink>
 
             <NavLink
+              to="/components"
+              className={({ isActive }) =>
+                [
+                  "px-3 py-1.5 rounded-lg transition-colors",
+                  isActive
+                    ? "bg-slate-800 text-slate-50"
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-50",
+                ].join(" ")
+              }
+            >
+              Components
+            </NavLink>
+
+            <NavLink
+              to="/playground"
+              className={({ isActive }) =>
+                [
+                  "px-3 py-1.5 rounded-lg transition-colors",
+                  isActive
+                    ? "bg-slate-800 text-slate-50"
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-50",
+                ].join(" ")
+              }
+            >
+              Playground
+            </NavLink>
+
+            <NavLink
               to="/help"
               className={({ isActive }) =>
                 [
