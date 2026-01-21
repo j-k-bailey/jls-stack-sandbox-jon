@@ -1,11 +1,14 @@
 import ContactForm from "@/components/ui/formSandbox/ContactForm";
 import AuthForm from "@/components/ui/formSandbox/AuthForm";
+import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function FormPlaygroundPage() {
   return (
     <div className="space-y-4 text-slate-300">
-      <h1 className="text-2xl font-bold tracking-tight">Forms</h1>
-      <p className="text-sm">Exploring common form patterns in React</p>
+      <SimpleHeader
+        pageTitle="Forms"
+        pageDescription="Exploring common form patterns in React"
+      />
 
       <div className="space-y-16">
         {/* Pattern 1: Basic Contact Form */}

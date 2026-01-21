@@ -1,13 +1,14 @@
 import { Outlet, NavLink } from "react-router-dom";
+import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function PlaygroundLayout() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold tracking-tight">Playground</h1>
-      <p className="text-sm text-slate-300">
-        The only way to learn is by playing. The only way to win is by learning.
-        And the only way to begin is by beginning.
-      </p>
+      <SimpleHeader
+        pageTitle="Playground"
+        pageDescription="The only way to learn is by playing. The only way to win is by learning.
+        And the only way to begin is by beginning."
+      />
 
       {/* Tab navigation */}
       <nav className="flex space-x-4 border-b border-slate-700">

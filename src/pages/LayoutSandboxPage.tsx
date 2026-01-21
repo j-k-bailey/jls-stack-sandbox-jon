@@ -1,12 +1,13 @@
 import { LayoutSandbox } from "@/components/layout/LayoutSandbox";
+import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function LayoutSandboxPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold tracking-tight">Layout Sandbox</h1>
-      <p className="text-sm text-slate-300">
-        A playground for practicing Tailwind layout patterns.
-      </p>
+      <SimpleHeader
+        pageTitle="Layout Sandbox"
+        pageDescription="A playground for practicing Tailwind layout patterns."
+      />
 
       {/* Reuse the sandbox component from Lesson 2.1a */}
       <div className="rounded-xl border border-slate-800 overflow-hidden">

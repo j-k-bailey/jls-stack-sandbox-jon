@@ -6,18 +6,16 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
+import { SimpleHeader } from "@/components/ui/simpleHeader";
+
 export function HelpPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8 p-6">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Help & Documentation
-        </h1>
-        <p className="text-muted-foreground">
-          Find resources and guidance to help you succeed in the JLS Academy
-          program.
-        </p>
-      </div>
+      <SimpleHeader
+        pageTitle="Help & Documentation"
+        pageDescription="Find resources and guidance to help you succeed in the JLS Academy
+          program."
+      />
 
       <div className="grid gap-6 md:grid-cols-1">
         <Card>

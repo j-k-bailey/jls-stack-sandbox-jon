@@ -1,7 +1,10 @@
+import { SimpleHeader } from "@/components/ui/simpleHeader";
+
 export function AestheticPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold tracking-tight">Aesthetic Fun</h1>
+      <SimpleHeader pageTitle="Aesthetic Fun" />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mt-8 bg-white/10 p-8">
         {/* Neobrutalism */}
         <div className="border-8 border-black bg-cyan-400 p-0 transform shadow-[12px_12px_0px_rgba(0,0,0,1)]">

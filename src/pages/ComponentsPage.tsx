@@ -10,15 +10,16 @@ import {
   ComponentHighlightShowcase,
   ComponentHighlightTitle,
 } from "@/components/common/ComponentHighlight";
+import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function ComponentsPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold tracking-tight">Component Gallery</h1>
-      <p className="text-sm text-slate-300">
-        A showcase of UI components created for JLS Stack Sandbox.
-      </p>
-      <hr />
+      <SimpleHeader
+        pageTitle="Component Gallery"
+        pageDescription="A showcase of UI components created for JLS Stack Sandbox"
+        hr
+      />
 
       {/* ActivityItem Section */}
 
