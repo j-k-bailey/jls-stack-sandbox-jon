@@ -17,30 +17,30 @@ export function StatCard({
 
   const variantClasses = {
     default:
-      "bg-stone-950/60 border border-stone-700/50 hover:bg-stone-900/50 hover:border-yellow-700/30",
+      "bg-surface border border-border hover:bg-surface/80 hover:border-primary/30",
     featured:
-      "bg-linear-to-br from-yellow-900/40 to-amber-900/40 border-2 border-yellow-600/50 hover:border-yellow-500/70 shadow-lg shadow-yellow-900/20",
+      "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50 hover:border-primary/70 shadow-lg shadow-primary/20",
     error:
-      "bg-linear-to-br from-orange-950/40 to-orange-900/40 border border-orange-800/60 hover:border-orange-700/60 shadow-lg shadow-orange-950/30",
+      "bg-gradient-to-br from-destructive/20 to-destructive/30 border border-destructive/60 hover:border-destructive/80 shadow-lg shadow-destructive/30",
   };
 
   const labelClasses = {
-    default: "text-stone-500",
-    featured: "text-yellow-400/80",
-    error: "text-orange-400/80",
+    default: "text-muted-foreground",
+    featured: "text-primary/80",
+    error: "text-destructive/80",
   };
 
   const valueClasses = {
-    default: "text-yellow-500/80",
+    default: "text-primary/80",
     featured:
-      "bg-linear-to-br from-yellow-400 to-yellow-600 bg-clip-text text-transparent",
-    error: "text-orange-500",
+      "bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent",
+    error: "text-destructive",
   };
 
   const descriptionClasses = {
-    default: "text-stone-500",
-    featured: "text-yellow-400/60",
-    error: "text-orange-400/60",
+    default: "text-muted-foreground",
+    featured: "text-primary/60",
+    error: "text-destructive/60",
   };
 
   return (

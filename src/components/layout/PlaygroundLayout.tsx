@@ -3,7 +3,7 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function PlaygroundLayout() {
   return (
-    <div className="space-y-4">
+    <div className="section-spacing">
       <SimpleHeader
         pageTitle="Playground"
         pageDescription="The only way to learn is by playing. The only way to win is by learning.
@@ -11,15 +11,15 @@ export function PlaygroundLayout() {
       />
 
       {/* Tab navigation */}
-      <nav className="flex space-x-4 border-b border-slate-700">
+      <nav className="flex space-x-4 border-b border-border">
         <NavLink
           to="/playground"
           end
           className={({ isActive }) =>
             `px-4 py-2 text-sm font-medium ${
               isActive
-                ? "border-b-2 border-sky-500 text-sky-400"
-                : "text-slate-400 hover:text-slate-200"
+                ? "border-b-2 border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`
           }
         >
@@ -30,8 +30,8 @@ export function PlaygroundLayout() {
           className={({ isActive }) =>
             `px-4 py-2 text-sm font-medium ${
               isActive
-                ? "border-b-2 border-sky-500 text-sky-400"
-                : "text-slate-400 hover:text-slate-200"
+                ? "border-b-2 border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`
           }
         >
@@ -42,8 +42,8 @@ export function PlaygroundLayout() {
           className={({ isActive }) =>
             `px-4 py-2 text-sm font-medium ${
               isActive
-                ? "border-b-2 border-sky-500 text-sky-400"
-                : "text-slate-400 hover:text-slate-200"
+                ? "border-b-2 border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`
           }
         >

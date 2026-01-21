@@ -15,11 +15,9 @@ export function SimpleHeader({
 }: SimpleHeaderProps) {
   return (
     <div className={cn("space-y-4", className)}>
-      <h1 className="text-2xl font-bold tracking-tight">{pageTitle}</h1>
-      {pageDescription && (
-        <p className="text-sm text-slate-300">{pageDescription}</p>
-      )}
-      {hr && <hr className="border-slate-700" />}
+      <h1>{pageTitle}</h1>
+      {pageDescription && <p>{pageDescription}</p>}
+      {hr && <hr className="border-border" />}
     </div>
   );
 }

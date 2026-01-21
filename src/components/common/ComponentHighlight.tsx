@@ -31,7 +31,9 @@ export function ComponentHighlight({
   className,
 }: ComponentHighlightProps) {
   return (
-    <section className={cn("p-4 space-y-2", className)}>{children}</section>
+    <section className={cn("p-6 section-spacing", className)}>
+      {children}
+    </section>
   );
 }
 
@@ -39,7 +41,7 @@ export function ComponentHighlightTitle({
   children,
   className,
 }: ComponentHighlightTitleProps) {
-  return <h2 className={cn("text-xl font-semibold", className)}>{children}</h2>;
+  return <h2 className={cn("mb-2", className)}>{children}</h2>;
 }
 
 export function ComponentHighlightDescription({
@@ -47,7 +49,9 @@ export function ComponentHighlightDescription({
   className,
 }: ComponentHighlightDescriptionProps) {
   return (
-    <p className={cn("text-sm text-slate-400 mb-4", className)}>{children}</p>
+    <p className={cn("text-sm text-muted-foreground mb-4", className)}>
+      {children}
+    </p>
   );
 }
 
@@ -67,8 +71,8 @@ export function ComponentHighlightProps({
   className,
 }: ComponentHighlightPropsProps) {
   return (
-    <div className={cn("bg-stone-900/50 rounded p-4", className)}>
-      <p className="text-stone-300 text-sm">
+    <div className={cn("bg-muted/50 rounded-lg p-4", className)}>
+      <p className="text-foreground text-sm">
         <strong>Props:</strong> {children}
       </p>
     </div>

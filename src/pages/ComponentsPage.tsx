@@ -14,7 +14,7 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function ComponentsPage() {
   return (
-    <div className="space-y-4">
+    <div className="section-spacing">
       <SimpleHeader
         pageTitle="Component Gallery"
         pageDescription="A showcase of UI components created for JLS Stack Sandbox"
@@ -22,14 +22,13 @@ export function ComponentsPage() {
       />
 
       {/* ActivityItem Section */}
-
       <ComponentHighlight>
         <ComponentHighlightTitle>ActivityItem</ComponentHighlightTitle>
         <ComponentHighlightDescription>
           Helper component to keep styling of various text consistent
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
-          <div className="bg-stone-950/60 border border-stone-700/50 rounded-lg p-6 mb-6 space-y-4">
+          <div className="card-standard mb-6 space-y-4">
             <ActivityItem
               name="John Doe"
               action="Created new project"
@@ -52,7 +51,8 @@ export function ComponentsPage() {
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
-      <hr />
+
+      <hr className="border-border" />
 
       {/* FeatureCard Section */}
       <ComponentHighlight>
@@ -69,8 +69,8 @@ export function ComponentsPage() {
               description="Automatically adapts to different screen sizes"
             />
             <FeatureCard
-              title="Dark Theme"
-              description="Built with a sophisticated dark color palette"
+              title="Light & Dark Themes"
+              description="Built with semantic color tokens that adapt to both modes"
             />
             <FeatureCard
               title="Accessible"
@@ -86,14 +86,15 @@ export function ComponentsPage() {
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
-      <hr />
+
+      <hr className="border-border" />
 
       {/* SelectInput Section */}
       <ComponentHighlight>
         <ComponentHighlightTitle>SelectInput</ComponentHighlightTitle>
         <ComponentHighlightDescription>
           Helper component to make simple selection boxes blend in with the
-          LayoutSandbox's theming.
+          brand kit theming.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -111,13 +112,14 @@ export function ComponentsPage() {
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
-      <hr />
+
+      <hr className="border-border" />
 
       {/* StatCard Section */}
       <ComponentHighlight>
         <ComponentHighlightTitle>StatCard</ComponentHighlightTitle>
         <ComponentHighlightDescription>
-          Used to emphasize a stat, with feature and error variant.
+          Used to emphasize a stat, with featured and error variants.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -129,7 +131,7 @@ export function ComponentsPage() {
             <StatCard
               label="Featured Variant"
               value="5,678"
-              description="Highlighted with yellow/amber accent colors"
+              description="Highlighted with cyan accent colors"
               variant="featured"
             />
             <StatCard
@@ -145,7 +147,8 @@ export function ComponentsPage() {
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
-      <hr />
+
+      <hr className="border-border" />
 
       {/* TaskItem Section */}
       <ComponentHighlight>

@@ -1,4 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 type AuthMode = "signin" | "signup";
 
@@ -96,68 +99,66 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white text-stone-900 rounded-lg shadow-md">
+    <Card className="max-w-md mx-auto">
       <div className="flex gap-2 mb-6">
-        <button
+        <Button
           type="button"
           onClick={() => setMode("signin")}
-          className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-            mode === "signin"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-          }`}
+          variant={mode === "signin" ? "default" : "secondary"}
+          className="flex-1"
         >
           Sign In
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setMode("signup")}
-          className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-            mode === "signup"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-          }`}
+          variant={mode === "signup" ? "default" : "secondary"}
+          className="flex-1"
         >
           Sign Up
-        </button>
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium mb-1 text-foreground"
+          >
             Email
           </label>
-          <input
+          <Input
             type="email"
             id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            }`}
+            aria-invalid={!!errors.email}
+            className={errors.email ? "border-destructive" : ""}
           />
           {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            <p className="text-destructive text-sm mt-1">{errors.email}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium mb-1 text-foreground"
+          >
             Password
           </label>
-          <input
+          <Input
             type="password"
             id="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.password ? "border-red-500" : "border-gray-300"
-            }`}
+            aria-invalid={!!errors.password}
+            className={errors.password ? "border-destructive" : ""}
           />
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            <p className="text-destructive text-sm mt-1">{errors.password}</p>
           )}
         </div>
 
@@ -165,22 +166,21 @@ export default function AuthForm() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium mb-1"
+              className="block text-sm font-medium mb-1 text-foreground"
             >
               Confirm Password
             </label>
-            <input
+            <Input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-md ${
-                errors.confirmPassword ? "border-red-500" : "border-gray-300"
-              }`}
+              aria-invalid={!!errors.confirmPassword}
+              className={errors.confirmPassword ? "border-destructive" : ""}
             />
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-destructive text-sm mt-1">
                 {errors.confirmPassword}
               </p>
             )}
@@ -189,7 +189,7 @@ export default function AuthForm() {
 
         {!isSignUp && (
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex items-center gap-2 text-sm text-foreground">
               <input
                 type="checkbox"
                 name="rememberMe"
@@ -199,42 +199,32 @@ export default function AuthForm() {
               />
               Remember me
             </label>
-            <button
-              type="button"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <Button type="button" variant="link" className="text-sm p-0 h-auto">
               Forgot password?
-            </button>
+            </Button>
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded-md font-medium ${
-            isSubmitting
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-          }`}
-        >
+        <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting
             ? "Processing..."
             : isSignUp
               ? "Create Account"
               : "Sign In"}
-        </button>
+        </Button>
       </form>
 
-      <p className="text-center text-sm text-gray-600 mt-4">
+      <p className="text-center text-sm text-muted-foreground mt-4">
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-        <button
+        <Button
           type="button"
           onClick={toggleMode}
-          className="text-blue-600 hover:underline font-medium"
+          variant="link"
+          className="text-sm p-0 h-auto font-medium"
         >
           {isSignUp ? "Sign in" : "Sign up"}
-        </button>
+        </Button>
       </p>
-    </div>
+    </Card>
   );
 }

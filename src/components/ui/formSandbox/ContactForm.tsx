@@ -1,4 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface FormData {
   name: string;
@@ -86,85 +89,91 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white text-stone-900  rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
+    <Card className="max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle>Contact Us</CardTitle>
+      </CardHeader>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium mb-1">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.name ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="message" className="block text-sm font-medium mb-1">
-            Message
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            rows={4}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.message ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.message && (
-            <p className="text-red-500 text-sm mt-1">{errors.message}</p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded-md font-medium ${
-            isSubmitting
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-          }`}
-        >
-          {isSubmitting ? "Sending..." : "Send Message"}
-        </button>
-
-        {submitSuccess && (
-          <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded-md">
-            Message sent successfully!
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
+              Name
+            </label>
+            <Input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              aria-invalid={!!errors.name}
+              className={errors.name ? "border-destructive" : ""}
+            />
+            {errors.name && (
+              <p className="text-destructive text-sm mt-1">{errors.name}</p>
+            )}
           </div>
-        )}
-      </form>
-    </div>
+
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
+              Email
+            </label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              aria-invalid={!!errors.email}
+              className={errors.email ? "border-destructive" : ""}
+            />
+            {errors.email && (
+              <p className="text-destructive text-sm mt-1">{errors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="message"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              rows={4}
+              aria-invalid={!!errors.message}
+              className={`w-full px-3 py-2 bg-background text-foreground border rounded-lg transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] ${
+                errors.message
+                  ? "border-destructive aria-invalid:ring-destructive/20 aria-invalid:border-destructive"
+                  : "border-input"
+              }`}
+            />
+            {errors.message && (
+              <p className="text-destructive text-sm mt-1">{errors.message}</p>
+            )}
+          </div>
+
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? "Sending..." : "Send Message"}
+          </Button>
+
+          {submitSuccess && (
+            <div className="p-3 bg-accent/10 border border-accent text-foreground rounded-lg">
+              Message sent successfully!
+            </div>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   );
 }
