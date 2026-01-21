@@ -8,7 +8,6 @@ export function PlaygroundLayout() {
         The only way to learn is by playing. The only way to win is by learning.
         And the only way to begin is by beginning.
       </p>
-      <h2 className="font-semibold">Focused Playgrounds</h2>
 
       {/* Tab navigation */}
       <nav className="flex space-x-4 border-b border-slate-700">
