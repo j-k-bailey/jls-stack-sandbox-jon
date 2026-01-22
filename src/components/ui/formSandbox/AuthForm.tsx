@@ -104,7 +104,7 @@ export default function AuthForm() {
         <Button
           type="button"
           onClick={() => setMode("signin")}
-          variant={mode === "signin" ? "default" : "secondary"}
+          variant={mode === "signin" ? "default" : "outline"}
           className="flex-1"
         >
           Sign In
@@ -112,7 +112,7 @@ export default function AuthForm() {
         <Button
           type="button"
           onClick={() => setMode("signup")}
-          variant={mode === "signup" ? "default" : "secondary"}
+          variant={mode === "signup" ? "default" : "outline"}
           className="flex-1"
         >
           Sign Up

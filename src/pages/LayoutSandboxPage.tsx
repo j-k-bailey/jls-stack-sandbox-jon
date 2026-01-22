@@ -3,7 +3,7 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function LayoutSandboxPage() {
   return (
-    <div className="space-y-8">
+    <div className="section-spacing container px-standard pb-section">
       <SimpleHeader
         pageTitle="Layout Sandbox"
         pageDescription="A playground for practicing Tailwind layout patterns."

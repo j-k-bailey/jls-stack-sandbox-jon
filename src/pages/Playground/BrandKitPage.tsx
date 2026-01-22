@@ -2,7 +2,7 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function BrandKitPage() {
   return (
-    <div className="section-spacing container mx-auto px-standard pb-section">
+    <div className="section-spacing container mx-auto">
       <SimpleHeader
         pageTitle="JLS Stack Sandbox Design System"
         pageDescription="Electric cyan and hot fuchsia create a cohesive color story with progressive surface elevation and comprehensive token sets."
@@ -62,7 +62,7 @@ export function BrandKitPage() {
         {/* Large Color Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-standard">
           {/* Primary Cyan */}
-          <div className="bg-gradient-to-br from-primary via-primary to-primary-hover text-primary-foreground p-section rounded-lg border-2 border-border-primary shadow-lg">
+          <div className="bg-linear-to-br from-primary via-primary to-primary-hover text-primary-foreground p-section rounded-lg border-2 border-border-primary shadow-lg">
             <div className="space-y-compact">
               <div className="inline-block bg-primary-foreground/10 backdrop-blur-sm px-3 py-1 rounded-full">
                 <p className="text-overline text-[10px]">PRIMARY</p>
@@ -89,7 +89,7 @@ export function BrandKitPage() {
           </div>
 
           {/* Accent Fuchsia */}
-          <div className="bg-gradient-to-br from-accent via-accent to-accent-hover text-accent-foreground p-section rounded-lg border-2 border-border-accent shadow-lg">
+          <div className="bg-linear-to-br from-accent via-accent to-accent-hover text-accent-foreground p-section rounded-lg border-2 border-border-accent shadow-lg">
             <div className="space-y-compact">
               <div className="inline-block bg-accent-foreground/10 backdrop-blur-sm px-3 py-1 rounded-full">
                 <p className="text-overline text-[10px]">ACCENT</p>
@@ -478,7 +478,7 @@ export function BrandKitPage() {
                     {s.size}
                   </code>
                   <div
-                    className="bg-gradient-to-r from-primary to-accent h-8 rounded"
+                    className="bg-linear-to-r from-primary to-accent h-8 rounded"
                     style={{ width: s.size }}
                   />
                 </div>

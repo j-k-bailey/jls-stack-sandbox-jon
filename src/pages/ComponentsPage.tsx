@@ -14,7 +14,7 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function ComponentsPage() {
   return (
-    <div className="section-spacing">
+    <div className="section-spacing container px-standard pb-section">
       <SimpleHeader
         pageTitle="Component Gallery"
         pageDescription="A showcase of UI components created for JLS Stack Sandbox"

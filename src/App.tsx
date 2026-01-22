@@ -10,6 +10,8 @@ import { AestheticPage } from "@/pages/Playground/AestheticPage";
 import { FormPlaygroundPage } from "@/pages/Playground/FormPlaygroundPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { BrandKitPage } from "@/pages/Playground/BrandKitPage";
+import { QualityCheckPage } from "@/pages/QualityCheck";
+import { SettingsPage } from "@/pages/SettingsPage";
 
 function App() {
   return (
@@ -30,6 +32,12 @@ function App() {
           <Route path="aesthetic" element={<AestheticPage />} />
           <Route path="forms" element={<FormPlaygroundPage />} />
         </Route>
+
+        {/* Quality Check */}
+        <Route path="quality-check" element={<QualityCheckPage />} />
+
+        {/* Settings */}
+        <Route path="settings" element={<SettingsPage />} />
 
         {/* "/help" -> Help page */}
         <Route path="help" element={<HelpPage />} />

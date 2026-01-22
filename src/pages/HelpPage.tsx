@@ -10,7 +10,7 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function HelpPage() {
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-6">
+    <div className="section-spacing container px-standard pb-section">
       <SimpleHeader
         pageTitle="Help & Documentation"
         pageDescription="Find resources and guidance to help you succeed in the JLS Academy

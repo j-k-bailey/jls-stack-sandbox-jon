@@ -3,7 +3,7 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 
 export function PlaygroundLayout() {
   return (
-    <div className="section-spacing">
+    <div className="section-spacing container px-standard pb-section">
       <SimpleHeader
         pageTitle="Playground"
         pageDescription="The only way to learn is by playing. The only way to win is by learning.

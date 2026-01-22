@@ -174,7 +174,6 @@
   --color-disabled-background: var(--disabled-background);
   --color-disabled-hover: var(--disabled-hover);
 }
-
 :root {
   /* === Cyan/Aqua Brand Scale === */
   --color-cyan-50: oklch(0.9848 0.021 189.59);
@@ -289,12 +288,12 @@
   --warning-background: oklch(94% 0.07 10);
   --warning-hover: oklch(56% 0.22 10);
 
-  /* === Disabled (Low Contrast Accessible) === */
-  --disabled: oklch(92% 0.006 200);
-  --disabled-foreground: oklch(62% 0.008 200);
-  --border-disabled: oklch(88% 0.006 200);
-  --disabled-background: oklch(95% 0.004 200);
-  --disabled-hover: oklch(92% 0.006 200);
+  /* === Disabled === */
+  --disabled: oklch(90% 0.006 200);
+  --disabled-foreground: oklch(0.3829 0.0053 196.93);
+  --border-disabled: oklch(85% 0.006 200);
+  --disabled-background: oklch(94% 0.004 200);
+  --disabled-hover: oklch(90% 0.006 200);
 }
 
 .dark {
@@ -385,12 +384,12 @@
   --warning-background: oklch(20% 0.12 10);
   --warning-hover: oklch(78% 0.24 10);
 
-  /* === Disabled (Low Contrast Accessible) === */
-  --disabled: oklch(20% 0.006 200);
-  --disabled-foreground: oklch(48% 0.008 200);
-  --border-disabled: oklch(25% 0.006 200);
-  --disabled-background: oklch(15% 0.004 200);
-  --disabled-hover: oklch(20% 0.006 200);
+  /* === Disabled === */
+  --disabled: oklch(22% 0.006 200);
+  --disabled-foreground: oklch(0.7276 0.0057 197.03);
+  --border-disabled: oklch(28% 0.006 200);
+  --disabled-background: oklch(16% 0.004 200);
+  --disabled-hover: oklch(22% 0.006 200);
 }
 
 /* ==========================================

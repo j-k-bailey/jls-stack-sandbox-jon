@@ -8,7 +8,9 @@ const navItems = [
   { label: "Layout Sandbox", to: "/layout-sandbox" },
   { label: "Components", to: "/components" },
   { label: "Playground", to: "/playground" },
+  { label: "Quality Log", to: "/quality-check" },
   { label: "Help", to: "/help" },
+  { label: "Settings", to: "/settings" },
 ];
 
 export function AppLayout() {
