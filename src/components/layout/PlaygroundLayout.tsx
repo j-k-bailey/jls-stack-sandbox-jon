@@ -11,12 +11,12 @@ export function PlaygroundLayout() {
       />
 
       {/* Tab navigation */}
-      <nav className="flex space-x-4 border-b border-border">
+      <nav className="flex space-x-compact border-b border-border">
         <NavLink
           to="/playground"
           end
           className={({ isActive }) =>
-            `px-4 py-2 text-sm font-medium ${
+            `px-compact py-compact text-button ${
               isActive
                 ? "border-b-2 border-primary text-primary"
                 : "text-muted-foreground hover:text-foreground"
@@ -28,7 +28,7 @@ export function PlaygroundLayout() {
         <NavLink
           to="/playground/aesthetic"
           className={({ isActive }) =>
-            `px-4 py-2 text-sm font-medium ${
+            `px-compact py-compact text-button ${
               isActive
                 ? "border-b-2 border-primary text-primary"
                 : "text-muted-foreground hover:text-foreground"
@@ -40,7 +40,7 @@ export function PlaygroundLayout() {
         <NavLink
           to="/playground/forms"
           className={({ isActive }) =>
-            `px-4 py-2 text-sm font-medium ${
+            `px-compact py-compact text-button ${
               isActive
                 ? "border-b-2 border-primary text-primary"
                 : "text-muted-foreground hover:text-foreground"

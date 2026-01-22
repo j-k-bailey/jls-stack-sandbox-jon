@@ -95,12 +95,9 @@ export default function ContactForm() {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-compact">
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium mb-1 text-foreground"
-            >
+            <label htmlFor="name" className="block text-body-2 mb-tight">
               Name
             </label>
             <Input
@@ -110,18 +107,15 @@ export default function ContactForm() {
               value={formData.name}
               onChange={handleChange}
               aria-invalid={!!errors.name}
-              className={errors.name ? "border-destructive" : ""}
+              className={errors.name ? "border-error" : ""}
             />
             {errors.name && (
-              <p className="text-destructive text-sm mt-1">{errors.name}</p>
+              <p className="text-error text-caption mt-tight">{errors.name}</p>
             )}
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium mb-1 text-foreground"
-            >
+            <label htmlFor="email" className="block text-body-2 mb-tight">
               Email
             </label>
             <Input
@@ -131,18 +125,15 @@ export default function ContactForm() {
               value={formData.email}
               onChange={handleChange}
               aria-invalid={!!errors.email}
-              className={errors.email ? "border-destructive" : ""}
+              className={errors.email ? "border-error" : ""}
             />
             {errors.email && (
-              <p className="text-destructive text-sm mt-1">{errors.email}</p>
+              <p className="text-error text-caption mt-tight">{errors.email}</p>
             )}
           </div>
 
           <div>
-            <label
-              htmlFor="message"
-              className="block text-sm font-medium mb-1 text-foreground"
-            >
+            <label htmlFor="message" className="block text-body-2 mb-tight">
               Message
             </label>
             <textarea
@@ -152,14 +143,16 @@ export default function ContactForm() {
               onChange={handleChange}
               rows={4}
               aria-invalid={!!errors.message}
-              className={`w-full px-3 py-2 bg-background text-foreground border rounded-lg transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] ${
+              className={`w-full px-compact py-compact bg-background text-foreground border rounded-lg transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] ${
                 errors.message
-                  ? "border-destructive aria-invalid:ring-destructive/20 aria-invalid:border-destructive"
+                  ? "border-error aria-invalid:ring-error/20 aria-invalid:border-error"
                   : "border-input"
               }`}
             />
             {errors.message && (
-              <p className="text-destructive text-sm mt-1">{errors.message}</p>
+              <p className="text-error text-caption mt-tight">
+                {errors.message}
+              </p>
             )}
           </div>
 
@@ -168,7 +161,7 @@ export default function ContactForm() {
           </Button>
 
           {submitSuccess && (
-            <div className="p-3 bg-accent/10 border border-accent text-foreground rounded-lg">
+            <div className="p-compact bg-accent/10 border border-accent text-foreground rounded-lg">
               Message sent successfully!
             </div>
           )}

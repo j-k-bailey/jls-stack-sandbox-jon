@@ -14,7 +14,7 @@ export function SimpleHeader({
   className,
 }: SimpleHeaderProps) {
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-tight", className)}>
       <h1>{pageTitle}</h1>
       {pageDescription && <p>{pageDescription}</p>}
       {hr && <hr className="border-border" />}

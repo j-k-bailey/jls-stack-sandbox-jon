@@ -10,10 +10,10 @@ export function HeaderNavLink({ children, ...props }: HeaderNavLinkProps) {
     <NavLink
       className={({ isActive }) =>
         cn(
-          "px-3 py-1.5 rounded-lg transition-colors",
+          "px-compact py-tight rounded-lg transition-colors text-button",
           isActive
             ? "bg-primary text-primary-foreground"
-            : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+            : "text-muted-foreground hover:bg-surface-5 hover:text-foreground",
         )
       }
       {...props}

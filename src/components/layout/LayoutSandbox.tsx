@@ -6,13 +6,13 @@ import { StatCard } from "@/components/ui/layoutSandbox/StatCard";
 
 export function LayoutSandbox() {
   return (
-    <div className="max-w-6xl mx-auto section-spacing p-6">
+    <div className="max-w-6xl mx-auto section-spacing p-standard">
       {/* Section 1: Page Title */}
-      <section className="space-y-3 border-b border-border pb-8">
-        <h1 className="text-page-title bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
+      <section className="space-y-tight border-b border-border pb-section">
+        <h1 className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
           TaskForge Pro
         </h1>
-        <p className="text-small">
+        <p className="text-subtitle-2 text-muted-foreground">
           Professional task management for ambitious teams (But actually just
           pt. 2 of Tailwind Layout Sandbox, Week 2 – Day 1a: Practicing spacing,
           flex, grid, and responsive utilities)
@@ -20,9 +20,9 @@ export function LayoutSandbox() {
       </section>
 
       {/* Section 2: Feature List */}
-      <section className="space-y-5">
-        <h2 className="text-section-title">Vertical Stack ("Feature List")</h2>
-        <div className="bg-muted/20 border border-border rounded-lg p-8 space-y-4 shadow-sm">
+      <section className="space-y-compact">
+        <h2>Vertical Stack ("Feature List")</h2>
+        <div className="bg-surface-2 border border-border rounded-lg p-standard space-y-compact shadow-sm">
           <FeatureCard
             title="AI-Powered Task Prioritization"
             description="Let machine learning analyze your workload and automatically surface the most critical tasks based on deadlines, dependencies, and team capacity."
@@ -39,25 +39,19 @@ export function LayoutSandbox() {
       </section>
 
       {/* Section 3: Responsive flex rows */}
-      <section className="space-y-5">
-        <h2 className="text-section-title">
-          Responsive Flex Row ("Sidebar + Content")
-        </h2>
-        <div className="space-y-8">
+      <section className="space-y-compact">
+        <h2>Responsive Flex Row ("Sidebar + Content")</h2>
+        <div className="space-y-standard">
           <div>
-            <h3 className="text-card-title text-primary mb-3">
-              Filter Bar with Content
-            </h3>
-            <p className="text-small mb-5">
+            <h3 className="text-primary mb-tight">Filter Bar with Content</h3>
+            <p className="text-subtitle-2 text-muted-foreground mb-compact">
               Filters stack above content on mobile, move to left sidebar on
               desktop for better use of horizontal space.
             </p>
-            <div className="bg-muted/20 border border-border rounded-lg p-8 flex flex-col md:flex-row gap-5 shadow-sm">
+            <div className="bg-surface-2 border border-border rounded-lg p-standard flex flex-col md:flex-row gap-compact shadow-sm">
               <div className="card-compact md:basis-1/4">
-                <h4 className="font-semibold text-primary text-lg mb-4">
-                  Filter
-                </h4>
-                <div className="space-y-4">
+                <h4 className="text-primary mb-compact">Filter</h4>
+                <div className="space-y-compact">
                   <SelectInput
                     label="Status"
                     options={[
@@ -79,12 +73,10 @@ export function LayoutSandbox() {
                 </div>
               </div>
               <div className="card-compact flex-1 md:basis-3/4">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-semibold text-primary text-lg">
-                    Task List
-                  </h4>
+                <div className="flex items-center justify-between mb-compact">
+                  <h4 className="text-primary">Task List</h4>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-tight">
                   <TaskItem
                     title="Complete Q4 revenue report"
                     metadata="Due tomorrow • High priority • Assigned to you"
@@ -106,29 +98,27 @@ export function LayoutSandbox() {
           </div>
 
           <div>
-            <h3 className="text-card-title text-primary mb-3">
-              Activity Sidebar
-            </h3>
-            <p className="text-small mb-5">
+            <h3 className="text-primary mb-tight">Activity Sidebar</h3>
+            <p className="text-subtitle-2 text-muted-foreground mb-compact">
               Right sidebar shows recent activity and team updates. Hidden on
               smaller screens to maximize workspace.
             </p>
-            <div className="bg-muted/20 border border-border rounded-lg p-8 flex flex-row gap-5 shadow-sm">
+            <div className="bg-surface-2 border border-border rounded-lg p-standard flex flex-row gap-compact shadow-sm">
               <div className="card-compact flex-1">
-                <h4 className="font-semibold text-primary text-lg mb-3">
-                  Active Tasks
-                </h4>
-                <p className="text-small leading-relaxed mb-4">
+                <h4 className="text-primary mb-tight">Active Tasks</h4>
+                <p className="text-body-2 text-muted-foreground leading-relaxed mb-compact">
                   Your current focus area with today's priorities and
                   in-progress work.
                 </p>
-                <div className="space-y-2">
-                  <div className="bg-muted rounded-lg p-2 text-xs">
-                    <div className="text-foreground">Draft marketing copy</div>
+                <div className="space-y-tight">
+                  <div className="bg-muted rounded-lg p-compact text-caption">
+                    <div className="text-foreground font-medium">
+                      Draft marketing copy
+                    </div>
                     <div className="text-muted-foreground">In progress</div>
                   </div>
-                  <div className="bg-muted rounded-lg p-2 text-xs">
-                    <div className="text-foreground">
+                  <div className="bg-muted rounded-lg p-compact text-caption">
+                    <div className="text-foreground font-medium">
                       Code review for PR #247
                     </div>
                     <div className="text-muted-foreground">
@@ -138,10 +128,8 @@ export function LayoutSandbox() {
                 </div>
               </div>
               <div className="card-compact hidden md:block md:basis-1/3">
-                <h4 className="font-semibold text-primary text-lg mb-3">
-                  Recent Activity
-                </h4>
-                <div className="space-y-3 text-xs">
+                <h4 className="text-primary mb-tight">Recent Activity</h4>
+                <div className="space-y-tight text-caption">
                   <ActivityItem
                     name="Jane Doe"
                     action='Completed "User research synthesis"'
@@ -166,12 +154,12 @@ export function LayoutSandbox() {
       </section>
 
       {/* Section 4: Dashboard Stats */}
-      <section className="space-y-5">
-        <h2 className="text-section-title">Your Overview (Responsive Grid)</h2>
-        <p className="text-small">
+      <section className="space-y-compact">
+        <h2>Your Overview (Responsive Grid)</h2>
+        <p className="text-subtitle-2 text-muted-foreground">
           Real-time insights into your workload and team performance.
         </p>
-        <div className="bg-muted/20 border border-border rounded-lg p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 shadow-sm">
+        <div className="bg-surface-2 border border-border rounded-lg p-standard grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-compact shadow-sm">
           <StatCard
             label="Open Tasks"
             value={12}

@@ -100,7 +100,7 @@ export default function AuthForm() {
 
   return (
     <Card className="max-w-md mx-auto">
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-tight mb-compact">
         <Button
           type="button"
           onClick={() => setMode("signin")}
@@ -119,12 +119,9 @@ export default function AuthForm() {
         </Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-compact">
         <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium mb-1 text-foreground"
-          >
+          <label htmlFor="email" className="block text-body-2 mb-tight">
             Email
           </label>
           <Input
@@ -134,18 +131,15 @@ export default function AuthForm() {
             value={formData.email}
             onChange={handleChange}
             aria-invalid={!!errors.email}
-            className={errors.email ? "border-destructive" : ""}
+            className={errors.email ? "border-error" : ""}
           />
           {errors.email && (
-            <p className="text-destructive text-sm mt-1">{errors.email}</p>
+            <p className="text-error text-caption mt-tight">{errors.email}</p>
           )}
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium mb-1 text-foreground"
-          >
+          <label htmlFor="password" className="block text-body-2 mb-tight">
             Password
           </label>
           <Input
@@ -155,10 +149,12 @@ export default function AuthForm() {
             value={formData.password}
             onChange={handleChange}
             aria-invalid={!!errors.password}
-            className={errors.password ? "border-destructive" : ""}
+            className={errors.password ? "border-error" : ""}
           />
           {errors.password && (
-            <p className="text-destructive text-sm mt-1">{errors.password}</p>
+            <p className="text-error text-caption mt-tight">
+              {errors.password}
+            </p>
           )}
         </div>
 
@@ -166,7 +162,7 @@ export default function AuthForm() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium mb-1 text-foreground"
+              className="block text-body-2 mb-tight"
             >
               Confirm Password
             </label>
@@ -177,10 +173,10 @@ export default function AuthForm() {
               value={formData.confirmPassword}
               onChange={handleChange}
               aria-invalid={!!errors.confirmPassword}
-              className={errors.confirmPassword ? "border-destructive" : ""}
+              className={errors.confirmPassword ? "border-error" : ""}
             />
             {errors.confirmPassword && (
-              <p className="text-destructive text-sm mt-1">
+              <p className="text-error text-caption mt-tight">
                 {errors.confirmPassword}
               </p>
             )}
@@ -189,7 +185,7 @@ export default function AuthForm() {
 
         {!isSignUp && (
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm text-foreground">
+            <label className="flex items-center gap-tight text-body-2">
               <input
                 type="checkbox"
                 name="rememberMe"
@@ -199,7 +195,7 @@ export default function AuthForm() {
               />
               Remember me
             </label>
-            <Button type="button" variant="link" className="text-sm p-0 h-auto">
+            <Button type="button" variant="link" className="p-0 h-auto">
               Forgot password?
             </Button>
           </div>
@@ -214,13 +210,13 @@ export default function AuthForm() {
         </Button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground mt-4">
+      <p className="text-center text-body-2 mt-compact">
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
         <Button
           type="button"
           onClick={toggleMode}
           variant="link"
-          className="text-sm p-0 h-auto font-medium"
+          className="p-0 h-auto"
         >
           {isSignUp ? "Sign in" : "Sign up"}
         </Button>

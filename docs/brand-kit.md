@@ -748,15 +748,133 @@ className =
 
 ---
 
-## Typography Scale
+## Typography Type Scale
 
-All typography automatically adapts to light/dark mode via semantic foreground colors.
+### Display & Heading Styles
 
-- **H1 (Page Title)**: `text-3xl font-bold tracking-tight text-foreground`
-- **H2 (Section Title)**: `text-xl font-semibold tracking-tight text-foreground`
-- **H3 (Card Title)**: `text-lg font-semibold text-foreground`
-- **Body Text**: `text-base text-muted-foreground` (deemphasized) or `text-foreground` (emphasized)
-- **Small Text**: `text-sm text-muted-foreground`
+#### **H1 (Display/Hero; Page Title)**
+
+- **Size**: `3rem` (48px)
+- **Weight**: `700` (bold)
+- **Line Height**: `1.2` (3.6rem / 57.6px)
+- **Letter Spacing**: `-0.02em` (tight)
+- **Usage**: Hero sections, main page titles, landing page headlines
+- **Class**: `.text-h1`
+
+#### **H2 (Page Section)**
+
+- **Size**: `2.25rem` (36px)
+- **Weight**: `600` (semibold)
+- **Line Height**: `1.3` (2.925rem / 46.8px)
+- **Letter Spacing**: `-0.015em` (slightly tight)
+- **Usage**: Major page sections, primary content divisions
+- **Class**: `.text-h2`
+
+#### **H3 (Section Title)**
+
+- **Size**: `1.875rem` (30px)
+- **Weight**: `600` (semibold)
+- **Line Height**: `1.3` (2.4375rem / 39px)
+- **Letter Spacing**: `-0.01em` (slightly tight)
+- **Usage**: Subsections, card group headers
+- **Class**: `.text-h3`
+
+#### **H4 (Component Header)**
+
+- **Size**: `1.5rem` (24px)
+- **Weight**: `600` (semibold)
+- **Line Height**: `1.4` (2.1rem / 33.6px)
+- **Letter Spacing**: `0` (normal)
+- **Usage**: Component titles, sidebar headers, prominent labels
+- **Class**: `.text-h4`
+
+#### **H5 (Small Header)**
+
+- **Size**: `1.25rem` (20px)
+- **Weight**: `600` (semibold)
+- **Line Height**: `1.4` (1.75rem / 28px)
+- **Letter Spacing**: `0` (normal)
+- **Usage**: Small component headers, list section titles
+- **Class**: `.text-h5`
+
+#### **H6 (Micro Header)**
+
+- **Size**: `1.125rem` (18px)
+- **Weight**: `600` (semibold)
+- **Line Height**: `1.5` (1.6875rem / 27px)
+- **Letter Spacing**: `0` (normal)
+- **Usage**: Compact headers, nested component titles
+- **Class**: `.text-h6`
+
+### Subtitle Styles
+
+#### **Subtitle 1 (Prominent Secondary)**
+
+- **Size**: `1rem` (16px)
+- **Weight**: `500` (medium)
+- **Line Height**: `1.5` (1.5rem / 24px)
+- **Letter Spacing**: `0.01em` (slightly loose)
+- **Usage**: Page subtitles, section descriptions, emphasized secondary text
+- **Class**: `.text-subtitle-1`
+
+#### **Subtitle 2 (Secondary)**
+
+- **Size**: `0.875rem` (14px)
+- **Weight**: `500` (medium)
+- **Line Height**: `1.43` (1.25rem / 20px)
+- **Letter Spacing**: `0.01em` (slightly loose)
+- **Usage**: Component subtitles, helper text, metadata
+- **Class**: `.text-subtitle-2`
+
+### Body Styles
+
+#### **Body 1 (Primary Content)**
+
+- **Size**: `1rem` (16px)
+- **Weight**: `400` (normal)
+- **Line Height**: `1.6` (1.6rem / 25.6px)
+- **Letter Spacing**: `0` (normal)
+- **Usage**: Main paragraph text, content-heavy sections, descriptions
+- **Class**: `.text-body-1`
+
+#### **Body 2 (Dense Content)**
+
+- **Size**: `0.875rem` (14px)
+- **Weight**: `400` (normal)
+- **Line Height**: `1.5` (1.3125rem / 21px)
+- **Letter Spacing**: `0` (normal)
+- **Usage**: Secondary content, compact paragraphs, supporting text
+- **Class**: `.text-body-2`
+
+### UI Element Styles
+
+#### **Button**
+
+- **Size**: `0.875rem` (14px)
+- **Weight**: `600` (semibold)
+- **Line Height**: `1.14` (1rem / 16px)
+- **Letter Spacing**: `0.04em` (loose - for all caps feel)
+- **Usage**: Buttons, CTAs, primary interactive elements
+- **Class**: `.text-button`
+
+#### **Caption**
+
+- **Size**: `0.75rem` (12px)
+- **Weight**: `400` (normal)
+- **Line Height**: `1.33` (1rem / 16px)
+- **Letter Spacing**: `0.02em` (slightly loose)
+- **Usage**: Image captions, timestamps, footnotes, legal text
+- **Class**: `.text-caption`
+
+#### **Overline**
+
+- **Size**: `0.75rem` (12px)
+- **Weight**: `600` (semibold)
+- **Line Height**: `1.33` (1rem / 16px)
+- **Letter Spacing**: `0.15em` (very loose for emphasis)
+- **Text Transform**: `uppercase`
+- **Usage**: Category labels, section tags, eyebrow text, badges
+- **Class**: `.text-overline`
 
 ---
 
@@ -769,8 +887,23 @@ All typography automatically adapts to light/dark mode via semantic foreground c
 
 ### Card Padding
 
-- **Standard**: `p-6` (1.5rem / 24px)
-- **Compact**: `p-3` (0.75rem / 12px)
+Card padding creates breathing room for content within containers. Choose based on content density and card importance.
+
+- **Section** (`p-section`): 2rem (32px)
+  - **When to use**: Large feature cards, hero sections, primary content areas that need significant breathing room
+  - **Example**: Dashboard summary cards, feature showcase panels, modal containers with complex content
+
+- **Standard** (`p-standard`): 1.5rem (24px)
+  - **When to use**: Default card padding for most use cases, general-purpose containers
+  - **Example**: Standard content cards, form containers, settings panels, article cards
+
+- **Compact** (`p-compact`): 0.75rem (12px)
+  - **When to use**: Smaller cards, sidebar widgets, dense data displays, space-constrained layouts
+  - **Example**: Filter sidebars, nested cards, compact stat displays, list item containers
+
+- **Tight** (`p-tight`): 0.375rem (6px)
+  - **When to use**: Very dense UI elements, inline badges, minimal containers, micro-interactions
+  - **Example**: Small status indicators, tag containers, tooltip content, compact notification items
 
 ### Component Classes
 

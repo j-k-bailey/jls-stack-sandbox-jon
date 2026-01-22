@@ -13,49 +13,49 @@ export function StatCard({
   variant = "default",
   className = "",
 }: StatCardProps) {
-  const baseClasses = "rounded-lg p-6 transition-all";
+  const baseClasses = "rounded-lg p-standard transition-all";
 
   const variantClasses = {
     default:
-      "bg-surface border border-border hover:bg-surface/80 hover:border-primary/30",
+      "bg-surface-1 border border-border hover:bg-surface-1/80 hover:border-primary/30",
     featured:
-      "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50 hover:border-primary/70 shadow-lg shadow-primary/20",
+      "bg-linear-to-br from-primary/20 to-accent/20 border-2 border-primary/50 hover:border-primary/70 shadow-lg shadow-primary/20",
     error:
-      "bg-gradient-to-br from-destructive/20 to-destructive/30 border border-destructive/60 hover:border-destructive/80 shadow-lg shadow-destructive/30",
+      "bg-linear-to-br from-error/20 to-error/30 border border-error/60 hover:border-error/80 shadow-lg shadow-error/30",
   };
 
   const labelClasses = {
     default: "text-muted-foreground",
     featured: "text-primary/80",
-    error: "text-destructive/80",
+    error: "text-error/80",
   };
 
   const valueClasses = {
     default: "text-primary/80",
     featured:
-      "bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent",
-    error: "text-destructive",
+      "bg-linear-to-br from-primary to-accent bg-clip-text text-transparent",
+    error: "text-error",
   };
 
   const descriptionClasses = {
     default: "text-muted-foreground",
     featured: "text-primary/60",
-    error: "text-destructive/60",
+    error: "text-error/60",
   };
 
   return (
     <div className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
-      <div
-        className={`text-xs uppercase tracking-widest mb-2 font-semibold ${labelClasses[variant]}`}
-      >
+      <div className={`text-overline mb-tight ${labelClasses[variant]}`}>
         {label}
       </div>
       <div
-        className={`text-5xl font-bold leading-none mb-3 ${valueClasses[variant]}`}
+        className={`text-5xl font-bold leading-none mb-tight ${valueClasses[variant]}`}
       >
         {value}
       </div>
-      <p className={`text-xs leading-relaxed ${descriptionClasses[variant]}`}>
+      <p
+        className={`text-caption leading-relaxed ${descriptionClasses[variant]}`}
+      >
         {description}
       </p>
     </div>
