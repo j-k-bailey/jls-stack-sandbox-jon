@@ -19,9 +19,9 @@ export function StatCard({
     default:
       "bg-surface-1 border border-border hover:bg-surface-1/80 hover:border-primary/30",
     featured:
-      "bg-linear-to-br from-primary/20 to-accent/20 border-2 border-primary/50 hover:border-primary/70 shadow-lg shadow-primary/20",
+      "bg-linear-to-br from-primary/20 to-accent/20 border-2 border-primary/50 shadow-sm shadow-primary/20",
     error:
-      "bg-linear-to-br from-error/20 to-error/30 border border-error/60 hover:border-error/80 shadow-lg shadow-error/30",
+      "bg-linear-to-br from-warning/20 to-warning/30 border border-warning/60  shadow-sm shadow-warning/30",
   };
 
   const labelClasses = {

@@ -26,6 +26,18 @@ export function PlaygroundLayout() {
           Overview
         </NavLink>
         <NavLink
+          to="/playground/brand-kit"
+          className={({ isActive }) =>
+            `px-compact py-compact text-button ${
+              isActive
+                ? "border-b-2 border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground"
+            }`
+          }
+        >
+          Brand Kit
+        </NavLink>
+        <NavLink
           to="/playground/aesthetic"
           className={({ isActive }) =>
             `px-compact py-compact text-button ${

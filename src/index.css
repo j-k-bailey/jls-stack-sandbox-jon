@@ -25,30 +25,56 @@
   --spacing-section: 2rem; /* 32px */
 
   /* ==========================================
-     NEUTRALS & SURFACES
+     BRAND IDENTITY COLORS (Cyan/Aqua Scale)
+     ========================================== */
+  --color-cyan-50: var(--color-cyan-50);
+  --color-cyan-100: var(--color-cyan-100);
+  --color-cyan-200: var(--color-cyan-200);
+  --color-cyan-300: var(--color-cyan-300);
+  --color-cyan-400: var(--color-cyan-400);
+  --color-cyan-500: var(--color-cyan-500);
+  --color-cyan-600: var(--color-cyan-600);
+  --color-cyan-700: var(--color-cyan-700);
+  --color-cyan-800: var(--color-cyan-800);
+  --color-cyan-900: var(--color-cyan-900);
+  --color-cyan-950: var(--color-cyan-950);
+
+  /* ==========================================
+     BRAND IDENTITY COLORS (Magenta/Fuchsia Scale)
+     ========================================== */
+  --color-fuchsia-50: var(--color-fuchsia-50);
+  --color-fuchsia-100: var(--color-fuchsia-100);
+  --color-fuchsia-200: var(--color-fuchsia-200);
+  --color-fuchsia-300: var(--color-fuchsia-300);
+  --color-fuchsia-400: var(--color-fuchsia-400);
+  --color-fuchsia-500: var(--color-fuchsia-500);
+  --color-fuchsia-600: var(--color-fuchsia-600);
+  --color-fuchsia-700: var(--color-fuchsia-700);
+  --color-fuchsia-800: var(--color-fuchsia-800);
+  --color-fuchsia-900: var(--color-fuchsia-900);
+  --color-fuchsia-950: var(--color-fuchsia-950);
+
+  /* ==========================================
+     CORE FOUNDATION
      ========================================== */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
-  --color-surface-1: var(--surface-1);
-  --color-surface-1-foreground: var(--surface-1-foreground);
-  --color-surface-2: var(--surface-2);
-  --color-surface-2-foreground: var(--surface-2-foreground);
-  --color-surface-3: var(--surface-3);
-  --color-surface-3-foreground: var(--surface-3-foreground);
-  --color-surface-4: var(--surface-4);
-  --color-surface-4-foreground: var(--surface-4-foreground);
-  --color-surface-5: var(--surface-5);
-  --color-surface-5-foreground: var(--surface-5-foreground);
-  --color-surface-6: var(--surface-6);
-  --color-surface-6-foreground: var(--surface-6-foreground);
+  --color-border: var(--border);
 
   /* ==========================================
-     BORDERS
+     SURFACES
      ========================================== */
-  --color-border: var(--border);
-  --color-border-subtle: var(--border-subtle);
-  --color-border-strong: var(--border-strong);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-4: var(--surface-4);
+
+  /* ==========================================
+     LINKS
+     ========================================== */
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --color-link-visited: var(--link-visited);
 
   /* ==========================================
      SHADCN/UI COMPATIBILITY
@@ -59,96 +85,24 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-ring-offset: var(--ring-offset);
-
-  /* ==========================================
-     PRIMARY BRAND
-     ========================================== */
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-border-primary: var(--border-primary);
-
-  /* ==========================================
-     DESTRUCTIVE (Dangerous Actions)
-     ========================================== */
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-border-destructive: var(--border-destructive);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   /* ==========================================
-     ERROR (System/Validation Failures)
+     CHART COLORS
      ========================================== */
-  --color-error: var(--error);
-  --color-error-foreground: var(--error-foreground);
-  --color-border-error: var(--border-error);
-
-  /* ==========================================
-     SUCCESS
-     ========================================== */
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-border-success: var(--border-success);
-
-  /* ==========================================
-     WARNING
-     ========================================== */
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-border-warning: var(--border-warning);
-
-  /* ==========================================
-     INFO
-     ========================================== */
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
-  --color-border-info: var(--border-info);
-
-  /* ==========================================
-     ACCENT
-     ========================================== */
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-border-accent: var(--border-accent);
-
-  /* ==========================================
-     LINKS
-     ========================================== */
-  --color-link: var(--link);
-  --color-link-hover: var(--link-hover);
-  --color-link-visited: var(--link-visited);
-
-  /* ==========================================
-     CODE DISPLAY
-     ========================================== */
-  --color-code-background: var(--code-background);
-  --color-code-text: var(--code-text);
-  --color-code-border: var(--code-border);
-
-  /* ==========================================
-     FOCUS & INPUT
-     ========================================== */
-  --color-focus-visible: var(--focus-visible);
-
-  /* ==========================================
-     DISABLED STATES
-     ========================================== */
-  --color-disabled-background: var(--disabled-background);
-  --color-disabled-text: var(--disabled-text);
-  --color-disabled-border: var(--disabled-border);
-
-  /* ==========================================
-     OVERLAY
-     ========================================== */
-  --color-overlay: var(--overlay);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 
   /* ==========================================
      SIDEBAR/NAVIGATION
      ========================================== */
-  --color-sidebar-background: var(--sidebar-background);
+  --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
@@ -158,239 +112,285 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ==========================================
-     DATA VISUALIZATION (CHARTS)
+     MUTED (Complete Token Set)
      ========================================== */
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border-muted: var(--border-muted);
+  --color-muted-background: var(--muted-background);
+  --color-muted-hover: var(--muted-hover);
+
+  /* ==========================================
+     PRIMARY (Complete Token Set)
+     ========================================== */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border-primary: var(--border-primary);
+  --color-primary-background: var(--primary-background);
+  --color-primary-hover: var(--primary-hover);
+
+  /* ==========================================
+     NEUTRAL (Complete Token Set)
+     ========================================== */
+  --color-neutral: var(--neutral);
+  --color-neutral-foreground: var(--neutral-foreground);
+  --color-border-neutral: var(--border-neutral);
+  --color-neutral-background: var(--neutral-background);
+  --color-neutral-hover: var(--neutral-hover);
+
+  /* ==========================================
+     ACCENT (Complete Token Set)
+     ========================================== */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border-accent: var(--border-accent);
+  --color-accent-background: var(--accent-background);
+  --color-accent-hover: var(--accent-hover);
+
+  /* ==========================================
+     SUCCESS (Complete Token Set)
+     ========================================== */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border-success: var(--border-success);
+  --color-success-background: var(--success-background);
+  --color-success-hover: var(--success-hover);
+
+  /* ==========================================
+     WARNING (Complete Token Set)
+     ========================================== */
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border-warning: var(--border-warning);
+  --color-warning-background: var(--warning-background);
+  --color-warning-hover: var(--warning-hover);
+
+  /* ==========================================
+     DISABLED (Complete Token Set)
+     ========================================== */
+  --color-disabled: var(--disabled);
+  --color-disabled-foreground: var(--disabled-foreground);
+  --color-border-disabled: var(--border-disabled);
+  --color-disabled-background: var(--disabled-background);
+  --color-disabled-hover: var(--disabled-hover);
 }
 
-/* ==========================================
-   LIGHT MODE COLOR VALUES
-   ========================================== */
 :root {
-  /* Neutrals & Surfaces */
-  --background: oklch(93% 0.003 255);
-  --foreground: oklch(22% 0.003 255);
+  /* === Cyan/Aqua Brand Scale === */
+  --color-cyan-50: oklch(0.9848 0.021 189.59);
+  --color-cyan-100: oklch(0.9651 0.0507 193.32);
+  --color-cyan-200: oklch(0.9417 0.0894 195.74);
+  --color-cyan-300: oklch(0.902 0.141 197.18);
+  --color-cyan-400: oklch(0.8633 0.1442 199.24);
+  --color-cyan-500: oklch(0.7832 0.1332 201.55);
+  --color-cyan-600: oklch(0.6664 0.1145 208.31);
+  --color-cyan-700: oklch(0.563 0.096 210.77);
+  --color-cyan-800: oklch(0.4832 0.0798 212.53);
+  --color-cyan-900: oklch(0.4234 0.0684 216.42);
+  --color-cyan-950: oklch(0.3228 0.0546 218);
 
-  --surface-1: oklch(97% 0.002 255);
-  --surface-1-foreground: oklch(22% 0.003 255);
-  --surface-2: oklch(95% 0.003 255);
-  --surface-2-foreground: oklch(22% 0.003 255);
-  --surface-3: oklch(98% 0.002 255);
-  --surface-3-foreground: oklch(22% 0.003 255);
-  --surface-4: oklch(96% 0.002 255);
-  --surface-4-foreground: oklch(22% 0.003 255);
-  --surface-5: oklch(90% 0.004 255);
-  --surface-5-foreground: oklch(22% 0.003 255);
-  --surface-6: oklch(85% 0.005 255);
-  --surface-6-foreground: oklch(22% 0.003 255);
+  /* === Magenta/Fuchsia Brand Scale === */
+  --color-fuchsia-50: oklch(0.9766 0.0193 328.27);
+  --color-fuchsia-100: oklch(0.9516 0.0418 324.69);
+  --color-fuchsia-200: oklch(0.9042 0.0868 325.64);
+  --color-fuchsia-300: oklch(0.8361 0.1561 327.61);
+  --color-fuchsia-400: oklch(0.7622 0.2386 328.68);
+  --color-fuchsia-500: oklch(0.7193 0.2966 327.9);
+  --color-fuchsia-600: oklch(0.6445 0.287 329.28);
+  --color-fuchsia-700: oklch(0.5596 0.2493 330.06);
+  --color-fuchsia-800: oklch(0.4813 0.2108 330.78);
+  --color-fuchsia-900: oklch(0.4182 0.1759 331.72);
+  --color-fuchsia-950: oklch(0.3112 0.1405 331.95);
 
-  /* Borders */
-  --border: oklch(82% 0.004 255);
-  --border-subtle: oklch(88% 0.003 255);
-  --border-strong: oklch(70% 0.005 255);
+  /* === Foundation === */
+  --background: oklch(98% 0.008 200);
+  --foreground: oklch(18% 0.015 200);
+  --border: oklch(82% 0.018 200);
 
-  /* shadcn/ui compatibility */
-  --card: oklch(97% 0.002 255);
-  --card-foreground: oklch(22% 0.003 255);
-  --popover: oklch(98% 0.002 255);
-  --popover-foreground: oklch(22% 0.003 255);
-  --secondary: oklch(90% 0.004 255);
-  --secondary-foreground: oklch(22% 0.003 255);
-  --muted: oklch(90% 0.004 255);
-  --muted-foreground: oklch(52% 0.004 255);
-  --input: oklch(82% 0.004 255);
-  --ring: oklch(60% 0.175 235);
-  --ring-offset: oklch(97% 0.002 255);
+  /* === Surface Elevation (4 levels with cyan tint progression) === */
+  --surface-1: oklch(93% 0.015 198);
+  --surface-2: oklch(88% 0.02 196);
+  --surface-3: oklch(83% 0.025 194);
+  --surface-4: oklch(78% 0.03 192);
 
-  /* Primary Brand */
-  --primary: oklch(55% 0.175 235);
-  --primary-foreground: oklch(100% 0 0);
-  --border-primary: oklch(50% 0.175 235);
+  /* === Links === */
+  --link: oklch(45% 0.18 195);
+  --link-hover: oklch(38% 0.19 195);
+  --link-visited: oklch(48% 0.18 310);
 
-  /* Destructive (Dangerous Actions) */
-  --destructive: oklch(60% 0.24 30);
-  --destructive-foreground: oklch(100% 0 0);
-  --border-destructive: oklch(55% 0.24 30);
+  /* === Shadcn/UI === */
+  --card: oklch(93% 0.015 198);
+  --card-foreground: oklch(18% 0.015 200);
+  --popover: oklch(98% 0.008 200);
+  --popover-foreground: oklch(18% 0.015 200);
+  --secondary: oklch(50% 0.22 325);
+  --secondary-foreground: oklch(98% 0.008 200);
+  --destructive: oklch(50% 0.2 10);
+  --destructive-foreground: oklch(98% 0.008 200);
+  --input: oklch(82% 0.018 200);
+  --ring: oklch(45% 0.18 195);
 
-  /* Error (System/Validation) */
-  --error: oklch(55% 0.22 20);
-  --error-foreground: oklch(100% 0 0);
-  --border-error: oklch(50% 0.22 20);
+  /* === Charts (Cyberpunk Spectrum) === */
+  --chart-1: oklch(45% 0.18 195);
+  --chart-2: oklch(50% 0.22 325);
+  --chart-3: oklch(48% 0.18 280);
+  --chart-4: oklch(48% 0.16 160);
+  --chart-5: oklch(50% 0.2 10);
 
-  /* Success */
-  --success: oklch(55% 0.15 145);
-  --success-foreground: oklch(100% 0 0);
-  --border-success: oklch(50% 0.15 145);
+  /* === Sidebar === */
+  --sidebar: oklch(93% 0.015 198);
+  --sidebar-foreground: oklch(20% 0.015 200);
+  --sidebar-primary: oklch(45% 0.18 195);
+  --sidebar-primary-foreground: oklch(98% 0.008 200);
+  --sidebar-accent: oklch(88% 0.02 196);
+  --sidebar-accent-foreground: oklch(20% 0.02 195);
+  --sidebar-border: oklch(82% 0.018 200);
+  --sidebar-ring: oklch(45% 0.18 195);
 
-  /* Warning */
-  --warning: oklch(65% 0.15 85);
-  --warning-foreground: oklch(15% 0.002 255);
-  --border-warning: oklch(60% 0.15 85);
+  /* === Muted (Blue-Gray Professional) === */
+  --muted: oklch(88% 0.02 240);
+  --muted-foreground: oklch(48% 0.025 240);
+  --border-muted: oklch(82% 0.022 240);
+  --muted-background: oklch(93% 0.015 240);
+  --muted-hover: oklch(84% 0.025 240);
 
-  /* Info */
-  --info: oklch(60% 0.15 250);
-  --info-foreground: oklch(100% 0 0);
-  --border-info: oklch(55% 0.15 250);
+  /* === Primary (Electric Cyan Hero) === */
+  --primary: oklch(45% 0.18 195);
+  --primary-foreground: oklch(98% 0.01 195);
+  --border-primary: oklch(38% 0.19 195);
+  --primary-background: oklch(94% 0.07 195);
+  --primary-hover: oklch(50% 0.19 195);
 
-  /* Accent */
-  --accent: oklch(60% 0.175 235);
-  --accent-foreground: oklch(100% 0 0);
-  --border-accent: oklch(55% 0.175 235);
+  /* === Neutral (Steel-Fuchsia Cyberpunk) === */
+  --neutral: oklch(86% 0.025 315);
+  --neutral-foreground: oklch(22% 0.02 315);
+  --border-neutral: oklch(72% 0.028 315);
+  --neutral-background: oklch(94% 0.018 315);
+  --neutral-hover: oklch(80% 0.03 315);
 
-  /* Links */
-  --link: oklch(55% 0.175 235);
-  --link-hover: oklch(50% 0.175 235);
-  --link-visited: oklch(50% 0.15 280);
+  /* === Accent (Hot Fuchsia Vaporwave) === */
+  --accent: oklch(50% 0.22 325);
+  --accent-foreground: oklch(99% 0.01 325);
+  --border-accent: oklch(43% 0.23 325);
+  --accent-background: oklch(94% 0.07 325);
+  --accent-hover: oklch(56% 0.24 325);
 
-  /* Code Display */
-  --code-background: oklch(19% 0.003 255);
-  --code-text: oklch(75% 0.165 235);
-  --code-border: oklch(28% 0.003 255);
+  /* === Success (Matrix Green-Teal) === */
+  --success: oklch(48% 0.16 160);
+  --success-foreground: oklch(98% 0.01 160);
+  --border-success: oklch(40% 0.17 160);
+  --success-background: oklch(94% 0.06 160);
+  --success-hover: oklch(54% 0.18 160);
 
-  /* Focus & Input */
-  --focus-visible: oklch(55% 0.175 235);
+  /* === Warning (Hot Coral Danger) === */
+  --warning: oklch(50% 0.2 10);
+  --warning-foreground: oklch(98% 0.01 10);
+  --border-warning: oklch(42% 0.21 10);
+  --warning-background: oklch(94% 0.07 10);
+  --warning-hover: oklch(56% 0.22 10);
 
-  /* Disabled States */
-  --disabled-background: oklch(92% 0.003 255);
-  --disabled-text: oklch(65% 0.003 255);
-  --disabled-border: oklch(88% 0.003 255);
-
-  /* Overlay */
-  --overlay: oklch(10% 0 0 / 0.5);
-
-  /* Sidebar/Navigation */
-  --sidebar-background: oklch(90% 0.004 255);
-  --sidebar-foreground: oklch(22% 0.003 255);
-  --sidebar-primary: oklch(55% 0.175 235);
-  --sidebar-primary-foreground: oklch(100% 0 0);
-  --sidebar-accent: oklch(85% 0.004 255);
-  --sidebar-accent-foreground: oklch(22% 0.003 255);
-  --sidebar-border: oklch(82% 0.004 255);
-  --sidebar-ring: oklch(60% 0.175 235);
-
-  /* Charts */
-  --chart-1: oklch(60% 0.175 235);
-  --chart-2: oklch(60% 0.17 285);
-  --chart-3: oklch(65% 0.13 190);
-  --chart-4: oklch(65% 0.12 250);
-  --chart-5: oklch(55% 0.16 280);
+  /* === Disabled (Low Contrast Accessible) === */
+  --disabled: oklch(92% 0.006 200);
+  --disabled-foreground: oklch(62% 0.008 200);
+  --border-disabled: oklch(88% 0.006 200);
+  --disabled-background: oklch(95% 0.004 200);
+  --disabled-hover: oklch(92% 0.006 200);
 }
 
-/* ==========================================
-   DARK MODE COLOR VALUES
-   ========================================== */
 .dark {
-  /* Neutrals & Surfaces */
-  --background: oklch(17% 0.003 255);
-  --foreground: oklch(93% 0.003 255);
+  /* === Foundation === */
+  --background: oklch(10% 0.015 200);
+  --foreground: oklch(95% 0.01 200);
+  --border: oklch(35% 0.03 200);
 
-  --surface-1: oklch(21% 0.003 255);
-  --surface-1-foreground: oklch(90% 0.003 255);
-  --surface-2: oklch(23% 0.003 255);
-  --surface-2-foreground: oklch(90% 0.003 255);
-  --surface-3: oklch(25% 0.003 255);
-  --surface-3-foreground: oklch(90% 0.003 255);
-  --surface-4: oklch(27% 0.003 255);
-  --surface-4-foreground: oklch(90% 0.003 255);
-  --surface-5: oklch(30% 0.004 255);
-  --surface-5-foreground: oklch(90% 0.003 255);
-  --surface-6: oklch(35% 0.005 255);
-  --surface-6-foreground: oklch(90% 0.003 255);
+  /* === Surface Elevation (4 levels with increasing cyan glow) === */
+  --surface-1: oklch(16% 0.025 198);
+  --surface-2: oklch(22% 0.035 196);
+  --surface-3: oklch(28% 0.045 194);
+  --surface-4: oklch(34% 0.055 192);
 
-  /* Borders */
-  --border: oklch(32% 0.004 255);
-  --border-subtle: oklch(26% 0.003 255);
-  --border-strong: oklch(40% 0.005 255);
+  /* === Links === */
+  --link: oklch(75% 0.18 195);
+  --link-hover: oklch(85% 0.2 195);
+  --link-visited: oklch(72% 0.18 310);
 
-  /* shadcn/ui compatibility */
-  --card: oklch(21% 0.003 255);
-  --card-foreground: oklch(90% 0.003 255);
-  --popover: oklch(25% 0.003 255);
-  --popover-foreground: oklch(90% 0.003 255);
-  --secondary: oklch(30% 0.004 255);
-  --secondary-foreground: oklch(93% 0.003 255);
-  --muted: oklch(30% 0.004 255);
-  --muted-foreground: oklch(62% 0.004 255);
-  --input: oklch(32% 0.004 255);
-  --ring: oklch(70% 0.165 235);
-  --ring-offset: oklch(17% 0.003 255);
+  /* === Shadcn/UI === */
+  --card: oklch(16% 0.025 198);
+  --card-foreground: oklch(95% 0.01 200);
+  --popover: oklch(10% 0.015 200);
+  --popover-foreground: oklch(95% 0.01 200);
+  --secondary: oklch(68% 0.24 325);
+  --secondary-foreground: oklch(10% 0.015 200);
+  --destructive: oklch(65% 0.22 10);
+  --destructive-foreground: oklch(10% 0.015 200);
+  --input: oklch(35% 0.03 200);
+  --ring: oklch(75% 0.18 195);
 
-  /* Primary Brand */
-  --primary: oklch(70% 0.165 235);
-  --primary-foreground: oklch(15% 0.002 255);
-  --border-primary: oklch(65% 0.165 235);
+  /* === Charts (Neon Spectrum) === */
+  --chart-1: oklch(75% 0.18 195);
+  --chart-2: oklch(72% 0.24 325);
+  --chart-3: oklch(70% 0.2 280);
+  --chart-4: oklch(72% 0.18 160);
+  --chart-5: oklch(70% 0.22 10);
 
-  /* Destructive (Dangerous Actions) */
-  --destructive: oklch(70% 0.22 30);
-  --destructive-foreground: oklch(15% 0.002 255);
-  --border-destructive: oklch(65% 0.22 30);
+  /* === Sidebar === */
+  --sidebar: oklch(16% 0.025 198);
+  --sidebar-foreground: oklch(92% 0.01 200);
+  --sidebar-primary: oklch(75% 0.18 195);
+  --sidebar-primary-foreground: oklch(10% 0.015 200);
+  --sidebar-accent: oklch(22% 0.035 196);
+  --sidebar-accent-foreground: oklch(92% 0.01 200);
+  --sidebar-border: oklch(35% 0.03 200);
+  --sidebar-ring: oklch(75% 0.18 195);
 
-  /* Error (System/Validation) */
-  --error: oklch(65% 0.2 20);
-  --error-foreground: oklch(15% 0.002 255);
-  --border-error: oklch(60% 0.2 20);
+  /* === Muted (Blue-Gray Professional) === */
+  --muted: oklch(28% 0.025 240);
+  --muted-foreground: oklch(68% 0.02 240);
+  --border-muted: oklch(38% 0.03 240);
+  --muted-background: oklch(18% 0.02 240);
+  --muted-hover: oklch(32% 0.03 240);
 
-  /* Success */
-  --success: oklch(70% 0.14 145);
-  --success-foreground: oklch(15% 0.002 255);
-  --border-success: oklch(65% 0.14 145);
+  /* === Primary (Electric Cyan Glowing) === */
+  --primary: oklch(75% 0.18 195);
+  --primary-foreground: oklch(8% 0.02 195);
+  --border-primary: oklch(88% 0.2 195);
+  --primary-background: oklch(20% 0.1 195);
+  --primary-hover: oklch(85% 0.2 195);
 
-  /* Warning */
-  --warning: oklch(75% 0.14 85);
-  --warning-foreground: oklch(15% 0.002 255);
-  --border-warning: oklch(70% 0.14 85);
+  /* === Neutral (Steel-Fuchsia Glow) === */
+  --neutral: oklch(30% 0.028 315);
+  --neutral-foreground: oklch(92% 0.015 315);
+  --border-neutral: oklch(45% 0.035 315);
+  --neutral-background: oklch(18% 0.022 315);
+  --neutral-hover: oklch(38% 0.035 315);
 
-  /* Info */
-  --info: oklch(70% 0.14 250);
-  --info-foreground: oklch(15% 0.002 255);
-  --border-info: oklch(65% 0.14 250);
+  /* === Accent (Hot Fuchsia Neon) === */
+  --accent: oklch(72% 0.24 325);
+  --accent-foreground: oklch(8% 0.02 325);
+  --border-accent: oklch(85% 0.26 325);
+  --accent-background: oklch(20% 0.12 325);
+  --accent-hover: oklch(82% 0.26 325);
 
-  /* Accent */
-  --accent: oklch(75% 0.165 235);
-  --accent-foreground: oklch(15% 0.002 255);
-  --border-accent: oklch(70% 0.165 235);
+  /* === Success (Matrix Green Digital) === */
+  --success: oklch(72% 0.18 160);
+  --success-foreground: oklch(8% 0.02 160);
+  --border-success: oklch(85% 0.2 160);
+  --success-background: oklch(20% 0.1 160);
+  --success-hover: oklch(82% 0.2 160);
 
-  /* Links */
-  --link: oklch(75% 0.165 235);
-  --link-hover: oklch(80% 0.165 235);
-  --link-visited: oklch(70% 0.14 280);
+  /* === Warning (Hot Coral Danger) === */
+  --warning: oklch(68% 0.22 10);
+  --warning-foreground: oklch(8% 0.02 10);
+  --border-warning: oklch(80% 0.24 10);
+  --warning-background: oklch(20% 0.12 10);
+  --warning-hover: oklch(78% 0.24 10);
 
-  /* Code Display */
-  --code-background: oklch(16% 0.003 255);
-  --code-text: oklch(80% 0.165 235);
-  --code-border: oklch(24% 0.003 255);
-
-  /* Focus & Input */
-  --focus-visible: oklch(70% 0.165 235);
-
-  /* Disabled States */
-  --disabled-background: oklch(19% 0.003 255);
-  --disabled-text: oklch(45% 0.003 255);
-  --disabled-border: oklch(24% 0.003 255);
-
-  /* Overlay */
-  --overlay: oklch(0% 0 0 / 0.7);
-
-  /* Sidebar/Navigation */
-  --sidebar-background: oklch(21% 0.003 255);
-  --sidebar-foreground: oklch(93% 0.003 255);
-  --sidebar-primary: oklch(70% 0.165 235);
-  --sidebar-primary-foreground: oklch(15% 0.002 255);
-  --sidebar-accent: oklch(30% 0.004 255);
-  --sidebar-accent-foreground: oklch(93% 0.003 255);
-  --sidebar-border: oklch(32% 0.004 255);
-  --sidebar-ring: oklch(70% 0.165 235);
-
-  /* Charts */
-  --chart-1: oklch(70% 0.165 235);
-  --chart-2: oklch(70% 0.16 285);
-  --chart-3: oklch(75% 0.12 190);
-  --chart-4: oklch(75% 0.11 250);
-  --chart-5: oklch(65% 0.15 280);
+  /* === Disabled (Low Contrast Accessible) === */
+  --disabled: oklch(20% 0.006 200);
+  --disabled-foreground: oklch(48% 0.008 200);
+  --border-disabled: oklch(25% 0.006 200);
+  --disabled-background: oklch(15% 0.004 200);
+  --disabled-hover: oklch(20% 0.006 200);
 }
 
 /* ==========================================
@@ -500,18 +500,6 @@
     gap: var(--spacing-section);
   }
 
-  /* Code Block */
-  .code-block {
-    background-color: var(--color-code-background);
-    color: var(--color-code-text);
-    border: 1px solid var(--color-code-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-standard);
-    font-family: ui-monospace, monospace;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-  }
-
   /* Badge Base */
   .badge {
     padding-left: var(--spacing-compact);
@@ -543,23 +531,6 @@
     align-items: center;
   }
 
-  /* Error Badge */
-  .badge-error {
-    background-color: var(--color-error);
-    color: var(--color-error-foreground);
-    border: 1px solid var(--color-border-error);
-    padding-left: var(--spacing-compact);
-    padding-right: var(--spacing-compact);
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-radius: var(--radius);
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-  }
-
   /* Warning Badge */
   .badge-warning {
     background-color: var(--color-warning);
@@ -577,28 +548,11 @@
     align-items: center;
   }
 
-  /* Info Badge */
-  .badge-info {
-    background-color: var(--color-info);
-    color: var(--color-info-foreground);
-    border: 1px solid var(--color-border-info);
-    padding-left: var(--spacing-compact);
-    padding-right: var(--spacing-compact);
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-radius: var(--radius);
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-  }
-
   /* Modal Backdrop */
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background-color: var(--color-overlay);
+    background-color: var(--color-surface-4);
   }
 
   /* Modal Container */
@@ -954,8 +908,7 @@
   }
 
   /* ==========================================
-     TYPOGRAPHY UTILITIES - COMPLETE TYPE SCALE
-     (NO hardcoded colors - Tailwind utilities work!)
+     TYPOGRAPHY UTILITIES
      ========================================== */
 
   /* H1 - Display/Hero */

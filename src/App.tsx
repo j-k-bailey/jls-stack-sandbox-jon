@@ -9,6 +9,7 @@ import { PlaygroundPage } from "@/pages/Playground/PlaygroundPage";
 import { AestheticPage } from "@/pages/Playground/AestheticPage";
 import { FormPlaygroundPage } from "@/pages/Playground/FormPlaygroundPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { BrandKitPage } from "@/pages/Playground/BrandKitPage";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         {/* Playground with layout wrapper */}
         <Route path="playground" element={<PlaygroundLayout />}>
           <Route index element={<PlaygroundPage />} />
+          <Route path="brand-kit" element={<BrandKitPage />} />
           <Route path="aesthetic" element={<AestheticPage />} />
           <Route path="forms" element={<FormPlaygroundPage />} />
         </Route>
