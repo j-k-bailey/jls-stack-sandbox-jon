@@ -22,7 +22,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-compact py-tight has-[>svg]:px-compact",
-        sm: "h-8 rounded-lg gap-tight px-compact has-[>svg]:px-tight",
+        sm: "h-8 rounded-lg px-compact has-[>svg]:px-tight",
         lg: "h-10 rounded-lg px-standard has-[>svg]:px-compact",
         icon: "size-9",
         "icon-sm": "size-8",
@@ -53,7 +53,7 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     />
   );

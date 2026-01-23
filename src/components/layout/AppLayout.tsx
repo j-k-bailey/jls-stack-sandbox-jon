@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/themeToggle";
+import { FaBars, FaX } from "react-icons/fa6";
 
 const navItems = [
   { label: "Dashboard", to: "/" },
@@ -19,15 +20,15 @@ export function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       {/* Topbar */}
-      <header className="border-b border-border bg-surface-1 backdrop-blur">
-        <div className="flex h-14 items-center justify-between px-compact lg:px-standard">
-          {/* Left: Logo + product */}
+      <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-border bg-surface-1 backdrop-blur">
+        <div className="flex h-full items-center justify-between p-compact lg:px-standard">
+          {/* Topbar Left: Logo + product */}
           <div className="flex items-center gap-tight">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-button font-bold">
               J
             </span>
             <div className="flex flex-col">
-              <span className="text-body-2 font-semibold text-foreground">
+              <span className="font-semibold text-foreground">
                 JLS Stack Sandbox
               </span>
               <span className="text-caption text-muted-foreground">
@@ -36,7 +37,7 @@ export function AppLayout() {
             </div>
           </div>
 
-          {/* Right: Desktop nav shortcuts + theme toggle + user placeholder */}
+          {/* Topbar Right: Desktop nav shortcuts + theme toggle + user placeholder */}
           <div className="hidden items-center gap-compact md:flex">
             <ThemeToggle />
 
@@ -55,20 +56,21 @@ export function AppLayout() {
           </div>
 
           {/* Mobile menu button */}
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-md border border-border bg-background px-tight py-tight text-button text-foreground md:hidden hover:bg-surface-5 transition-colors"
+          <Button
+            variant="default"
+            size="lg"
+            className="inline-flex md:hidden transition-colors"
             onClick={() => setSidebarOpen((prev) => !prev)}
           >
-            Menu
-          </button>
+            <FaBars />
+          </Button>
         </div>
       </header>
 
       {/* Shell body: sidebar + content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 pt-16">
         {/* Sidebar – desktop */}
-        <aside className="hidden w-56 shrink-0 pt-compact border-r border-border bg-surface-1 md:block">
+        <aside className="hidden md:block fixed left-0 top-16 bottom-0 w-56 pt-compact border-r border-border bg-surface-1 ">
           <div className="flex h-full flex-col">
             <nav className="flex flex-1 flex-col gap-tight px-compact overflow-y-auto">
               <div className="mb-tight px-tight text-overline text-muted-foreground">
@@ -98,26 +100,25 @@ export function AppLayout() {
 
         {/* Sidebar – mobile (overlay) */}
         {sidebarOpen && (
-          <div className="fixed inset-0 z-40 flex md:hidden">
+          <div className="fixed inset-0 z-50 flex md:hidden">
             {/* Backdrop */}
             <div
-              className="flex-1 bg-overlay"
+              className="flex-1 bg-overlay/40"
               onClick={() => setSidebarOpen(false)}
             />
 
             {/* Panel */}
-            <aside className="w-64 min-h-screen border-l border-border bg-surface-1 p-compact flex flex-col">
+            <aside className="w-64 min-h-screen border-l border-border bg-surface-4 p-compact flex flex-col">
               <div className="mb-compact flex items-center justify-between">
-                <span className="text-overline text-muted-foreground">
-                  Navigation
-                </span>
-                <button
-                  type="button"
-                  className="text-caption text-muted-foreground hover:text-foreground transition-colors"
+                <span className="text-overline">Navigation</span>
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="inline-flex md:hidden transition-colors"
                   onClick={() => setSidebarOpen(false)}
                 >
-                  Close
-                </button>
+                  <FaX />
+                </Button>
               </div>
 
               <nav className="flex flex-1 flex-col gap-tight">
@@ -131,7 +132,7 @@ export function AppLayout() {
                         "flex items-center gap-tight rounded-lg px-compact py-tight text-body-2 transition-colors",
                         isActive
                           ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:bg-surface-5 hover:text-foreground",
+                          : "text-foreground hover:bg-surface-5 hover:text-accent-foreground hover:bg-accent/50",
                       ].join(" ")
                     }
                     onClick={() => setSidebarOpen(false)}
@@ -156,7 +157,7 @@ export function AppLayout() {
 
         {/* Main content */}
         <main className="flex-1">
-          <div className="mx-auto max-w-6xl px-compact py-standard lg:px-standard">
+          <div className="mx-auto md:ml-56 max-w-6xl px-compact py-standard lg:px-standard">
             <Outlet />
           </div>
         </main>
