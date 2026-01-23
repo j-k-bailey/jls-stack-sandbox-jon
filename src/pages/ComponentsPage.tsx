@@ -129,6 +129,44 @@ export function ComponentsPage() {
                   <Button size="lg">Large</Button>
                 </div>
               </div>
+              <div>
+                <p className="text-sm font-semibold mb-3">Combined Variants</p>
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    <Button semantic="primary" variant="default">
+                      Primary Default
+                    </Button>
+                    <Button semantic="primary" variant="outline">
+                      Primary Outline
+                    </Button>
+                    <Button semantic="primary" variant="ghost">
+                      Primary Ghost
+                    </Button>
+                    <Button semantic="primary" variant="link">
+                      Primary Link
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button semantic="success" variant="default" size="sm">
+                      Success Sm
+                    </Button>
+                    <Button semantic="success" variant="outline" size="default">
+                      Success Default
+                    </Button>
+                    <Button semantic="success" variant="ghost" size="lg">
+                      Success Lg
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <Button semantic="warning" variant="default" size="icon">
+                      🗑️
+                    </Button>
+                    <Button semantic="accent" variant="default" size="icon-lg">
+                      →
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </SectionCard>
           <ComponentHighlightProps>
