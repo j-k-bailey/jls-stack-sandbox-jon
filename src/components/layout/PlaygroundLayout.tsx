@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { SimpleHeader } from "@/components/ui/simpleHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +25,7 @@ const playgroundLinks = [
 export function PlaygroundLayout() {
   return (
     <div className="section-spacing container px-standard pb-section">
-      <SimpleHeader
+      <PageHeader
         pageTitle="Playground"
         pageDescription="The only way to learn is by playing. The only way to win is by learning.
         And the only way to begin is by beginning."

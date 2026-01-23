@@ -69,7 +69,7 @@ export function ComponentHighlightProps({
   return (
     <div
       className={cn(
-        "bg-surface-1 border border-border rounded-lg p-compact",
+        "bg-surface-1 border border-border rounded-lg mt-compact p-compact",
         className,
       )}
     >

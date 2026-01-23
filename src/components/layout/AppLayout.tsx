@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Topbar } from "./Topbar";
-import { Sidebar } from "./Sidebar";
-import { MainContent } from "./MainContent";
+import { Topbar } from "@/components/ui/Topbar";
+import { Sidebar } from "@/components/ui/Sidebar";
+import { MainContent } from "@/components/layout/MainContent";
 import { NAVIGATION_CONFIG } from "@/constants/navigation";
 
 export function AppLayout() {

@@ -1,4 +1,4 @@
-import { SimpleHeader } from "@/components/ui/simpleHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 import {
   UpdateCard,
   UpdateCardContent,
@@ -15,6 +15,18 @@ const toDoItems = [
 ];
 
 const updates = [
+  {
+    version: "v0.0.3",
+    date: "January 23, 2026",
+    title: "Lesson 2.5 - Reusable Components & Patterns",
+    items: [
+      "Prototyped grid-based dashboard for dashboard page",
+      "Moved form- and layout-Sandbox directories to exist in @/components/ rather than @/components/ui",
+      "Moved NavigationItem, Sidebar, and Topbar from @/components/layouts to @/components/ui",
+      "Refactored SimpleHeader into PageHeader",
+      "Made SectionCard and StatsRow components",
+    ],
+  },
   {
     version: "v0.0.2",
     date: "January 23, 2026",
@@ -48,7 +60,7 @@ const updates = [
 export function QualityCheckPage() {
   return (
     <div className="section-spacing container px-standard pb-section">
-      <SimpleHeader
+      <PageHeader
         pageTitle="Quality Check & Changelog"
         pageDescription="Polish validation, accessibility self-audit, and design system updates."
         hr

@@ -1,13 +1,13 @@
-import ContactForm from "@/components/ui/formSandbox/ContactForm";
-import AuthForm from "@/components/ui/formSandbox/AuthForm";
-import { SimpleHeader } from "@/components/ui/simpleHeader";
+import ContactForm from "@/components/formSandbox/ContactForm";
+import AuthForm from "@/components/formSandbox/AuthForm";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export function FormPlaygroundPage() {
   return (
     <div className="section-spacing">
       {" "}
       {/* ✅ Changed from space-y-4 to section-spacing */}
-      <SimpleHeader
+      <PageHeader
         pageTitle="Forms"
         level="h2"
         pageDescription="Exploring common form patterns in React"

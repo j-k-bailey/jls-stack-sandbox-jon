@@ -1,9 +1,9 @@
-import { SimpleHeader } from "@/components/ui/simpleHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export function SettingsPage() {
   return (
     <div className="section-spacing container px-standard pb-section">
-      <SimpleHeader pageTitle="Settings" hr />
+      <PageHeader pageTitle="Settings" hr />
 
       <section>
         <span className="text-body-1">

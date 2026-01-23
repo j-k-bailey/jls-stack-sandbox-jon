@@ -8,7 +8,7 @@ import {
   FaGear,
   FaEnvelope,
 } from "react-icons/fa6";
-import type { NavConfig } from "@/components/layout/NavigationItem";
+import type { NavConfig } from "@/components/ui/navigationItem";
 
 export const NAVIGATION_CONFIG: NavConfig[] = [
   {

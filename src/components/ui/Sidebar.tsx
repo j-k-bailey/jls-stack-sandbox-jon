@@ -4,7 +4,7 @@ import { FaX } from "react-icons/fa6";
 import {
   NavigationGroup,
   type NavConfig,
-} from "@/components/layout/NavigationItem";
+} from "@/components/ui/navigationItem";
 
 interface SidebarProps {
   navigationConfig: NavConfig[];

@@ -1,10 +1,10 @@
 import { LayoutSandbox } from "@/components/layout/LayoutSandbox";
-import { SimpleHeader } from "@/components/ui/simpleHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export function LayoutSandboxPage() {
   return (
     <div className="section-spacing container px-standard pb-section">
-      <SimpleHeader
+      <PageHeader
         pageTitle="Layout Sandbox"
         pageDescription="A playground for practicing Tailwind layout patterns."
       />

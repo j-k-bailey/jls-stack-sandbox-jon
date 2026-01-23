@@ -1,10 +1,10 @@
-import { SimpleHeader } from "@/components/ui/simpleHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 
 export function BrandKitPage() {
   return (
     <div className="section-spacing container mx-auto">
-      <SimpleHeader
+      <PageHeader
         pageTitle="JLS Stack Sandbox Design System"
         level="h2"
         pageDescription="Electric cyan and hot fuchsia create a cohesive color story with progressive surface elevation and comprehensive token sets."

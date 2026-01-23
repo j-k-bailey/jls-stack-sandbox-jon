@@ -1,9 +1,9 @@
-import { SimpleHeader } from "@/components/ui/simpleHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export function AestheticPage() {
   return (
     <div className="section-spacing">
-      <SimpleHeader
+      <PageHeader
         pageTitle="Aesthetic Fun"
         level="h2"
         pageDescription="An experiment playing with various Tailwind CSS features to see how they work together."
