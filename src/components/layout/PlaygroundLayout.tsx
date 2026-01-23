@@ -1,5 +1,26 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { SimpleHeader } from "@/components/ui/simpleHeader";
+import { NavLink } from "react-router-dom";
+import { cn } from "@/lib/utils";
+
+const playgroundLinks = [
+  {
+    anchor: "Overview",
+    to: "/playground",
+  },
+  {
+    anchor: "Aesthetic Cards",
+    to: "/playground/aesthetic",
+  },
+  {
+    anchor: "Brand Kit",
+    to: "/playground/brand-kit",
+  },
+  {
+    anchor: "Forms",
+    to: "/playground/forms",
+  },
+];
 
 export function PlaygroundLayout() {
   return (
@@ -10,61 +31,29 @@ export function PlaygroundLayout() {
         And the only way to begin is by beginning."
       />
 
-      {/* Tab navigation */}
-      <nav className="flex space-x-compact border-b border-border">
-        <NavLink
-          to="/playground"
-          end
-          className={({ isActive }) =>
-            `px-compact py-compact text-button ${
-              isActive
-                ? "border-b-2 border-primary text-primary"
-                : "text-muted-foreground hover:text-foreground"
-            }`
-          }
-        >
-          Overview
-        </NavLink>
-        <NavLink
-          to="/playground/brand-kit"
-          className={({ isActive }) =>
-            `px-compact py-compact text-button ${
-              isActive
-                ? "border-b-2 border-primary text-primary"
-                : "text-muted-foreground hover:text-foreground"
-            }`
-          }
-        >
-          Brand Kit
-        </NavLink>
-        <NavLink
-          to="/playground/aesthetic"
-          className={({ isActive }) =>
-            `px-compact py-compact text-button ${
-              isActive
-                ? "border-b-2 border-primary text-primary"
-                : "text-muted-foreground hover:text-foreground"
-            }`
-          }
-        >
-          Aesthetic Fun
-        </NavLink>
-        <NavLink
-          to="/playground/forms"
-          className={({ isActive }) =>
-            `px-compact py-compact text-button ${
-              isActive
-                ? "border-b-2 border-primary text-primary"
-                : "text-muted-foreground hover:text-foreground"
-            }`
-          }
-        >
-          Forms
-        </NavLink>
-      </nav>
+      <div className="space-y-standard">
+        <div className="flex gap-tight pb-compact border-b border-border">
+          {playgroundLinks.map((playgroundLink, index) => (
+            <NavLink
+              key={index}
+              to={playgroundLink.to}
+              end
+              className={({ isActive }) =>
+                cn(
+                  "button-text px-compact py-tight rounded-lg rounded-tr-lg text-body-2 transition-colors",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-link hover:bg-accent/20",
+                )
+              }
+            >
+              {playgroundLink.anchor}
+            </NavLink>
+          ))}
+        </div>
 
-      {/* Child routes render here */}
-      <Outlet />
+        <Outlet />
+      </div>
     </div>
   );
 }

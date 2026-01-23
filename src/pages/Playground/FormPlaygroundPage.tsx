@@ -9,6 +9,7 @@ export function FormPlaygroundPage() {
       {/* ✅ Changed from space-y-4 to section-spacing */}
       <SimpleHeader
         pageTitle="Forms"
+        level="h2"
         pageDescription="Exploring common form patterns in React"
       />
       <div className="section-spacing">

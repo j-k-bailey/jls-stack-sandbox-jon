@@ -34,7 +34,7 @@ const UpdateCardVersion = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <span
     ref={ref}
-    className={cn("text-overline text-primary", className)}
+    className={cn("overline-text text-primary", className)}
     {...props}
   />
 ));
@@ -46,7 +46,7 @@ const UpdateCardDate = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <span
     ref={ref}
-    className={cn("text-caption text-muted-foreground", className)}
+    className={cn("caption text-muted-foreground", className)}
     {...props}
   />
 ));
@@ -56,7 +56,7 @@ const UpdateCardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <h3 ref={ref} className={cn("text-h6 mb-tight", className)} {...props} />
+  <h3 ref={ref} className={cn("headline-6 mb-tight", className)} {...props} />
 ));
 UpdateCardTitle.displayName = "UpdateCardTitle";
 
@@ -66,7 +66,7 @@ const UpdateCardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ul
     ref={ref}
-    className={cn("space-y-1 text-body-2 list-disc ml-standard", className)}
+    className={cn("space-y-1 body-2 list-disc ml-standard", className)}
     {...props}
   />
 ));

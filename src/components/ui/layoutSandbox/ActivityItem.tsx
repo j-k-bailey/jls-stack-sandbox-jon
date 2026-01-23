@@ -13,11 +13,9 @@ export function ActivityItem({
 }: ActivityItemProps) {
   return (
     <div className={isLast ? "pb-tight" : "pb-tight border-b border-border"}>
-      <div className="text-accent font-semibold text-body-2">{name}</div>
-      <div className="text-foreground mt-tight text-caption">{action}</div>
-      <div className="text-muted-foreground mt-tight text-caption">
-        {timestamp}
-      </div>
+      <div className="text-accent font-semibold body-2">{name}</div>
+      <div className="text-foreground mt-tight caption">{action}</div>
+      <div className="text-muted-foreground mt-tight caption">{timestamp}</div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Helper function to get initial theme
 const getInitialTheme = () => {
@@ -25,12 +26,8 @@ export function ThemeToggle() {
   };
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="p-tight rounded-lg bg-muted hover:bg-surface-5 text-muted-foreground hover:text-foreground transition-colors"
-      aria-label="Toggle theme"
-    >
+    <Button semantic="primary" onClick={toggleTheme} aria-label="Toggle theme">
       {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
+    </Button>
   );
 }

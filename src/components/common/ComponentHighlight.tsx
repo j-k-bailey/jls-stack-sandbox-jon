@@ -30,18 +30,14 @@ export function ComponentHighlight({
   children,
   className,
 }: ComponentHighlightProps) {
-  return (
-    <section className={cn("p-6 section-spacing", className)}>
-      {children}
-    </section>
-  );
+  return <section className={className}>{children}</section>;
 }
 
 export function ComponentHighlightTitle({
   children,
   className,
 }: ComponentHighlightTitleProps) {
-  return <h2 className={cn("mb-2", className)}>{children}</h2>;
+  return <h2 className={className}>{children}</h2>;
 }
 
 export function ComponentHighlightDescription({
@@ -49,7 +45,7 @@ export function ComponentHighlightDescription({
   className,
 }: ComponentHighlightDescriptionProps) {
   return (
-    <p className={cn("text-sm text-muted-foreground mb-4", className)}>
+    <p className={cn("text-muted-foreground mb-compact", className)}>
       {children}
     </p>
   );
@@ -60,8 +56,8 @@ export function ComponentHighlightShowcase({
   className,
 }: ComponentHighlightShowcaseProps) {
   return (
-    <div className={cn("ml-6", className)}>
-      <div className="mb-6">{children}</div>
+    <div className={cn("ml-standard", className)}>
+      <div>{children}</div>
     </div>
   );
 }
@@ -71,7 +67,12 @@ export function ComponentHighlightProps({
   className,
 }: ComponentHighlightPropsProps) {
   return (
-    <div className={cn("bg-muted/50 rounded-lg p-4", className)}>
+    <div
+      className={cn(
+        "bg-surface-1 border border-border rounded-lg p-compact",
+        className,
+      )}
+    >
       <p className="text-foreground text-sm">
         <strong>Props:</strong> {children}
       </p>

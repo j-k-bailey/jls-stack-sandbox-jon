@@ -97,11 +97,11 @@ Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 
 | Level              | Light | Dark | Usage                     |
 | ------------------ | ----- | ---- | ------------------------- |
-| **0** (background) | 98%   | 10%  | Main canvas               |
-| **1** (surface-1)  | 93%   | 16%  | Cards, primary containers |
-| **2** (surface-2)  | 88%   | 22%  | Nested panels             |
-| **3** (surface-3)  | 83%   | 28%  | Popovers, tooltips        |
-| **4** (surface-4)  | 78%   | 34%  | Modals, dialogs           |
+| **0** (background) | 98%   | 12%  | Main canvas               |
+| **1** (surface-1)  | 95%   | 15%  | Cards, primary containers |
+| **2** (surface-2)  | 92%   | 18%  | Nested panels             |
+| **3** (surface-3)  | 89%   | 21%  | Popovers, tooltips        |
+| **4** (surface-4)  | 86%   | 24%  | Modals, dialogs           |
 
 **Dark Mode**: Chroma increases with elevation (0.025 → 0.055) for "backlit" effect  
 **Light Mode**: Chroma increases subtly (0.015 → 0.030)

@@ -1,11 +1,22 @@
+import { cn } from "@/lib/utils";
 interface FeatureCardProps {
   title: string;
   description: string;
+  className?: string;
 }
 
-export function FeatureCard({ title, description }: FeatureCardProps) {
+export function FeatureCard({
+  title,
+  description,
+  className,
+}: FeatureCardProps) {
   return (
-    <div className="card-compact">
+    <div
+      className={cn(
+        "bg-surface-1 text-foreground border border-border rounded-lg p-compact",
+        className,
+      )}
+    >
       <strong className="block sm:inline text-accent font-semibold text-subtitle-1">
         {title}
       </strong>

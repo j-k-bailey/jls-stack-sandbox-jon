@@ -209,10 +209,10 @@
   --overlay: oklch(18% 0.015 200);
 
   /* === Surface Elevation (4 levels with cyan tint progression) === */
-  --surface-1: oklch(93% 0.015 198);
-  --surface-2: oklch(88% 0.02 196);
-  --surface-3: oklch(83% 0.025 194);
-  --surface-4: oklch(78% 0.03 192);
+  --surface-1: oklch(95% 0.015 198);
+  --surface-2: oklch(92% 0.018 197);
+  --surface-3: oklch(89% 0.021 196);
+  --surface-4: oklch(86% 0.024 195);
 
   /* === Links === */
   --link: oklch(45% 0.18 195);
@@ -300,16 +300,16 @@
 
 .dark {
   /* === Foundation === */
-  --background: oklch(10% 0.015 200);
+  --background: oklch(12% 0.015 200);
   --foreground: oklch(95% 0.01 200);
   --border: oklch(35% 0.03 200);
   --overlay: oklch(10% 0.015 200);
 
   /* === Surface Elevation (4 levels with increasing cyan glow) === */
-  --surface-1: oklch(16% 0.025 198);
-  --surface-2: oklch(22% 0.035 196);
-  --surface-3: oklch(28% 0.045 194);
-  --surface-4: oklch(34% 0.055 192);
+  --surface-1: oklch(15% 0.025 198);
+  --surface-2: oklch(18% 0.035 196);
+  --surface-3: oklch(21% 0.045 194);
+  --surface-4: oklch(24% 0.055 192);
 
   /* === Links === */
   --link: oklch(75% 0.18 195);
@@ -474,24 +474,6 @@
    COMPONENT UTILITIES
    ========================================== */
 @layer components {
-  /* Standard Card */
-  .card-standard {
-    background-color: var(--color-surface-1);
-    color: var(--color-surface-1-foreground);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-standard);
-  }
-
-  /* Compact Card */
-  .card-compact {
-    background-color: var(--color-surface-1);
-    color: var(--color-surface-1-foreground);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-compact);
-  }
-
   /* Section Spacing */
   .section-spacing > * + * {
     margin-top: var(--spacing-section);
@@ -501,185 +483,99 @@
   .section-gap {
     gap: var(--spacing-section);
   }
-
-  /* Badge Base */
-  .badge {
-    padding-left: var(--spacing-compact);
-    padding-right: var(--spacing-compact);
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-radius: var(--radius);
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* Success Badge */
-  .badge-success {
-    background-color: var(--color-success);
-    color: var(--color-success-foreground);
-    border: 1px solid var(--color-border-success);
-    padding-left: var(--spacing-compact);
-    padding-right: var(--spacing-compact);
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-radius: var(--radius);
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* Warning Badge */
-  .badge-warning {
-    background-color: var(--color-warning);
-    color: var(--color-warning-foreground);
-    border: 1px solid var(--color-border-warning);
-    padding-left: var(--spacing-compact);
-    padding-right: var(--spacing-compact);
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    border-radius: var(--radius);
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* Modal Backdrop */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background-color: var(--color-surface-4);
-  }
-
-  /* Modal Container */
-  .modal-container {
-    background-color: var(--color-surface-4);
-    color: var(--color-surface-4-foreground);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-standard);
-    max-width: 32rem;
-    width: 100%;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    position: relative;
-    z-index: 10;
-  }
 }
 
-@layer utilities {
-  /* ==========================================
+/* ==========================================
      TYPOGRAPHY UTILITIES
      ========================================== */
+@utility headline-1 {
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
 
-  /* H1 - Display/Hero */
-  .text-h1 {
-    font-size: 3rem;
-    line-height: 1.2;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
+@utility headline-2 {
+  font-size: 2.25rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
 
-  /* H2 - Page Section */
-  .text-h2 {
-    font-size: 2.25rem;
-    line-height: 1.3;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-  }
+@utility headline-3 {
+  font-size: 1.875rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
 
-  /* H3 - Section Title */
-  .text-h3 {
-    font-size: 1.875rem;
-    line-height: 1.3;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
+@utility headline-4 {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0;
+}
 
-  /* H4 - Component Header */
-  .text-h4 {
-    font-size: 1.5rem;
-    line-height: 1.4;
-    font-weight: 600;
-    letter-spacing: 0;
-  }
+@utility headline-5 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0;
+}
 
-  /* H5 - Small Header */
-  .text-h5 {
-    font-size: 1.25rem;
-    line-height: 1.4;
-    font-weight: 600;
-    letter-spacing: 0;
-  }
+@utility headline-6 {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: 0;
+}
 
-  /* H6 - Micro Header */
-  .text-h6 {
-    font-size: 1.125rem;
-    line-height: 1.5;
-    font-weight: 600;
-    letter-spacing: 0;
-  }
+@utility subtitle-1 {
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
 
-  /* Subtitle 1 - Prominent Secondary */
-  .text-subtitle-1 {
-    font-size: 1rem;
-    line-height: 1.5;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-  }
+@utility subtitle-2 {
+  font-size: 0.875rem;
+  line-height: 1.43;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
 
-  /* Subtitle 2 - Secondary */
-  .text-subtitle-2 {
-    font-size: 0.875rem;
-    line-height: 1.43;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-  }
+@utility body-1 {
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: 0;
+}
 
-  /* Body 1 - Primary Content */
-  .text-body-1 {
-    font-size: 1rem;
-    line-height: 1.6;
-    font-weight: 400;
-    letter-spacing: 0;
-  }
+@utility body-2 {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0;
+}
 
-  /* Body 2 - Dense Content */
-  .text-body-2 {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    font-weight: 400;
-    letter-spacing: 0;
-  }
+@utility button-text {
+  font-size: 0.875rem;
+  line-height: 1.14;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
 
-  /* Button Text */
-  .text-button {
-    font-size: 0.875rem;
-    line-height: 1.14;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
+@utility caption {
+  font-size: 0.75rem;
+  line-height: 1.33;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
 
-  /* Caption */
-  .text-caption {
-    font-size: 0.75rem;
-    line-height: 1.33;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-  }
-
-  /* Overline */
-  .text-overline {
-    font-size: 0.75rem;
-    line-height: 1.33;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
+@utility overline-text {
+  font-size: 0.75rem;
+  line-height: 1.33;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }

@@ -3,9 +3,13 @@ import { SimpleHeader } from "@/components/ui/simpleHeader";
 export function AestheticPage() {
   return (
     <div className="section-spacing">
-      <SimpleHeader pageTitle="Aesthetic Fun" />
+      <SimpleHeader
+        pageTitle="Aesthetic Fun"
+        level="h2"
+        pageDescription="An experiment playing with various Tailwind CSS features to see how they work together."
+      />
 
-      <div className=" card-standard grid grid-cols-1 md:grid-cols-2 gap-8 border border-border bg-surface">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-standard">
         {/* Neobrutalism */}
         <div className="border-8 border-black bg-cyan-400 p-0 transform shadow-[12px_12px_0px_rgba(0,0,0,1)]">
           <h2

@@ -12,7 +12,7 @@ export function LayoutSandbox() {
         <h1 className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
           TaskForge Pro
         </h1>
-        <p className="text-subtitle-2 text-muted-foreground">
+        <p className="subtitle-2 text-muted-foreground">
           Professional task management for ambitious teams (But actually just
           pt. 2 of Tailwind Layout Sandbox, Week 2 – Day 1a: Practicing spacing,
           flex, grid, and responsive utilities)
@@ -22,18 +22,21 @@ export function LayoutSandbox() {
       {/* Section 2: Feature List */}
       <section className="space-y-compact">
         <h2>Vertical Stack ("Feature List")</h2>
-        <div className="bg-surface-2 border border-border rounded-lg p-standard space-y-compact shadow-sm">
+        <div className="bg-surface-1 border border-border rounded-lg p-standard space-y-compact shadow-sm">
           <FeatureCard
             title="AI-Powered Task Prioritization"
             description="Let machine learning analyze your workload and automatically surface the most critical tasks based on deadlines, dependencies, and team capacity."
+            className="bg-surface-2"
           />
           <FeatureCard
             title="Advanced Team Analytics"
             description="Gain deep insights into productivity patterns, bottlenecks, and team velocity with comprehensive dashboards and custom reports."
+            className="bg-surface-2"
           />
           <FeatureCard
             title="Real-Time Collaboration"
             description="Work seamlessly with your team through live updates, @mentions, file sharing, and integrated video calls. All without leaving the platform."
+            className="bg-surface-2"
           />
         </div>
       </section>
@@ -44,12 +47,12 @@ export function LayoutSandbox() {
         <div className="space-y-standard">
           <div>
             <h3 className="text-primary mb-tight">Filter Bar with Content</h3>
-            <p className="text-subtitle-2 text-muted-foreground mb-compact">
+            <p className="subtitle-2 text-muted-foreground mb-compact">
               Filters stack above content on mobile, move to left sidebar on
               desktop for better use of horizontal space.
             </p>
-            <div className="bg-surface-2 border border-border rounded-lg p-standard flex flex-col md:flex-row gap-compact shadow-sm">
-              <div className="card-compact md:basis-1/4">
+            <div className="bg-surface-1 border border-border rounded-lg p-standard flex flex-col md:flex-row gap-compact shadow-sm">
+              <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact md:basis-1/4">
                 <h4 className="text-primary mb-compact">Filter</h4>
                 <div className="space-y-compact">
                   <SelectInput
@@ -72,7 +75,7 @@ export function LayoutSandbox() {
                   />
                 </div>
               </div>
-              <div className="card-compact flex-1 md:basis-3/4">
+              <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact flex-1 md:basis-3/4">
                 <div className="flex items-center justify-between mb-compact">
                   <h4 className="text-primary">Task List</h4>
                 </div>
@@ -81,16 +84,19 @@ export function LayoutSandbox() {
                     title="Complete Q4 revenue report"
                     metadata="Due tomorrow • High priority • Assigned to you"
                     priority="high"
+                    className="bg-surface-3"
                   />
                   <TaskItem
                     title="Review design mockups"
                     metadata="Due in 3 days • Medium priority • Jane Doe"
                     priority="medium"
+                    className="bg-surface-3"
                   />
                   <TaskItem
                     title="Update API documentation"
                     metadata="Due next week • Low priority • John Smith"
                     priority="low"
+                    className="bg-surface-3"
                   />
                 </div>
               </div>
@@ -99,25 +105,25 @@ export function LayoutSandbox() {
 
           <div>
             <h3 className="text-primary mb-tight">Activity Sidebar</h3>
-            <p className="text-subtitle-2 text-muted-foreground mb-compact">
+            <p className="subtitle-2 text-muted-foreground mb-compact">
               Right sidebar shows recent activity and team updates. Hidden on
               smaller screens to maximize workspace.
             </p>
-            <div className="bg-surface-2 border border-border rounded-lg p-standard flex flex-row gap-compact shadow-sm">
-              <div className="card-compact flex-1">
+            <div className="bg-surface-1 border border-border rounded-lg p-standard flex flex-row gap-compact shadow-sm">
+              <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact flex-1">
                 <h4 className="text-primary mb-tight">Active Tasks</h4>
-                <p className="text-body-2 text-muted-foreground leading-relaxed mb-compact">
+                <p className="body-2 text-muted-foreground leading-relaxed mb-compact">
                   Your current focus area with today's priorities and
                   in-progress work.
                 </p>
                 <div className="space-y-tight">
-                  <div className="bg-muted rounded-lg p-compact text-caption">
+                  <div className="bg-muted rounded-lg p-compact caption">
                     <div className="text-foreground font-medium">
                       Draft marketing copy
                     </div>
                     <div className="text-muted-foreground">In progress</div>
                   </div>
-                  <div className="bg-muted rounded-lg p-compact text-caption">
+                  <div className="bg-muted rounded-lg p-compact caption">
                     <div className="text-foreground font-medium">
                       Code review for PR #247
                     </div>
@@ -127,9 +133,9 @@ export function LayoutSandbox() {
                   </div>
                 </div>
               </div>
-              <div className="card-compact hidden md:block md:basis-1/3">
+              <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact hidden md:block md:basis-1/3">
                 <h4 className="text-primary mb-tight">Recent Activity</h4>
-                <div className="space-y-tight text-caption">
+                <div className="space-y-tight">
                   <ActivityItem
                     name="Jane Doe"
                     action='Completed "User research synthesis"'
@@ -156,10 +162,10 @@ export function LayoutSandbox() {
       {/* Section 4: Dashboard Stats */}
       <section className="space-y-compact">
         <h2>Your Overview (Responsive Grid)</h2>
-        <p className="text-subtitle-2 text-muted-foreground">
+        <p className="subtitle-2 text-muted-foreground">
           Real-time insights into your workload and team performance.
         </p>
-        <div className="bg-surface-2 border border-border rounded-lg p-standard grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-compact shadow-sm">
+        <div className="bg-surface-1 border border-border rounded-lg p-standard grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-compact shadow-sm">
           <StatCard
             label="Open Tasks"
             value={12}
@@ -170,23 +176,26 @@ export function LayoutSandbox() {
             label="In Progress"
             value={7}
             description="Currently active tasks being worked on by your team"
+            className="bg-surface-2"
           />
           <StatCard
             label="Completed This Week"
             value={34}
             description="Tasks successfully finished in the last 7 days"
+            className="bg-surface-2"
           />
           <StatCard
             label="Overdue"
             value={3}
             description="Tasks that have passed their deadline and need attention"
             variant="error"
+            className="bg-surface-2"
           />
           <StatCard
             label="Team Members Active"
             value={8}
             description="Team members currently online or active in the last hour"
-            className="sm:col-span-2 lg:col-span-4"
+            className="sm:col-span-2 lg:col-span-4 bg-surface-2"
           />
         </div>
       </section>

@@ -27,25 +27,25 @@ export function StatCard({
   const labelClasses = {
     default: "text-muted-foreground",
     featured: "text-primary/80",
-    error: "text-error/80",
+    error: "text-warning/80",
   };
 
   const valueClasses = {
     default: "text-primary/80",
     featured:
       "bg-linear-to-br from-primary to-accent bg-clip-text text-transparent",
-    error: "text-error",
+    error: "text-warning",
   };
 
   const descriptionClasses = {
     default: "text-muted-foreground",
-    featured: "text-primary/60",
-    error: "text-error/60",
+    featured: "text-primary/80",
+    error: "text-warning/80-",
   };
 
   return (
     <div className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
-      <div className={`text-overline mb-tight ${labelClasses[variant]}`}>
+      <div className={`overline-text mb-tight ${labelClasses[variant]}`}>
         {label}
       </div>
       <div
@@ -53,9 +53,7 @@ export function StatCard({
       >
         {value}
       </div>
-      <p
-        className={`text-caption leading-relaxed ${descriptionClasses[variant]}`}
-      >
+      <p className={`caption leading-relaxed ${descriptionClasses[variant]}`}>
         {description}
       </p>
     </div>

@@ -121,7 +121,7 @@ export default function AuthForm() {
 
       <form onSubmit={handleSubmit} className="space-y-compact">
         <div>
-          <label htmlFor="email" className="block text-body-2 mb-tight">
+          <label htmlFor="email" className="block body-2 mb-tight">
             Email
           </label>
           <Input
@@ -134,12 +134,12 @@ export default function AuthForm() {
             className={errors.email ? "border-error" : ""}
           />
           {errors.email && (
-            <p className="text-error text-caption mt-tight">{errors.email}</p>
+            <p className="text-warning caption mt-tight">{errors.email}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-body-2 mb-tight">
+          <label htmlFor="password" className="block body-2 mb-tight">
             Password
           </label>
           <Input
@@ -152,18 +152,13 @@ export default function AuthForm() {
             className={errors.password ? "border-error" : ""}
           />
           {errors.password && (
-            <p className="text-error text-caption mt-tight">
-              {errors.password}
-            </p>
+            <p className="text-warning caption mt-tight">{errors.password}</p>
           )}
         </div>
 
         {isSignUp && (
           <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-body-2 mb-tight"
-            >
+            <label htmlFor="confirmPassword" className="block body-2 mb-tight">
               Confirm Password
             </label>
             <Input
@@ -176,7 +171,7 @@ export default function AuthForm() {
               className={errors.confirmPassword ? "border-error" : ""}
             />
             {errors.confirmPassword && (
-              <p className="text-error text-caption mt-tight">
+              <p className="text-warning caption mt-tight">
                 {errors.confirmPassword}
               </p>
             )}
@@ -185,7 +180,7 @@ export default function AuthForm() {
 
         {!isSignUp && (
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-tight text-body-2">
+            <label className="flex items-center gap-tight body-2">
               <input
                 type="checkbox"
                 name="rememberMe"
@@ -201,7 +196,12 @@ export default function AuthForm() {
           </div>
         )}
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          semantic="primary"
+          disabled={isSubmitting}
+          className="w-full"
+        >
           {isSubmitting
             ? "Processing..."
             : isSignUp
@@ -210,12 +210,13 @@ export default function AuthForm() {
         </Button>
       </form>
 
-      <p className="text-center text-body-2 mt-compact">
+      <p className="text-center body-2 mt-compact">
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
         <Button
           type="button"
           onClick={toggleMode}
           variant="link"
+          semantic="primary"
           className="p-0 h-auto"
         >
           {isSignUp ? "Sign in" : "Sign up"}

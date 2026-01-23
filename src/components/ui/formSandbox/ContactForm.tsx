@@ -97,7 +97,7 @@ export default function ContactForm() {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-compact">
           <div>
-            <label htmlFor="name" className="block text-body-2 mb-tight">
+            <label htmlFor="name" className="block body-2 mb-tight">
               Name
             </label>
             <Input
@@ -110,12 +110,12 @@ export default function ContactForm() {
               className={errors.name ? "border-error" : ""}
             />
             {errors.name && (
-              <p className="text-error text-caption mt-tight">{errors.name}</p>
+              <p className="text-warning caption mt-tight">{errors.name}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-body-2 mb-tight">
+            <label htmlFor="email" className="block body-2 mb-tight">
               Email
             </label>
             <Input
@@ -128,12 +128,12 @@ export default function ContactForm() {
               className={errors.email ? "border-error" : ""}
             />
             {errors.email && (
-              <p className="text-error text-caption mt-tight">{errors.email}</p>
+              <p className="text-warning caption mt-tight">{errors.email}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="message" className="block text-body-2 mb-tight">
+            <label htmlFor="message" className="block body-2 mb-tight">
               Message
             </label>
             <textarea
@@ -150,13 +150,16 @@ export default function ContactForm() {
               }`}
             />
             {errors.message && (
-              <p className="text-error text-caption mt-tight">
-                {errors.message}
-              </p>
+              <p className="text-warning caption mt-tight">{errors.message}</p>
             )}
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <Button
+            type="submit"
+            semantic="primary"
+            disabled={isSubmitting}
+            className="w-full"
+          >
             {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
 
