@@ -471,21 +471,6 @@
 }
 
 /* ==========================================
-   COMPONENT UTILITIES
-   ========================================== */
-@layer components {
-  /* Section Spacing */
-  .section-spacing > * + * {
-    margin-top: var(--spacing-section);
-  }
-
-  /* Section Gap */
-  .section-gap {
-    gap: var(--spacing-section);
-  }
-}
-
-/* ==========================================
      TYPOGRAPHY UTILITIES
      ========================================== */
 @utility headline-1 {

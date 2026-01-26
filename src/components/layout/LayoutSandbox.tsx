@@ -7,7 +7,7 @@ import { SectionCard } from "@/components/common/SectionCard";
 
 export function LayoutSandbox() {
   return (
-    <div className="max-w-6xl mx-auto section-spacing p-standard">
+    <div className="max-w-6xl mx-auto space-y-section p-standard">
       {/* Section 1: Page Title */}
       <section className="space-y-tight border-b border-border pb-section">
         <h1 className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">

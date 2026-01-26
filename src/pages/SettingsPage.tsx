@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 
 export function SettingsPage() {
   return (
-    <div className="section-spacing container px-standard pb-section">
+    <div className="space-y-section container px-standard pb-section">
       <PageHeader pageTitle="Settings" hr />
 
       <section>

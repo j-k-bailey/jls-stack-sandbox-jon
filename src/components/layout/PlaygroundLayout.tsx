@@ -24,7 +24,7 @@ const playgroundLinks = [
 
 export function PlaygroundLayout() {
   return (
-    <div className="section-spacing container px-standard pb-section">
+    <div className="space-y-section container px-standard pb-section">
       <PageHeader
         pageTitle="Playground"
         pageDescription="The only way to learn is by playing. The only way to win is by learning.

@@ -3,7 +3,7 @@ import { SectionCard } from "@/components/common/SectionCard";
 
 export function HelpPage() {
   return (
-    <div className="section-spacing container px-standard pb-section">
+    <div className="space-y-section container px-standard pb-section">
       <PageHeader
         pageTitle="Help & Documentation"
         pageDescription="Find resources and guidance to help you succeed in the JLS Academy

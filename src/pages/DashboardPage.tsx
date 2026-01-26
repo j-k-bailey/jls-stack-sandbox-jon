@@ -5,7 +5,7 @@ import { StatCard } from "@/components/layoutSandbox/StatCard";
 
 export function DashboardPage() {
   return (
-    <div className="section-spacing container px-standard pb-section">
+    <div className="space-y-section container px-standard pb-section">
       <PageHeader
         pageTitle="JLS Stack Dashboard (Placeholder)"
         pageDescription="This is your future home for metrics, quick links, and key actions. For now, it just proves that routing works."

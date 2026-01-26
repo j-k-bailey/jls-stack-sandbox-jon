@@ -1,14 +1,9 @@
 import { PageHeader } from "@/components/common/PageHeader";
-import {
-  Button,
-  GhostButton,
-  LinkButton,
-  OutlineButton,
-} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export function BrandKitPage() {
   return (
-    <div className="section-spacing container mx-auto">
+    <div className="space-y-section container mx-auto">
       <PageHeader
         pageTitle="JLS Stack Sandbox Design System"
         level="h2"
@@ -245,11 +240,15 @@ export function BrandKitPage() {
               <Button semantic="primary" disabled>
                 Disabled
               </Button>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-compact mt-compact">
-              <OutlineButton semantic="primary">Outline</OutlineButton>
-              <GhostButton semantic="accent">Ghost</GhostButton>
-              <LinkButton semantic="success">Link</LinkButton>
+              <Button variant="outline" semantic="primary">
+                Outline
+              </Button>
+              <Button variant="ghost" semantic="accent">
+                Ghost
+              </Button>
+              <Button variant="link" semantic="success">
+                Link
+              </Button>
             </div>
           </div>
           {/* Badges */}
@@ -426,9 +425,7 @@ export function BrandKitPage() {
           {/* UI Elements */}
           <div className="space-y-tight">
             <div className="flex items-center gap-compact flex-wrap">
-              <span className="bg-primary text-primary-foreground px-3 py-1.5 rounded button-text">
-                Button Text
-              </span>
+              <Button semantic="primary">Button Text</Button>
               <span className="caption text-muted-foreground">
                 Caption text for metadata and footnotes
               </span>

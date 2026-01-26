@@ -13,12 +13,7 @@ import {
   ComponentHighlightShowcase,
   ComponentHighlightTitle,
 } from "@/components/common/ComponentHighlight";
-import {
-  Button,
-  GhostButton,
-  LinkButton,
-  OutlineButton,
-} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   UpdateCard,
@@ -34,7 +29,7 @@ import { ThemeToggle } from "@/components/ui/themeToggle";
 
 export function ComponentsPage() {
   return (
-    <div className="section-spacing container px-standard pb-section">
+    <div className="space-y-section container px-standard pb-section">
       <PageHeader
         pageTitle="Component Gallery"
         pageDescription="A showcase of UI components created for JLS Stack Sandbox"
@@ -101,8 +96,10 @@ export function ComponentsPage() {
       <ComponentHighlight>
         <ComponentHighlightTitle>Button</ComponentHighlightTitle>
         <ComponentHighlightDescription>
-          Versatile button component with multiple semantic variants, sizes, and
-          styles including default, outline, ghost, and link variants.
+          Versatile button system with semantic color variants and multiple
+          styles. Use FilledButton, OutlineButton, GhostButton, and LinkButton
+          directly for static UIs, or use the Button wrapper with variant prop
+          for dynamic rendering.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
           <SectionCard title="Buttons">
@@ -121,9 +118,15 @@ export function ComponentsPage() {
                 <p className="text-sm font-semibold mb-3">Style Variants</p>
                 <div className="flex flex-wrap gap-2">
                   <Button semantic="primary">Default</Button>
-                  <OutlineButton semantic="primary">Outline</OutlineButton>
-                  <GhostButton semantic="primary">Ghost</GhostButton>
-                  <LinkButton semantic="primary">Link</LinkButton>
+                  <Button variant="outline" semantic="primary">
+                    Outline
+                  </Button>
+                  <Button variant="ghost" semantic="primary">
+                    Ghost
+                  </Button>
+                  <Button variant="link" semantic="primary">
+                    Link
+                  </Button>
                 </div>
               </div>
               <div>
@@ -139,22 +142,26 @@ export function ComponentsPage() {
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">
                     <Button semantic="primary">Primary Default</Button>
-                    <OutlineButton semantic="primary">
+                    <Button variant="outline" semantic="primary">
                       Primary Outline
-                    </OutlineButton>
-                    <GhostButton semantic="primary">Primary Ghost</GhostButton>
-                    <LinkButton semantic="primary">Primary Link</LinkButton>
+                    </Button>
+                    <Button variant="ghost" semantic="primary">
+                      Primary Ghost
+                    </Button>
+                    <Button variant="link" semantic="primary">
+                      Primary Link
+                    </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button semantic="success" size="sm">
                       Success Sm
                     </Button>
-                    <OutlineButton semantic="success" size="default">
+                    <Button variant="outline" semantic="success" size="default">
                       Success Default
-                    </OutlineButton>
-                    <GhostButton semantic="success" size="lg">
-                      Success Lg
-                    </GhostButton>
+                    </Button>
+                    <Button variant="ghost" semantic="success" size="lg">
+                      Success Ghost Lg
+                    </Button>
                   </div>
                   <div className="flex flex-wrap gap-2 items-center">
                     <Button semantic="warning" size="icon">
@@ -169,9 +176,11 @@ export function ComponentsPage() {
             </div>
           </SectionCard>
           <ComponentHighlightProps>
-            Button, OutlineButton, GhostButton, LinkButton all accept: semantic
-            ("primary" | "accent" | "success" | "warning" | "neutral"), size
-            ("sm" | "default" | "lg" | "icon" | "icon-sm" | "icon-lg")
+            Button: variant ("default" | "filled" | "outline" | "ghost" |
+            "link"), semantic ("default" | "primary" | "accent" | "success" |
+            "warning" | "neutral"), size ("default" | "sm" | "lg" | "icon" |
+            "icon-sm" | "icon-lg"). FilledButton, OutlineButton, GhostButton,
+            LinkButton: semantic and size only (no variant prop needed).
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>

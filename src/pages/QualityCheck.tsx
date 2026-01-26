@@ -59,7 +59,7 @@ const updates = [
 
 export function QualityCheckPage() {
   return (
-    <div className="section-spacing container px-standard pb-section">
+    <div className="space-y-section container px-standard pb-section">
       <PageHeader
         pageTitle="Quality Check & Changelog"
         pageDescription="Polish validation, accessibility self-audit, and design system updates."

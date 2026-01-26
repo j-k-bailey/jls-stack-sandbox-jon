@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 
 export function AestheticPage() {
   return (
-    <div className="section-spacing">
+    <div className="space-y-section">
       <PageHeader
         pageTitle="Aesthetic Fun"
         level="h2"
