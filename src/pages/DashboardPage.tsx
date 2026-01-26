@@ -137,7 +137,7 @@ export function DashboardPage() {
             <FeatureCard
               icon={<FaRocket />}
               heading="Layout Sandbox"
-              description="Test different layout patterns and responsive behaviors in the sandbox."
+              description="See different layout patterns and responsive behaviors in the layout sandbox."
               cta={{
                 label: "Open Sandbox",
                 href: "/layout-sandbox",
