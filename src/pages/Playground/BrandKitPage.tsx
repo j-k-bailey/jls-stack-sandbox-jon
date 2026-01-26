@@ -1,5 +1,10 @@
 import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
+import {
+  Button,
+  GhostButton,
+  LinkButton,
+  OutlineButton,
+} from "@/components/ui/button";
 
 export function BrandKitPage() {
   return (
@@ -241,8 +246,12 @@ export function BrandKitPage() {
                 Disabled
               </Button>
             </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-compact mt-compact">
+              <OutlineButton semantic="primary">Outline</OutlineButton>
+              <GhostButton semantic="accent">Ghost</GhostButton>
+              <LinkButton semantic="success">Link</LinkButton>
+            </div>
           </div>
-
           {/* Badges */}
           <div className="space-y-compact">
             <p className="overline-text text-primary">BADGES</p>

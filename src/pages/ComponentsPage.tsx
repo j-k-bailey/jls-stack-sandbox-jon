@@ -13,7 +13,12 @@ import {
   ComponentHighlightShowcase,
   ComponentHighlightTitle,
 } from "@/components/common/ComponentHighlight";
-import { Button } from "@/components/ui/button";
+import {
+  Button,
+  GhostButton,
+  LinkButton,
+  OutlineButton,
+} from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   UpdateCard,
@@ -115,10 +120,10 @@ export function ComponentsPage() {
               <div>
                 <p className="text-sm font-semibold mb-3">Style Variants</p>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="default">Default</Button>
-                  <Button variant="outline">Outline</Button>
-                  <Button variant="ghost">Ghost</Button>
-                  <Button variant="link">Link</Button>
+                  <Button semantic="primary">Default</Button>
+                  <OutlineButton semantic="primary">Outline</OutlineButton>
+                  <GhostButton semantic="primary">Ghost</GhostButton>
+                  <LinkButton semantic="primary">Link</LinkButton>
                 </div>
               </div>
               <div>
@@ -133,35 +138,29 @@ export function ComponentsPage() {
                 <p className="text-sm font-semibold mb-3">Combined Variants</p>
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">
-                    <Button semantic="primary" variant="default">
-                      Primary Default
-                    </Button>
-                    <Button semantic="primary" variant="outline">
+                    <Button semantic="primary">Primary Default</Button>
+                    <OutlineButton semantic="primary">
                       Primary Outline
-                    </Button>
-                    <Button semantic="primary" variant="ghost">
-                      Primary Ghost
-                    </Button>
-                    <Button semantic="primary" variant="link">
-                      Primary Link
-                    </Button>
+                    </OutlineButton>
+                    <GhostButton semantic="primary">Primary Ghost</GhostButton>
+                    <LinkButton semantic="primary">Primary Link</LinkButton>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button semantic="success" variant="default" size="sm">
+                    <Button semantic="success" size="sm">
                       Success Sm
                     </Button>
-                    <Button semantic="success" variant="outline" size="default">
+                    <OutlineButton semantic="success" size="default">
                       Success Default
-                    </Button>
-                    <Button semantic="success" variant="ghost" size="lg">
+                    </OutlineButton>
+                    <GhostButton semantic="success" size="lg">
                       Success Lg
-                    </Button>
+                    </GhostButton>
                   </div>
                   <div className="flex flex-wrap gap-2 items-center">
-                    <Button semantic="warning" variant="default" size="icon">
+                    <Button semantic="warning" size="icon">
                       🗑️
                     </Button>
-                    <Button semantic="accent" variant="default" size="icon-lg">
+                    <Button semantic="accent" size="icon-lg">
                       →
                     </Button>
                   </div>
@@ -170,10 +169,9 @@ export function ComponentsPage() {
             </div>
           </SectionCard>
           <ComponentHighlightProps>
-            semantic ("primary" | "accent" | "success" | "warning" | "neutral"),
-            variant ("default" | "outline" | "ghost" | "link"), size ("sm" |
-            "default" | "lg" | "icon" | "icon-sm" | "icon-lg"), asChild
-            (boolean)
+            Button, OutlineButton, GhostButton, LinkButton all accept: semantic
+            ("primary" | "accent" | "success" | "warning" | "neutral"), size
+            ("sm" | "default" | "lg" | "icon" | "icon-sm" | "icon-lg")
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
