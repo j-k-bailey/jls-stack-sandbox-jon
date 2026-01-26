@@ -26,6 +26,7 @@ const updates = [
       "Added ResponsiveGrid, InlineAlert, and FeatureCard (the new one).",
       "Added *-on-background to semantic tokens/brand kit for more versatility in color tokens",
       "Updated pages to use new components: Dashboard, LayoutSandbox, Components, Aesthetic, Brand Kit",
+      "Fixed broken feature cards.",
     ],
   },
   {

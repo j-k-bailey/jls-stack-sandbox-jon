@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/Card";
 import { FilledButton } from "@/components/ui/ButtonVariants";
 
-const featureCardVariants = cva("", {
+const featureCardVariants = cva("relative", {
   variants: {
     layout: {
       vertical: "flex flex-col",
@@ -59,10 +59,10 @@ export interface FeatureCardProps extends VariantProps<
     onClick?: () => void;
     variant?: "primary" | "accent" | "neutral";
   };
-  badge?: {
+  badges?: Array<{
     text: string;
     variant?: "primary" | "accent";
-  };
+  }>;
   className?: string;
   onClick?: () => void;
 }
@@ -73,10 +73,10 @@ export const FeatureCard = ({
   image,
   icon,
   heading,
-  headingLevel = "h3",
+  headingLevel = "h4",
   description,
   cta,
-  badge,
+  badges,
   className,
   onClick,
 }: FeatureCardProps) => {
@@ -91,19 +91,22 @@ export const FeatureCard = ({
       )}
       onClick={onClick}
     >
-      {/* Badge */}
-      {badge && (
-        <div className="absolute top-4 right-4 z-10">
-          <span
-            className={cn(
-              "inline-block px-3 py-1 text-xs font-bold rounded-full",
-              badge.variant === "accent"
-                ? "bg-accent text-accent-on-background"
-                : "bg-primary text-primary-on-background",
-            )}
-          >
-            {badge.text}
-          </span>
+      {/* Badges */}
+      {badges && badges.length > 0 && (
+        <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
+          {badges.map((badge, index) => (
+            <span
+              key={index}
+              className={cn(
+                "inline-block px-3 py-1 text-xs font-bold rounded-full",
+                badge.variant === "accent"
+                  ? "bg-accent text-accent-foreground"
+                  : "bg-primary text-primary-foreground",
+              )}
+            >
+              {badge.text}
+            </span>
+          ))}
         </div>
       )}
 

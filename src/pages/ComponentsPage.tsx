@@ -34,7 +34,6 @@ import {
   FaFaceSmile,
   FaCircleCheck,
   FaTriangleExclamation,
-  FaShield,
   FaLightbulb,
   FaCode,
   FaRocket,
@@ -223,140 +222,113 @@ export function ComponentsPage() {
           both vertical and horizontal layouts with subtle or bold emphasis
           variants.
         </ComponentHighlightDescription>
-        <ComponentHighlightShowcase>
-          {/* Vertical Layout - Subtle */}
-          <SectionCard title="Vertical Layout - Subtle Emphasis">
-            <ResponsiveGrid maxColumns="three">
+        <ComponentHighlightShowcase className="space-y-compact">
+          {/* Core Layouts */}
+          <SectionCard title="Layout Variants">
+            <ResponsiveGrid maxColumns="two">
+              {/* Vertical - Default */}
               <FeatureCard
-                heading="Automated Workflows"
-                description="Build sophisticated automation pipelines with our visual workflow builder. Connect APIs, transform data, and automate repetitive tasks."
+                heading="Vertical Layout"
+                description="Default vertical layout with image, description, CTA, and multiple badges."
                 image={{
-                  src: "https://picsum.photos/seed/workflow/800/450",
-                  alt: "Workflow automation interface",
+                  src: "https://picsum.photos/seed/vertical/800/450",
+                  alt: "Vertical layout example",
                 }}
                 cta={{
                   label: "Learn More",
                   href: "#",
                 }}
-                badge={{ text: "New", variant: "accent" }}
+                badges={[
+                  { text: "New", variant: "accent" },
+                  { text: "Featured", variant: "primary" },
+                ]}
               />
 
+              {/* Horizontal - Bold */}
               <FeatureCard
+                layout="horizontal"
+                emphasis="bold"
                 icon={<FaRocket />}
-                heading="Lightning Fast"
-                description="Optimized performance ensures your applications run at peak efficiency with minimal resource usage."
+                heading="Horizontal Bold"
+                headingLevel="h3"
+                description="Horizontal layout with bold emphasis, icon, and accent CTA variant."
                 cta={{
-                  label: "View Benchmarks",
-                  onClick: () => console.log("Benchmarks clicked"),
+                  label: "Get Started",
+                  href: "#",
+                  variant: "accent",
+                }}
+              />
+            </ResponsiveGrid>
+          </SectionCard>
+
+          {/* Content Flexibility */}
+          <SectionCard title="Content Variations">
+            <ResponsiveGrid maxColumns="three">
+              {/* Icon Only */}
+              <FeatureCard
+                icon={<FaCode />}
+                heading="Icon-Based"
+                description="Card with icon instead of image, perfect for abstract concepts."
+                cta={{
+                  label: "Explore",
+                  onClick: () => console.log("Clicked"),
                 }}
               />
 
+              {/* Text Only */}
               <FeatureCard
-                image={{
-                  src: "https://picsum.photos/seed/security/800/450",
-                  alt: "Security dashboard",
-                }}
-                heading="Enterprise Security"
-                headingLevel="h3"
-                description="Bank-level encryption and compliance with SOC 2, GDPR, and HIPAA standards to keep your data safe."
+                heading="Text-Only Card"
+                headingLevel="h4"
+                description="No image or icon needed. Useful for documentation or simple feature lists."
                 cta={{
-                  label: "Security Details",
+                  label: "Read Docs",
                   href: "#",
                   variant: "neutral",
                 }}
               />
-            </ResponsiveGrid>
-          </SectionCard>
 
-          {/* Horizontal Layout - Bold */}
-          <SectionCard title="Horizontal Layout - Bold Emphasis">
-            <div className="space-y-compact">
-              <FeatureCard
-                layout="horizontal"
-                emphasis="bold"
-                image={{
-                  src: "https://picsum.photos/seed/analytics/800/800",
-                  alt: "Analytics dashboard",
-                }}
-                heading="Advanced Analytics"
-                headingLevel="h2"
-                description={
-                  <>
-                    Track every metric that matters with real-time dashboards
-                    and customizable reports.
-                    <ul className="list-disc ml-5 mt-2 space-y-1">
-                      <li>Custom KPI tracking</li>
-                      <li>Real-time data sync</li>
-                      <li>Export to CSV/PDF</li>
-                    </ul>
-                  </>
-                }
-                cta={{
-                  label: "Start Free Trial",
-                  href: "#",
-                  variant: "accent",
-                }}
-                badge={{ text: "Popular", variant: "primary" }}
-              />
-
-              <FeatureCard
-                layout="horizontal"
-                emphasis="bold"
-                icon={<FaCode />}
-                heading="Developer Friendly"
-                description="Comprehensive API documentation, SDKs for popular languages, and extensive code examples to get you started in minutes."
-                cta={{
-                  label: "View API Docs",
-                  href: "#",
-                  variant: "primary",
-                }}
-              />
-            </div>
-          </SectionCard>
-
-          {/* Mixed Layouts */}
-          <SectionCard title="Clickable Cards & Various States">
-            <ResponsiveGrid maxColumns="two">
-              <FeatureCard
-                heading="Click Entire Card"
-                description="This entire card is clickable and shows a hover effect. Great for navigation cards or when the whole card should be interactive."
-                image={{
-                  src: "https://picsum.photos/seed/click/800/450",
-                  alt: "Interactive card example",
-                }}
-                onClick={() => alert("Card clicked!")}
-              />
-
+              {/* Clickable Card */}
               <FeatureCard
                 icon={<FaLightbulb />}
-                heading="Icon Only Card"
-                description="Feature cards work great with just icons instead of images. Perfect for service or capability showcases."
-                cta={{
-                  label: "Explore",
-                  href: "#",
-                  variant: "accent",
-                }}
-              />
-
-              <FeatureCard
-                layout="horizontal"
-                image={{
-                  src: "https://picsum.photos/seed/mobile/800/800",
-                  alt: "Mobile responsive design",
-                }}
-                heading="Responsive by Default"
-                description="Horizontal cards stack vertically on mobile devices, ensuring great UX across all screen sizes."
-                badge={{ text: "Responsive", variant: "accent" }}
-              />
-
-              <FeatureCard
-                emphasis="bold"
-                icon={<FaShield />}
-                heading="No CTA Needed"
-                headingLevel="h4"
-                description="Cards work perfectly fine without a call-to-action button. Use them for informational content that doesn't require user interaction."
+                heading="Entire Card Clickable"
+                description="Using onClick makes the whole card interactive with hover effects."
+                badges={[{ text: "Interactive", variant: "accent" }]}
+                onClick={() => alert("Card clicked!")}
               />
             </ResponsiveGrid>
+          </SectionCard>
+
+          {/* Advanced Usage */}
+          <SectionCard title="Advanced Features">
+            <FeatureCard
+              layout="horizontal"
+              emphasis="bold"
+              image={{
+                src: "https://picsum.photos/seed/advanced/800/800",
+                alt: "Advanced example",
+              }}
+              heading="Rich Content Support"
+              headingLevel="h2"
+              description={
+                <>
+                  Description supports ReactNode for complex layouts:
+                  <ul className="list-disc ml-5 mt-2 space-y-1">
+                    <li>Custom HTML elements</li>
+                    <li>Nested lists and formatting</li>
+                    <li>Any valid React content</li>
+                  </ul>
+                </>
+              }
+              cta={{
+                label: "View Example",
+                href: "#",
+                variant: "primary",
+              }}
+              badges={[
+                { text: "Advanced", variant: "primary" },
+                { text: "Popular", variant: "accent" },
+              ]}
+            />
           </SectionCard>
 
           <ComponentHighlightProps>
@@ -367,8 +339,9 @@ export function ComponentsPage() {
             {
               "{ label: string, href?: string, onClick?: () => void, variant?: 'primary' | 'accent' | 'neutral' }"
             }
-            ), badge ({"{ text: string, variant?: 'primary' | 'accent' }"}),
-            onClick (() =&gt; void), className (string)
+            ), badges (Array
+            {"<{ text: string, variant?: 'primary' | 'accent' }>"}), onClick (()
+            =&gt; void), className (string)
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
