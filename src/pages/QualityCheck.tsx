@@ -16,6 +16,19 @@ const toDoItems = [
 
 const updates = [
   {
+    version: "v0.0.4",
+    date: "January 26, 2026",
+    title: "Lesson 2.5 - Reusable Components & Patterns - Part 2",
+    items: [
+      "Experimented with different ways to work with really complicated variants with different styling based on props. E.g., primary filled vs. outline button. Settled on wrapper pattern as best blend of DX for restyling and using in other components without friction.",
+      "Old FeatureCard became SimpleFeatureCard",
+      "shadcn using lowercase for file names low-key drove me crazy. So changed it for files which have been customized already.",
+      "Added ResponsiveGrid, InlineAlert, and FeatureCard (the new one).",
+      "Added *-on-background to semantic tokens/brand kit for more versatility in color tokens",
+      "Updated pages to use new components: Dashboard, LayoutSandbox, Components, Aesthetic, Brand Kit",
+    ],
+  },
+  {
     version: "v0.0.3",
     date: "January 23, 2026",
     title: "Lesson 2.5 - Reusable Components & Patterns",
@@ -70,10 +83,8 @@ export function QualityCheckPage() {
           CHANGELOG
           =============================== */}
       <section className="space-y-standard">
-        <h2>To Do</h2>
+        <h2 className="mb-compact">To Do</h2>
         <div className="space-y-compact">
-          {/* Add new entries here */}
-
           <div className="bg-surface-1 border-l-4 border-primary p-standard rounded">
             <ul className="space-y-1 body-2 list-disc ml-standard">
               {toDoItems.map((toDoItem, index) => (
@@ -83,9 +94,9 @@ export function QualityCheckPage() {
           </div>
         </div>
 
-        <h2>Changelog</h2>
+        <h2 className="mb-compact">Changelog</h2>
 
-        <div className="space-y-compact">
+        <div className="space-y-section">
           {updates.map((update, index) => (
             <UpdateCard key={index}>
               <UpdateCardHeader>

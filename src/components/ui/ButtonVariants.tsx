@@ -1,5 +1,6 @@
 // button.tsx
 import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -53,19 +54,24 @@ const filledButtonVariants = cva(baseClasses, {
 export interface FilledButtonProps
   extends
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof filledButtonVariants> {}
+    VariantProps<typeof filledButtonVariants> {
+  asChild?: boolean;
+}
 
 export const FilledButton = React.forwardRef<
   HTMLButtonElement,
   FilledButtonProps
->(({ className, semantic, size, ...props }, ref) => (
-  <button
-    className={cn(filledButtonVariants({ semantic, size, className }))}
-    ref={ref}
-    {...props}
-  />
-));
-FilledButton.displayName = "Button";
+>(({ className, semantic, size, asChild = false, ...props }, ref) => {
+  const Comp = asChild ? Slot : "button";
+  return (
+    <Comp
+      className={cn(filledButtonVariants({ semantic, size, className }))}
+      ref={ref}
+      {...props}
+    />
+  );
+});
+FilledButton.displayName = "FilledButton";
 
 // ============================================================================
 // OUTLINE BUTTON
@@ -92,18 +98,23 @@ const outlineButtonVariants = cva(`${baseClasses} border-2 shadow-xs`, {
 export interface OutlineButtonProps
   extends
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof outlineButtonVariants> {}
+    VariantProps<typeof outlineButtonVariants> {
+  asChild?: boolean;
+}
 
 export const OutlineButton = React.forwardRef<
   HTMLButtonElement,
   OutlineButtonProps
->(({ className, semantic, size, ...props }, ref) => (
-  <button
-    className={cn(outlineButtonVariants({ semantic, size, className }))}
-    ref={ref}
-    {...props}
-  />
-));
+>(({ className, semantic, size, asChild = false, ...props }, ref) => {
+  const Comp = asChild ? Slot : "button";
+  return (
+    <Comp
+      className={cn(outlineButtonVariants({ semantic, size, className }))}
+      ref={ref}
+      {...props}
+    />
+  );
+});
 OutlineButton.displayName = "OutlineButton";
 
 // ============================================================================
@@ -132,18 +143,23 @@ const ghostButtonVariants = cva(`${baseClasses} border-transparent`, {
 export interface GhostButtonProps
   extends
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof ghostButtonVariants> {}
+    VariantProps<typeof ghostButtonVariants> {
+  asChild?: boolean;
+}
 
 export const GhostButton = React.forwardRef<
   HTMLButtonElement,
   GhostButtonProps
->(({ className, semantic, size, ...props }, ref) => (
-  <button
-    className={cn(ghostButtonVariants({ semantic, size, className }))}
-    ref={ref}
-    {...props}
-  />
-));
+>(({ className, semantic, size, asChild = false, ...props }, ref) => {
+  const Comp = asChild ? Slot : "button";
+  return (
+    <Comp
+      className={cn(ghostButtonVariants({ semantic, size, className }))}
+      ref={ref}
+      {...props}
+    />
+  );
+});
 GhostButton.displayName = "GhostButton";
 
 // ============================================================================
@@ -170,15 +186,20 @@ const linkButtonVariants = cva(
 export interface LinkButtonProps
   extends
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof linkButtonVariants> {}
+    VariantProps<typeof linkButtonVariants> {
+  asChild?: boolean;
+}
 
 export const LinkButton = React.forwardRef<HTMLButtonElement, LinkButtonProps>(
-  ({ className, semantic, size, ...props }, ref) => (
-    <button
-      className={cn(linkButtonVariants({ semantic, size, className }))}
-      ref={ref}
-      {...props}
-    />
-  ),
+  ({ className, semantic, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    return (
+      <Comp
+        className={cn(linkButtonVariants({ semantic, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
 );
 LinkButton.displayName = "LinkButton";

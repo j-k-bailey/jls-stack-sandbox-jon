@@ -5,7 +5,7 @@ import {
   OutlineButton,
   GhostButton,
   LinkButton,
-} from "@/components/ui/button-variants";
+} from "@/components/ui/ButtonVariants";
 
 // BUTTON - Wrapper that picks the right component
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -18,6 +18,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     | "warning"
     | "neutral";
   size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg";
+  asChild?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -26,6 +27,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant = "filled",
       semantic = "neutral",
       size = "default",
+      asChild = false,
       className,
       ...props
     },
@@ -48,6 +50,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <ButtonComponent
         semantic={normalizedSemantic}
         size={size}
+        asChild={asChild}
         className={className}
         ref={ref}
         {...props}

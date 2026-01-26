@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 
 type AuthMode = "signin" | "signup";
 

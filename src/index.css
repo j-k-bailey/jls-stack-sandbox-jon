@@ -2,7 +2,6 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-
 @theme inline {
   /* ==========================================
      RADIUS SCALE
@@ -113,68 +112,76 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ==========================================
-     MUTED (Complete Token Set)
+     MUTED
      ========================================== */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border-muted: var(--border-muted);
   --color-muted-background: var(--muted-background);
   --color-muted-hover: var(--muted-hover);
+  --color-muted-on-background: var(--muted-on-background);
 
   /* ==========================================
-     PRIMARY (Complete Token Set)
+     PRIMARY
      ========================================== */
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-border-primary: var(--border-primary);
   --color-primary-background: var(--primary-background);
   --color-primary-hover: var(--primary-hover);
+  --color-primary-on-background: var(--primary-on-background);
 
   /* ==========================================
-     NEUTRAL (Complete Token Set)
+     NEUTRAL
      ========================================== */
   --color-neutral: var(--neutral);
   --color-neutral-foreground: var(--neutral-foreground);
   --color-border-neutral: var(--border-neutral);
   --color-neutral-background: var(--neutral-background);
   --color-neutral-hover: var(--neutral-hover);
+  --color-neutral-on-background: var(--neutral-on-background);
 
   /* ==========================================
-     ACCENT (Complete Token Set)
+     ACCENT
      ========================================== */
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-border-accent: var(--border-accent);
   --color-accent-background: var(--accent-background);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-on-background: var(--accent-on-background);
 
   /* ==========================================
-     SUCCESS (Complete Token Set)
+     SUCCESS
      ========================================== */
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-border-success: var(--border-success);
   --color-success-background: var(--success-background);
   --color-success-hover: var(--success-hover);
+  --color-success-on-background: var(--success-on-background);
 
   /* ==========================================
-     WARNING (Complete Token Set)
+     WARNING
      ========================================== */
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-border-warning: var(--border-warning);
   --color-warning-background: var(--warning-background);
   --color-warning-hover: var(--warning-hover);
+  --color-warning-on-background: var(--warning-on-background);
 
   /* ==========================================
-     DISABLED (Complete Token Set)
+     DISABLED
      ========================================== */
   --color-disabled: var(--disabled);
   --color-disabled-foreground: var(--disabled-foreground);
   --color-border-disabled: var(--border-disabled);
   --color-disabled-background: var(--disabled-background);
   --color-disabled-hover: var(--disabled-hover);
+  --color-disabled-on-background: var(--disabled-on-background);
 }
+
 :root {
   /* === Cyan/Aqua Brand Scale === */
   --color-cyan-50: oklch(0.9848 0.021 189.59);
@@ -254,6 +261,9 @@
   --border-muted: oklch(82% 0.022 240);
   --muted-background: oklch(93% 0.015 240);
   --muted-hover: oklch(84% 0.025 240);
+  --muted-on-background: oklch(
+    32% 0.028 240
+  ); /* Dark text for light backgrounds */
 
   /* === Primary (Electric Cyan Hero) === */
   --primary: oklch(45% 0.18 195);
@@ -261,6 +271,9 @@
   --border-primary: oklch(38% 0.19 195);
   --primary-background: oklch(94% 0.07 195);
   --primary-hover: oklch(50% 0.19 195);
+  --primary-on-background: oklch(
+    30% 0.2 195
+  ); /* Dark cyan for light backgrounds */
 
   /* === Neutral (Steel-Fuchsia Cyberpunk) === */
   --neutral: oklch(86% 0.025 315);
@@ -268,6 +281,9 @@
   --border-neutral: oklch(72% 0.028 315);
   --neutral-background: oklch(94% 0.018 315);
   --neutral-hover: oklch(80% 0.03 315);
+  --neutral-on-background: oklch(
+    28% 0.025 315
+  ); /* Dark text for light backgrounds */
 
   /* === Accent (Hot Fuchsia Vaporwave) === */
   --accent: oklch(50% 0.22 325);
@@ -275,6 +291,9 @@
   --border-accent: oklch(43% 0.23 325);
   --accent-background: oklch(94% 0.07 325);
   --accent-hover: oklch(56% 0.24 325);
+  --accent-on-background: oklch(
+    35% 0.24 325
+  ); /* Dark fuchsia for light backgrounds */
 
   /* === Success (Matrix Green-Teal) === */
   --success: oklch(48% 0.16 160);
@@ -282,6 +301,9 @@
   --border-success: oklch(40% 0.17 160);
   --success-background: oklch(94% 0.06 160);
   --success-hover: oklch(54% 0.18 160);
+  --success-on-background: oklch(
+    32% 0.18 160
+  ); /* Dark green for light backgrounds */
 
   /* === Warning (Hot Coral Danger) === */
   --warning: oklch(50% 0.2 10);
@@ -289,6 +311,9 @@
   --border-warning: oklch(42% 0.21 10);
   --warning-background: oklch(94% 0.07 10);
   --warning-hover: oklch(56% 0.22 10);
+  --warning-on-background: oklch(
+    35% 0.22 10
+  ); /* Dark coral for light backgrounds */
 
   /* === Disabled === */
   --disabled: oklch(90% 0.006 200);
@@ -296,6 +321,9 @@
   --border-disabled: oklch(85% 0.006 200);
   --disabled-background: oklch(94% 0.004 200);
   --disabled-hover: oklch(90% 0.006 200);
+  --disabled-on-background: oklch(
+    50% 0.006 200
+  ); /* Mid-gray for light backgrounds */
 }
 
 .dark {
@@ -351,6 +379,9 @@
   --border-muted: oklch(38% 0.03 240);
   --muted-background: oklch(18% 0.02 240);
   --muted-hover: oklch(32% 0.03 240);
+  --muted-on-background: oklch(
+    78% 0.022 240
+  ); /* Light text for dark backgrounds */
 
   /* === Primary (Electric Cyan Glowing) === */
   --primary: oklch(75% 0.18 195);
@@ -358,6 +389,9 @@
   --border-primary: oklch(88% 0.2 195);
   --primary-background: oklch(20% 0.1 195);
   --primary-hover: oklch(85% 0.2 195);
+  --primary-on-background: oklch(
+    88% 0.2 195
+  ); /* Bright cyan for dark backgrounds */
 
   /* === Neutral (Steel-Fuchsia Glow) === */
   --neutral: oklch(30% 0.028 315);
@@ -365,6 +399,9 @@
   --border-neutral: oklch(45% 0.035 315);
   --neutral-background: oklch(18% 0.022 315);
   --neutral-hover: oklch(38% 0.035 315);
+  --neutral-on-background: oklch(
+    88% 0.025 315
+  ); /* Light text for dark backgrounds */
 
   /* === Accent (Hot Fuchsia Neon) === */
   --accent: oklch(72% 0.24 325);
@@ -372,6 +409,9 @@
   --border-accent: oklch(85% 0.26 325);
   --accent-background: oklch(20% 0.12 325);
   --accent-hover: oklch(82% 0.26 325);
+  --accent-on-background: oklch(
+    90% 0.26 325
+  ); /* Bright fuchsia for dark backgrounds */
 
   /* === Success (Matrix Green Digital) === */
   --success: oklch(72% 0.18 160);
@@ -379,6 +419,9 @@
   --border-success: oklch(85% 0.2 160);
   --success-background: oklch(20% 0.1 160);
   --success-hover: oklch(82% 0.2 160);
+  --success-on-background: oklch(
+    88% 0.2 160
+  ); /* Bright green for dark backgrounds */
 
   /* === Warning (Hot Coral Danger) === */
   --warning: oklch(68% 0.22 10);
@@ -386,6 +429,9 @@
   --border-warning: oklch(80% 0.24 10);
   --warning-background: oklch(20% 0.12 10);
   --warning-hover: oklch(78% 0.24 10);
+  --warning-on-background: oklch(
+    85% 0.24 10
+  ); /* Bright coral for dark backgrounds */
 
   /* === Disabled === */
   --disabled: oklch(22% 0.006 200);
@@ -393,6 +439,9 @@
   --border-disabled: oklch(28% 0.006 200);
   --disabled-background: oklch(16% 0.004 200);
   --disabled-hover: oklch(22% 0.006 200);
+  --disabled-on-background: oklch(
+    60% 0.006 200
+  ); /* Mid-gray for dark backgrounds */
 }
 
 /* ==========================================

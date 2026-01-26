@@ -1,211 +1,187 @@
-import { FeatureCard } from "@/components/layoutSandbox/FeatureCard";
+import { SimpleFeatureCard } from "@/components/layoutSandbox/SimpleFeatureCard";
 import { SelectInput } from "@/components/layoutSandbox/SelectInput";
 import { TaskItem } from "@/components/layoutSandbox/TaskItem";
 import { ActivityItem } from "@/components/layoutSandbox/ActivityItem";
 import { StatCard } from "@/components/layoutSandbox/StatCard";
 import { SectionCard } from "@/components/common/SectionCard";
+import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 
 export function LayoutSandbox() {
   return (
-    <div className="max-w-6xl mx-auto space-y-section p-standard">
-      {/* Section 1: Page Title */}
-      <section className="space-y-tight border-b border-border pb-section">
-        <h1 className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
-          TaskForge Pro
-        </h1>
-        <p className="subtitle-2 text-muted-foreground">
-          Professional task management for ambitious teams (But actually just
-          pt. 2 of Tailwind Layout Sandbox, Week 2 – Day 1a: Practicing spacing,
-          flex, grid, and responsive utilities)
-        </p>
-      </section>
-
-      {/* Section 2: Feature List */}
-      <section className="space-y-compact">
-        <h2>Vertical Stack ("Feature List")</h2>
-        <SectionCard className="bg-surface-1 border border-border rounded-lg p-standard gap-compact shadow-sm">
-          <FeatureCard
-            title="AI-Powered Task Prioritization"
-            description="Let machine learning analyze your workload and automatically surface the most critical tasks based on deadlines, dependencies, and team capacity."
-            className="bg-surface-2"
+    <div className="space-y-section">
+      {/* Section 1: Vertical Stack Pattern */}
+      <SectionCard
+        title="Vertical Stack Pattern"
+        description="SimpleFeatureCard components in a vertical layout with consistent spacing"
+      >
+        <div className="space-y-compact">
+          <SimpleFeatureCard
+            title="AI-Powered Prioritization"
+            description="Automatically surface critical tasks based on deadlines, dependencies, and team capacity."
           />
-          <FeatureCard
-            title="Advanced Team Analytics"
-            description="Gain deep insights into productivity patterns, bottlenecks, and team velocity with comprehensive dashboards and custom reports."
-            className="bg-surface-2"
+          <SimpleFeatureCard
+            title="Advanced Analytics"
+            description="Gain insights into productivity patterns, bottlenecks, and team velocity."
           />
-          <FeatureCard
+          <SimpleFeatureCard
             title="Real-Time Collaboration"
-            description="Work seamlessly with your team through live updates, @mentions, file sharing, and integrated video calls. All without leaving the platform."
-            className="bg-surface-2"
+            description="Live updates, @mentions, and file sharing without leaving the platform."
           />
-        </SectionCard>
-      </section>
+        </div>
+      </SectionCard>
 
-      {/* Section 3: Responsive flex rows */}
-      <section className="space-y-compact">
-        <h2>Responsive Flex Row ("Sidebar + Content")</h2>
-        <div className="space-y-standard">
-          <div>
-            <h3 className="text-primary mb-tight">Filter Bar with Content</h3>
-            <p className="subtitle-2 text-muted-foreground mb-compact">
-              Filters stack above content on mobile, move to left sidebar on
-              desktop for better use of horizontal space.
-            </p>
-            <SectionCard>
-              <div className="flex flex-col md:flex-row gap-compact">
-                <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact md:basis-1/4">
-                  <h4 className="text-primary mb-compact">Filter</h4>
-                  <div className="space-y-compact">
-                    <SelectInput
-                      label="Status"
-                      options={[
-                        "All Tasks",
-                        "Open",
-                        "In Progress",
-                        "Completed",
-                        "Overdue",
-                      ]}
-                    />
-                    <SelectInput
-                      label="Priority"
-                      options={["All Priorities", "High", "Medium", "Low"]}
-                    />
-                    <SelectInput
-                      label="Assignee"
-                      options={["All Team", "Me", "Unassigned"]}
-                    />
-                  </div>
-                </div>
-                <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact flex-1 md:basis-3/4">
-                  <div className="flex items-center justify-between mb-compact">
-                    <h4 className="text-primary">Task List</h4>
-                  </div>
-                  <div className="space-y-tight">
-                    <TaskItem
-                      title="Complete Q4 revenue report"
-                      metadata="Due tomorrow • High priority • Assigned to you"
-                      priority="high"
-                      className="bg-surface-3"
-                    />
-                    <TaskItem
-                      title="Review design mockups"
-                      metadata="Due in 3 days • Medium priority • Jane Doe"
-                      priority="medium"
-                      className="bg-surface-3"
-                    />
-                    <TaskItem
-                      title="Update API documentation"
-                      metadata="Due next week • Low priority • John Smith"
-                      priority="low"
-                      className="bg-surface-3"
-                    />
-                  </div>
-                </div>
-              </div>
-            </SectionCard>
+      {/* Section 2: Sidebar + Content Pattern */}
+      <SectionCard
+        title="Sidebar + Content Pattern"
+        description="Responsive flex layout: stacks on mobile, side-by-side on desktop"
+      >
+        <div className="flex flex-col md:flex-row gap-standard">
+          {/* Sidebar */}
+          <div className="md:basis-1/4 space-y-compact">
+            <SelectInput
+              label="Status"
+              options={["All Tasks", "Open", "In Progress", "Completed"]}
+            />
+            <SelectInput
+              label="Priority"
+              options={["All Priorities", "High", "Medium", "Low"]}
+            />
+            <SelectInput
+              label="Assignee"
+              options={["All Team", "Me", "Unassigned"]}
+            />
           </div>
 
-          <div>
-            <h3 className="text-primary mb-tight">Activity Sidebar</h3>
-            <p className="subtitle-2 text-muted-foreground mb-compact">
-              Right sidebar shows recent activity and team updates. Hidden on
-              smaller screens to maximize workspace.
-            </p>
-            <SectionCard>
-              <div className="flex flex-row gap-compact">
-                <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact flex-1">
-                  <h4 className="text-primary mb-tight">Active Tasks</h4>
-                  <p className="body-2 text-muted-foreground leading-relaxed mb-compact">
-                    Your current focus area with today's priorities and
-                    in-progress work.
-                  </p>
-                  <div className="space-y-tight">
-                    <div className="bg-muted rounded-lg p-compact caption">
-                      <div className="text-foreground font-medium">
-                        Draft marketing copy
-                      </div>
-                      <div className="text-muted-foreground">In progress</div>
-                    </div>
-                    <div className="bg-muted rounded-lg p-compact caption">
-                      <div className="text-foreground font-medium">
-                        Code review for PR #247
-                      </div>
-                      <div className="text-muted-foreground">
-                        Waiting on feedback
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-surface-2 text-foreground border border-border rounded-lg p-compact hidden md:block md:basis-1/3">
-                  <h4 className="text-primary mb-tight">Recent Activity</h4>
-                  <div className="space-y-tight">
-                    <ActivityItem
-                      name="Jane Doe"
-                      action='Completed "User research synthesis"'
-                      timestamp="2 minutes ago"
-                    />
-                    <ActivityItem
-                      name="John Smith"
-                      action='Added comment on "API integration"'
-                      timestamp="15 minutes ago"
-                    />
-                    <ActivityItem
-                      name="Team Update"
-                      action="3 new tasks assigned to Engineering"
-                      timestamp="1 hour ago"
-                      isLast
-                    />
-                  </div>
-                </div>
-              </div>
-            </SectionCard>
+          {/* Main Content */}
+          <div className="md:basis-3/4 space-y-tight">
+            <TaskItem
+              title="Complete Q4 revenue report"
+              metadata="Due tomorrow • High priority"
+              priority="high"
+            />
+            <TaskItem
+              title="Review design mockups"
+              metadata="Due in 3 days • Medium priority"
+              priority="medium"
+            />
+            <TaskItem
+              title="Update API documentation"
+              metadata="Due next week • Low priority"
+              priority="low"
+            />
           </div>
         </div>
-      </section>
+      </SectionCard>
 
-      {/* Section 4: Dashboard Stats */}
-      <section className="space-y-compact">
-        <h2>Your Overview (Responsive Grid)</h2>
-        <p className="subtitle-2 text-muted-foreground">
-          Real-time insights into your workload and team performance.
-        </p>
-        <SectionCard>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-compact">
+      {/* Section 3: Content + Right Sidebar Pattern */}
+      <SectionCard
+        title="Content + Right Sidebar Pattern"
+        description="Activity sidebar hidden on mobile, visible on medium+ screens"
+      >
+        <div className="flex flex-row gap-standard">
+          {/* Main Content */}
+          <div className="flex-1 space-y-compact">
+            <h3 className="font-heading text-base font-semibold">
+              Active Tasks
+            </h3>
+            <div className="space-y-tight">
+              <div className="bg-surface-2 rounded-lg p-compact border border-border-muted">
+                <div className="font-medium">Draft marketing copy</div>
+                <div className="text-sm text-muted-foreground">In progress</div>
+              </div>
+              <div className="bg-surface-2 rounded-lg p-compact border border-border-muted">
+                <div className="font-medium">Code review for PR #247</div>
+                <div className="text-sm text-muted-foreground">
+                  Waiting on feedback
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Sidebar - Hidden on mobile */}
+          <div className="hidden md:block md:basis-1/3 space-y-compact">
+            <h3 className="font-heading text-base font-semibold">
+              Recent Activity
+            </h3>
+            <div className="space-y-tight">
+              <ActivityItem
+                name="Jane Doe"
+                action="Completed research synthesis"
+                timestamp="2 min ago"
+              />
+              <ActivityItem
+                name="John Smith"
+                action="Added comment on API task"
+                timestamp="15 min ago"
+              />
+              <ActivityItem
+                name="Team Update"
+                action="3 new tasks assigned"
+                timestamp="1 hour ago"
+                isLast
+              />
+            </div>
+          </div>
+        </div>
+      </SectionCard>
+
+      {/* Section 4: Responsive Grid Pattern */}
+      <SectionCard
+        title="Responsive Grid Pattern"
+        description="ResponsiveGrid component with StatCard items demonstrating 1→2→4 column behavior"
+      >
+        <ResponsiveGrid>
+          <StatCard
+            label="Open Tasks"
+            value={12}
+            description="Waiting to be started"
+            variant="featured"
+          />
+          <StatCard
+            label="In Progress"
+            value={7}
+            description="Currently active"
+          />
+          <StatCard
+            label="Completed"
+            value={34}
+            description="Finished this week"
+          />
+          <StatCard
+            label="Overdue"
+            value={3}
+            description="Need attention"
+            variant="error"
+          />
+        </ResponsiveGrid>
+      </SectionCard>
+
+      {/* Section 5: Full-Width Grid Item */}
+      <SectionCard
+        title="Grid Spanning Pattern"
+        description="Using manual column spans for asymmetric layouts"
+      >
+        <ResponsiveGrid>
+          <StatCard
+            label="Active Users"
+            value={156}
+            description="Online in the last hour"
+          />
+          <StatCard
+            label="API Calls"
+            value="2.4M"
+            description="Requests this month"
+          />
+          <div className="lg:col-span-2">
             <StatCard
-              label="Open Tasks"
-              value={12}
-              description="Tasks waiting to be started or assigned to team members"
+              label="System Health"
+              value="99.8%"
+              description="Uptime across all services"
               variant="featured"
             />
-            <StatCard
-              label="In Progress"
-              value={7}
-              description="Currently active tasks being worked on by your team"
-              className="bg-surface-2"
-            />
-            <StatCard
-              label="Completed This Week"
-              value={34}
-              description="Tasks successfully finished in the last 7 days"
-              className="bg-surface-2"
-            />
-            <StatCard
-              label="Overdue"
-              value={3}
-              description="Tasks that have passed their deadline and need attention"
-              variant="error"
-              className="bg-surface-2"
-            />
-            <StatCard
-              label="Team Members Active"
-              value={8}
-              description="Team members currently online or active in the last hour"
-              className="sm:col-span-2 lg:col-span-4 bg-surface-2"
-            />
           </div>
-        </SectionCard>
-      </section>
+        </ResponsiveGrid>
+      </SectionCard>
     </div>
   );
 }

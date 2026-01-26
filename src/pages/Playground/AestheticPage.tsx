@@ -1,13 +1,25 @@
 import { PageHeader } from "@/components/common/PageHeader";
+import { InlineAlert } from "@/components/ui/InlineAlert";
+import { FaCircleInfo } from "react-icons/fa6";
 
 export function AestheticPage() {
   return (
-    <div className="space-y-section">
-      <PageHeader
-        pageTitle="Aesthetic Fun"
-        level="h2"
-        pageDescription="An experiment playing with various Tailwind CSS features to see how they work together."
-      />
+    <div className="space-y-section container px-standard pb-section">
+      <PageHeader pageTitle="Aesthetic Playground" level="h2" />
+
+      <InlineAlert variant="primary">
+        <div className="shrink-0 py-1">
+          <FaCircleInfo className="h-6 w-6" />
+        </div>
+        <div className="flex-1">
+          <p className="font-bold">Creative Experimentation Zone</p>
+          <p className="text-sm mt-1">
+            This page showcases various aesthetic styles using pure CSS and
+            Tailwind utilities. These are explorations in visual design, not
+            production components.
+          </p>
+        </div>
+      </InlineAlert>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-standard">
         {/* Neobrutalism */}

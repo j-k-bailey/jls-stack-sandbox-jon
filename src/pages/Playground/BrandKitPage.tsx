@@ -1,14 +1,50 @@
 import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
+import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
+import { FeatureCard } from "@/components/ui/FeatureCard";
+import { FaPalette, FaShapes, FaFont, FaRulerCombined } from "react-icons/fa6";
 
 export function BrandKitPage() {
   return (
-    <div className="space-y-section container mx-auto">
+    <div className="space-y-section container px-standard pb-section">
       <PageHeader
         pageTitle="JLS Stack Sandbox Design System"
         level="h2"
         pageDescription="Electric cyan and hot fuchsia create a cohesive color story with progressive surface elevation and comprehensive token sets."
+        hr
       />
+
+      <section>
+        <h3 className="mb-standard">Design System Overview</h3>
+        <ResponsiveGrid>
+          <FeatureCard
+            icon={<FaShapes />}
+            heading="Surface Elevation"
+            description="Four distinct levels create clear hierarchy with progressive cyan tinting"
+            emphasis="subtle"
+          />
+          <FeatureCard
+            icon={<FaPalette />}
+            heading="Brand Colors"
+            description="Electric cyan and hot fuchsia anchor all interactive moments"
+            emphasis="subtle"
+          />
+          <FeatureCard
+            icon={<FaFont />}
+            heading="Typography"
+            description="Comprehensive scale from headlines to captions with optimal readability"
+            emphasis="subtle"
+          />
+          <FeatureCard
+            icon={<FaRulerCombined />}
+            heading="Spacing System"
+            description="Four-step scale for consistent rhythm across all components"
+            emphasis="subtle"
+          />
+        </ResponsiveGrid>
+      </section>
+
+      <hr className="border-border" />
 
       {/* ===============================
           1. SURFACE ELEVATION SYSTEM
@@ -22,8 +58,7 @@ export function BrandKitPage() {
           </p>
         </div>
 
-        {/* Grid Reference */}
-        <div className="grid grid-cols-5 gap-compact">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-compact">
           <div className="text-center space-y-tight">
             <div className="h-16 rounded border-2 border-border bg-background" />
             <p className="caption text-muted-foreground">Level 0</p>
@@ -60,8 +95,7 @@ export function BrandKitPage() {
           </p>
         </div>
 
-        {/* Large Color Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-standard">
+        <ResponsiveGrid maxColumns="two">
           {/* Primary Cyan */}
           <div className="bg-linear-to-br from-primary via-primary to-primary-hover text-primary-foreground p-section rounded-lg border-2 border-border-primary shadow-lg">
             <div className="space-y-compact">
@@ -115,10 +149,8 @@ export function BrandKitPage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Token Variants */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-compact">
+        </ResponsiveGrid>
+        <ResponsiveGrid>
           <div className="space-y-1">
             <div className="h-20 rounded-lg border-2 border-border-primary bg-primary" />
             <p className="caption text-center text-muted-foreground">Primary</p>
@@ -135,7 +167,7 @@ export function BrandKitPage() {
             <div className="h-20 rounded-lg border-2 border-border-accent bg-accent-hover" />
             <p className="caption text-center text-muted-foreground">Hover</p>
           </div>
-        </div>
+        </ResponsiveGrid>
       </section>
 
       <hr className="border-border" />
@@ -150,7 +182,6 @@ export function BrandKitPage() {
             Complete token sets for every semantic need.
           </p>
         </div>
-
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-compact">
           {/* Success */}
           <div className="group bg-surface-1 border border-border rounded-lg overflow-hidden hover:border-border-success transition-all">
@@ -231,7 +262,7 @@ export function BrandKitPage() {
           {/* Buttons */}
           <div className="space-y-compact">
             <p className="overline-text text-primary">BUTTONS</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-compact">
+            <ResponsiveGrid maxColumns="three">
               <Button semantic="primary">Primary</Button>
               <Button semantic="accent">Accent</Button>
               <Button semantic="success">Success</Button>
@@ -249,8 +280,9 @@ export function BrandKitPage() {
               <Button variant="link" semantic="success">
                 Link
               </Button>
-            </div>
+            </ResponsiveGrid>
           </div>
+
           {/* Badges */}
           <div className="space-y-compact">
             <p className="overline-text text-primary">BADGES</p>

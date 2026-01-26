@@ -1,15 +1,15 @@
 import { cn } from "@/lib/utils";
-interface FeatureCardProps {
+interface SimpleFeatureCardProps {
   title: string;
   description: string;
   className?: string;
 }
 
-export function FeatureCard({
+export function SimpleFeatureCard({
   title,
   description,
   className,
-}: FeatureCardProps) {
+}: SimpleFeatureCardProps) {
   return (
     <div
       className={cn(

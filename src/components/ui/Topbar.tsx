@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/themeToggle";
+import { Button } from "@/components/ui/Button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { FaBars } from "react-icons/fa6";
 import AppLogo from "@/components//common/AppLogo";
 

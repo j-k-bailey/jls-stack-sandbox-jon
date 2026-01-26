@@ -6,13 +6,11 @@ export function LayoutSandboxPage() {
     <div className="space-y-section container px-standard pb-section">
       <PageHeader
         pageTitle="Layout Sandbox"
-        pageDescription="A playground for practicing Tailwind layout patterns."
+        pageDescription="Practical demonstrations of responsive layout patterns using my JLS Stack component library."
+        hr
       />
 
-      {/* Reuse the sandbox component from Lesson 2.1a */}
-      <div className="rounded-lg border border-border overflow-hidden">
-        <LayoutSandbox />
-      </div>
+      <LayoutSandbox />
     </div>
   );
 }

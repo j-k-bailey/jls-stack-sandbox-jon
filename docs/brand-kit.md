@@ -2,7 +2,7 @@
 
 **Name**: JLS Stack Sandbox  
 **Purpose**: Training playground for building stack-aligned apps quickly and correctly  
-**Vibe**: Experimental, disciplined, modern
+**Vibe**: Experimental, disciplined, modern  
 **Color Story**: Electric cyan (195°) and hot fuchsia (325°) with OKLCH precision
 
 ---
@@ -39,15 +39,15 @@
   - Dark: `oklch(28% 0.025 240)`
   - Usage: De-emphasized content, helper text, timestamps
 - **Disabled — Ghosted (200°)**
-  - Light: `oklch(92% 0.006 200)`
-  - Dark: `oklch(20% 0.006 200)`
+  - Light: `oklch(90% 0.006 200)`
+  - Dark: `oklch(22% 0.006 200)`
   - Usage: Inactive states, disabled components
 
 ### Neutrals
 
 - **Background**: Main canvas
   - Light: `oklch(98% 0.008 200)`
-  - Dark: `oklch(10% 0.015 200)`
+  - Dark: `oklch(12% 0.015 200)`
 - **Foreground**: Primary text
   - Light: `oklch(18% 0.015 200)`
   - Dark: `oklch(95% 0.01 200)`
@@ -71,23 +71,59 @@
 
 ### Token Variation
 
-Each semantic color has 5 tokens:
+Each semantic color has **6 tokens** for flexible, accessible usage:
 
---[semantic] Base color
---[semantic]-foreground Text on base (high contrast)
---border-[semantic] Border matching context
---[semantic]-background Subtle tinted background
---[semantic]-hover Interactive hover state
+#### Token Set
+
+- `--[semantic]` — Base color (the actual hue at full intensity)
+- `--[semantic]-foreground` — Text on solid base color (high contrast, for buttons)
+- `--[semantic]-on-background` — Text on subtle background (high contrast, for alerts/badges)
+- `--border-[semantic]` — Border matching context
+- `--[semantic]-background` — Subtle tinted background (10% opacity style)
+- `--[semantic]-hover` — Interactive hover state
+
+#### Usage Patterns
+
+**Solid backgrounds (buttons, badges):**
+
+```tsx
+className = "bg-primary text-primary-foreground";
+```
+
+→ Bright cyan background with white text
+
+**Subtle backgrounds (alerts, info cards):**
+
+```tsx
+className = "bg-primary-background text-primary-on-background";
+```
+
+→ Light cyan background with dark cyan text
 
 **Example — Primary Cyan**:
 
 ```css
---primary: oklch(45% 0.18 195);
---primary-foreground: oklch(98% 0.01 195);
---border-primary: oklch(38% 0.19 195);
---primary-background: oklch(94% 0.07 195);
---primary-hover: oklch(50% 0.19 195);
+/* Light mode */
+--primary: oklch(45% 0.18 195); /* Base cyan */
+--primary-foreground: oklch(98% 0.01 195); /* White text on cyan button */
+--primary-on-background: oklch(30% 0.2 195); /* Dark cyan on light bg */
+--border-primary: oklch(38% 0.19 195); /* Darker cyan border */
+--primary-background: oklch(94% 0.07 195); /* Subtle cyan tint */
+--primary-hover: oklch(50% 0.19 195); /* Brighter on hover */
+
+/* Dark mode */
+--primary: oklch(75% 0.18 195); /* Bright cyan */
+--primary-foreground: oklch(8% 0.02 195); /* Dark text on cyan button */
+--primary-on-background: oklch(88% 0.2 195); /* Bright cyan on dark bg */
+--border-primary: oklch(88% 0.2 195); /* Glowing cyan border */
+--primary-background: oklch(20% 0.1 195); /* Dark cyan tint */
+--primary-hover: oklch(85% 0.2 195); /* Even brighter on hover */
 ```
+
+**Contrast Compliance:**
+
+- `*-foreground` tokens: ≥ 7:1 contrast on solid `*` backgrounds (WCAG AAA)
+- `*-on-background` tokens: ≥ 4.5:1 contrast on `*-background` surfaces (WCAG AA)
 
 ---
 
@@ -173,6 +209,43 @@ Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 
 ---
 
+## Component Token Usage Examples
+
+### Buttons
+
+```tsx
+// Primary button - solid cyan
+<button className="bg-primary text-primary-foreground hover:bg-primary-hover">
+
+// Outlined primary button
+<button className="border-2 border-primary text-primary-on-background bg-transparent">
+
+// Ghost primary button
+<button className="text-primary-on-background hover:bg-primary-background">
+```
+
+### Alerts
+
+```tsx
+// Success alert - subtle green background
+<div className="bg-success-background text-success-on-background border border-success">
+
+// Warning alert - solid coral (critical)
+<div className="bg-warning text-warning-foreground">
+```
+
+### Badges
+
+```tsx
+// Accent badge - solid fuchsia
+<span className="bg-accent text-accent-foreground">
+
+// Neutral badge - subtle
+<span className="bg-neutral-background text-neutral-on-background">
+```
+
+---
+
 ## Quick Reference
 
 **Brand Hues**: Cyan 195° • Fuchsia 325°  
@@ -180,6 +253,14 @@ Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 **Neutral Hue**: Cool Blue 200°  
 **Surface Hue Shift**: 200° → 192° (progressive cyan tint)
 
-**Contrast Ratios**: All foreground/background ≥ 4.5:1 (WCAG AA)  
+**Token Pattern**: Each semantic has 6 variants
+
+- Base color, foreground (for solid), on-background (for subtle), border, background, hover
+
+**Contrast Ratios**:
+
+- Foreground tokens: ≥ 7:1 on solid backgrounds (WCAG AAA)
+- On-background tokens: ≥ 4.5:1 on tinted backgrounds (WCAG AA)
+
 **Dark Mode Glow**: Semantic borders at 80-88% lightness  
 **Chart Colors**: Stay in cold spectrum (blues, purples, teals, coral accent)

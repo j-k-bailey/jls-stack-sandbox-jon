@@ -55,11 +55,7 @@ export function ComponentHighlightShowcase({
   children,
   className,
 }: ComponentHighlightShowcaseProps) {
-  return (
-    <div className={cn("ml-standard", className)}>
-      <div>{children}</div>
-    </div>
-  );
+  return <div className={cn("ml-standard", className)}>{children}</div>;
 }
 
 export function ComponentHighlightProps({

@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/themeToggle";
+import { Button } from "@/components/ui/Button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { FaX } from "react-icons/fa6";
 import {
   NavigationGroup,
   type NavConfig,
-} from "@/components/ui/navigationItem";
+} from "@/components/ui/NavigationItem";
 
 interface SidebarProps {
   navigationConfig: NavConfig[];
