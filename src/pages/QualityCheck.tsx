@@ -16,6 +16,15 @@ const toDoItems = [
 
 const updates = [
   {
+    version: "v0.0.5",
+    date: "January 27, 2026",
+    title: "Lesson 2.6 - Forms",
+    items: [
+      "Imported Dialog, Form, Popover from shadcn",
+      "Updated ButtonVariants, Command, Dialog, Form, Input, Label, and Popover from shadcn to better align with brand kit",
+    ],
+  },
+  {
     version: "v0.0.4",
     date: "January 26, 2026",
     title: "Lesson 2.5 - Reusable Components & Patterns - Part 2",

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Visualization docs for component editing
+docs/formComponentsVisualization.tsx

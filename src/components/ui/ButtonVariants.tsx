@@ -76,7 +76,7 @@ FilledButton.displayName = "FilledButton";
 // ============================================================================
 // OUTLINE BUTTON
 // ============================================================================
-const outlineButtonVariants = cva(`${baseClasses} border-2 shadow-xs`, {
+const outlineButtonVariants = cva(`${baseClasses} border shadow-xs`, {
   variants: {
     semantic: {
       primary:

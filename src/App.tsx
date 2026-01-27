@@ -12,6 +12,7 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 import { BrandKitPage } from "@/pages/Playground/BrandKitPage";
 import { QualityCheckPage } from "@/pages/QualityCheck";
 import { SettingsPage } from "@/pages/SettingsPage";
+import { CreateTaskPage } from "@/pages/CreateTaskPage";
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
         <Route path="layout-sandbox" element={<LayoutSandboxPage />} />
 
         <Route path="components" element={<ComponentsPage />} />
+
+        {/* Quality Check */}
+        <Route path="create-task" element={<CreateTaskPage />} />
 
         {/* Playground with layout wrapper */}
         <Route path="playground" element={<PlaygroundLayout />}>

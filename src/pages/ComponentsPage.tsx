@@ -14,7 +14,8 @@ import {
   ComponentHighlightTitle,
 } from "@/components/common/ComponentHighlight";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 import {
   UpdateCard,
   UpdateCardContent,
@@ -29,6 +30,52 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { InlineAlert } from "@/components/ui/InlineAlert";
 import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  CardAction,
+} from "@/components/ui/Card";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/Dialog";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverDescription,
+} from "@/components/ui/Popover";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandSeparator,
+  CommandShortcut,
+  CommandDialog,
+} from "@/components/ui/Command";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/Form";
+import {
   FaCircleInfo,
   FaBell,
   FaFaceSmile,
@@ -37,10 +84,52 @@ import {
   FaLightbulb,
   FaCode,
   FaRocket,
+  FaGears,
+  FaMagnifyingGlass,
+  FaCalendar,
 } from "react-icons/fa6";
 import { FeatureCard } from "@/components/ui/FeatureCard";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import React from "react";
+
+// Form schema for the example form
+const formSchema = z
+  .object({
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    email: z.string().email("Please enter a valid email"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+    bio: z.string().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+type FormValues = z.infer<typeof formSchema>;
 
 export function ComponentsPage() {
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [commandOpen, setCommandOpen] = React.useState(false);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      bio: "",
+    },
+  });
+
+  const onSubmit = (data: FormValues) => {
+    console.log("Form submitted:", data);
+    alert("Form submitted successfully! Check console for data.");
+  };
+
   return (
     <div className="space-y-section container px-standard pb-section">
       <PageHeader
@@ -213,6 +302,240 @@ export function ComponentsPage() {
 
       <hr />
 
+      {/* Card Section */}
+      <ComponentHighlight>
+        <ComponentHighlightTitle>Card</ComponentHighlightTitle>
+        <ComponentHighlightDescription>
+          Compound card component with surface-1 background elevation. Built
+          with CardHeader, CardTitle, CardDescription, CardAction, CardContent,
+          and CardFooter subcomponents for flexible layouts.
+        </ComponentHighlightDescription>
+        <ComponentHighlightShowcase>
+          <SectionCard title="Card Structures">
+            <div className="space-y-compact">
+              {/* Full Card with All Parts */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Complete Card Example</CardTitle>
+                  <CardDescription>
+                    This card demonstrates all available subcomponents working
+                    together
+                  </CardDescription>
+                  <CardAction>
+                    <Button variant="ghost" size="icon-sm">
+                      <FaGears />
+                    </Button>
+                  </CardAction>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm">
+                    Card content goes here. This is the main body area for your
+                    card's information.
+                  </p>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline">Cancel</Button>
+                  <Button semantic="primary">Save</Button>
+                </CardFooter>
+              </Card>
+
+              {/* Card Without Action */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Card Without Action Button</CardTitle>
+                  <CardDescription>
+                    A simpler card without the action slot
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm">
+                    Content can include any React components or text
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Minimal Card */}
+              <Card>
+                <CardContent>
+                  <p className="text-sm">
+                    Minimal card with only content - no header or footer
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </SectionCard>
+          <ComponentHighlightProps>
+            Card (className?: string), CardHeader (className?: string),
+            CardTitle (className?: string, children: ReactNode), CardDescription
+            (className?: string, children: ReactNode), CardAction (className?:
+            string, children: ReactNode), CardContent (className?: string,
+            children: ReactNode), CardFooter (className?: string, children:
+            ReactNode)
+          </ComponentHighlightProps>
+        </ComponentHighlightShowcase>
+      </ComponentHighlight>
+
+      <hr />
+
+      {/* Command Section */}
+      <ComponentHighlight>
+        <ComponentHighlightTitle>Command</ComponentHighlightTitle>
+        <ComponentHighlightDescription>
+          Command palette component with search, groups, keyboard shortcuts, and
+          dialog mode. Perfect for command menus, search interfaces, and quick
+          actions.
+        </ComponentHighlightDescription>
+        <ComponentHighlightShowcase>
+          <SectionCard title="Command Component">
+            <div className="space-y-compact">
+              {/* Static Command */}
+              <div>
+                <h3 className="font-heading text-base font-semibold mb-compact">
+                  Static Command Palette
+                </h3>
+                <Command className="rounded-lg border">
+                  <CommandInput placeholder="Type a command or search..." />
+                  <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup heading="Suggestions">
+                      <CommandItem>
+                        <FaCalendar className="mr-2" />
+                        <span>Calendar</span>
+                      </CommandItem>
+                      <CommandItem>
+                        <FaMagnifyingGlass className="mr-2" />
+                        <span>Search Emoji</span>
+                      </CommandItem>
+                      <CommandItem>
+                        <FaGears className="mr-2" />
+                        <span>Settings</span>
+                      </CommandItem>
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Settings">
+                      <CommandItem>
+                        <span>Profile</span>
+                        <CommandShortcut>⌘P</CommandShortcut>
+                      </CommandItem>
+                      <CommandItem>
+                        <span>Billing</span>
+                        <CommandShortcut>⌘B</CommandShortcut>
+                      </CommandItem>
+                      <CommandItem>
+                        <span>Settings</span>
+                        <CommandShortcut>⌘S</CommandShortcut>
+                      </CommandItem>
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </div>
+
+              {/* Command Dialog */}
+              <div>
+                <h3 className="font-heading text-base font-semibold mb-compact">
+                  Command Dialog (Full-screen)
+                </h3>
+                <Button variant="outline" onClick={() => setCommandOpen(true)}>
+                  Open Command Dialog
+                </Button>
+                <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+                  <CommandInput placeholder="Type a command or search..." />
+                  <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup heading="Actions">
+                      <CommandItem>Create New Document</CommandItem>
+                      <CommandItem>Open File</CommandItem>
+                      <CommandItem>Save All</CommandItem>
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Recent">
+                      <CommandItem>Project Alpha</CommandItem>
+                      <CommandItem>Design System</CommandItem>
+                      <CommandItem>Documentation</CommandItem>
+                    </CommandGroup>
+                  </CommandList>
+                </CommandDialog>
+              </div>
+            </div>
+          </SectionCard>
+          <ComponentHighlightProps>
+            Command (className?: string), CommandInput (placeholder?: string),
+            CommandList (children: ReactNode), CommandEmpty (children:
+            ReactNode), CommandGroup (heading?: string, children: ReactNode),
+            CommandItem (onSelect?: () =&gt; void, disabled?: boolean, children:
+            ReactNode), CommandSeparator (), CommandShortcut (children:
+            ReactNode), CommandDialog (open: boolean, onOpenChange: (open:
+            boolean) =&gt; void)
+          </ComponentHighlightProps>
+        </ComponentHighlightShowcase>
+      </ComponentHighlight>
+
+      <hr />
+
+      {/* Dialog Section */}
+      <ComponentHighlight>
+        <ComponentHighlightTitle>Dialog</ComponentHighlightTitle>
+        <ComponentHighlightDescription>
+          Modal dialog component with overlay, customizable close button, and
+          structured header/footer sections. Uses surface-4 elevation for
+          prominent modals.
+        </ComponentHighlightDescription>
+        <ComponentHighlightShowcase>
+          <SectionCard title="Dialog Component">
+            <div className="space-y-compact">
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Open Dialog</Button>
+                </DialogTrigger>
+                <DialogContent showCloseButton={true}>
+                  <DialogHeader>
+                    <DialogTitle>Edit Profile</DialogTitle>
+                    <DialogDescription>
+                      Make changes to your profile here. Click save when you're
+                      done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-standard py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" placeholder="Enter your name" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="email@example.com"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button semantic="primary">Save Changes</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </SectionCard>
+          <ComponentHighlightProps>
+            Dialog (open?: boolean, onOpenChange?: (open: boolean) =&gt; void),
+            DialogTrigger (asChild?: boolean, children: ReactNode),
+            DialogContent (showCloseButton?: boolean, className?: string,
+            children: ReactNode), DialogHeader (className?: string, children:
+            ReactNode), DialogTitle (className?: string, children: ReactNode),
+            DialogDescription (className?: string, children: ReactNode),
+            DialogFooter (className?: string, children: ReactNode)
+          </ComponentHighlightProps>
+        </ComponentHighlightShowcase>
+      </ComponentHighlight>
+
+      <hr />
+
       {/* FeatureCard Section */}
       <ComponentHighlight>
         <ComponentHighlightTitle>FeatureCard</ComponentHighlightTitle>
@@ -348,6 +671,146 @@ export function ComponentsPage() {
 
       <hr />
 
+      {/* Form Section */}
+      <ComponentHighlight>
+        <ComponentHighlightTitle>Form</ComponentHighlightTitle>
+        <ComponentHighlightDescription>
+          Form components built on react-hook-form with built-in validation,
+          error handling, and accessibility. Uses FormField, FormItem,
+          FormLabel, FormControl, FormDescription, and FormMessage for
+          structured field layouts.
+        </ComponentHighlightDescription>
+        <ComponentHighlightShowcase>
+          <SectionCard title="Form Example">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-standard"
+              >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input placeholder="johndoe" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Your public display name. Min 3 characters.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="john@example.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        We'll use this for account notifications
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Must be at least 8 characters
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Re-enter your password</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bio (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Tell us about yourself..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Maximum 200 characters</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex gap-2 pt-4">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => form.reset()}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" semantic="primary">
+                    Create Account
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </SectionCard>
+          <ComponentHighlightProps>
+            Form (Spread react-hook-form methods), FormField (control: Control,
+            name: string, render: (field) =&gt; ReactNode), FormItem
+            (className?: string), FormLabel (className?: string, children:
+            ReactNode), FormControl (children: ReactNode - wraps input),
+            FormDescription (className?: string, children: ReactNode),
+            FormMessage (className?: string - auto-displays errors)
+          </ComponentHighlightProps>
+        </ComponentHighlightShowcase>
+      </ComponentHighlight>
+
+      <hr />
+
       {/* InlineAlert Section */}
       <ComponentHighlight>
         <ComponentHighlightTitle>InlineAlert</ComponentHighlightTitle>
@@ -459,24 +922,110 @@ export function ComponentsPage() {
       <ComponentHighlight>
         <ComponentHighlightTitle>Input</ComponentHighlightTitle>
         <ComponentHighlightDescription>
-          Text input component with support for file uploads, placeholders, and
-          form validation with accessibility features.
+          Text input component with brand-aligned styling, file upload support,
+          focus states with cyan ring, error states with coral warning color,
+          and accessibility features. Features fuchsia accent hover glow and
+          cyan focus ring.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
-          <SectionCard title="Input Fields">
+          <SectionCard title="Input Variants">
             <div className="space-y-standard max-w-sm">
-              <Input placeholder="Enter text here..." />
-              <Input placeholder="Email address..." type="email" />
-              <Input placeholder="Password..." type="password" />
-              <Input type="file" />
+              <div className="space-y-2">
+                <Label htmlFor="text">Text Input</Label>
+                <Input id="text" placeholder="Enter text here..." />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Input</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="email@example.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password Input</Label>
+                <Input id="password" type="password" placeholder="••••••••" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="number">Number Input</Label>
+                <Input id="number" type="number" placeholder="0" />
+              </div>
+
+              <div className="group space-y-2">
+                <Label htmlFor="disabled">Disabled Input</Label>
+                <Input
+                  id="disabled"
+                  type="text"
+                  disabled
+                  placeholder="Disabled field"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="error">Input with Error</Label>
+                <Input
+                  id="error"
+                  type="text"
+                  aria-invalid={true}
+                  placeholder="Invalid input"
+                />
+                <p className="text-warning text-sm">This field has an error</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="file">File Upload</Label>
+                <Input id="file" type="file" />
+              </div>
             </div>
           </SectionCard>
           <ComponentHighlightProps>
-            type (string), placeholder (string), className (string), disabled
-            (boolean)
+            type (string - "text" | "email" | "password" | "number" | "file" |
+            etc.), placeholder (string), disabled (boolean), aria-invalid
+            (boolean), className (string), ...standard input props
           </ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
+      <hr />
+
+      {/* Label Section */}
+      <ComponentHighlight>
+        <ComponentHighlightTitle>Label</ComponentHighlightTitle>
+        <ComponentHighlightDescription>
+          Form label component with subtitle-2 typography (14px, 500 weight),
+          proper spacing, and support for disabled state styling when used with
+          group wrapper.
+        </ComponentHighlightDescription>
+        <ComponentHighlightShowcase>
+          <SectionCard title="Label Examples">
+            <div className="space-y-standard max-w-sm">
+              <div className="space-y-2">
+                <Label htmlFor="example1">Standard Label</Label>
+                <Input id="example1" placeholder="Associated input" />
+              </div>
+
+              <div className="group space-y-2">
+                <Label htmlFor="example2">Label with Disabled Input</Label>
+                <Input id="example2" placeholder="Disabled" disabled />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="example3">
+                  Label with Required Indicator *
+                </Label>
+                <Input id="example3" placeholder="Required field" required />
+              </div>
+            </div>
+          </SectionCard>
+          <ComponentHighlightProps>
+            htmlFor (string - associates with input id), className (string),
+            children (ReactNode)
+          </ComponentHighlightProps>
+        </ComponentHighlightShowcase>
+      </ComponentHighlight>
+
       <hr />
 
       {/* PageHeader Section */}
@@ -503,6 +1052,90 @@ export function ComponentsPage() {
       </ComponentHighlight>
 
       <hr />
+
+      {/* Popover Section */}
+      <ComponentHighlight>
+        <ComponentHighlightTitle>Popover</ComponentHighlightTitle>
+        <ComponentHighlightDescription>
+          Floating popover component with surface-3 elevation, structured
+          header/title/description sections, and customizable positioning.
+          Perfect for tooltips, dropdown menus, and contextual information.
+        </ComponentHighlightDescription>
+        <ComponentHighlightShowcase>
+          <SectionCard title="Popover Examples">
+            <div className="flex flex-wrap gap-4">
+              {/* Simple Popover */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">Simple Popover</Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <p className="text-sm">
+                    This is a simple popover with just text content.
+                  </p>
+                </PopoverContent>
+              </Popover>
+
+              {/* Popover with Header */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">Popover with Header</Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverHeader>
+                    <PopoverTitle>Popover Title</PopoverTitle>
+                    <PopoverDescription>
+                      This popover includes a structured header with title and
+                      description.
+                    </PopoverDescription>
+                  </PopoverHeader>
+                  <div className="mt-4 space-y-2">
+                    <Input placeholder="Input in popover" />
+                    <Button semantic="primary" className="w-full">
+                      Submit
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              {/* Popover with Form */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">
+                    <FaCalendar className="mr-2" />
+                    Date Picker Example
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverHeader>
+                    <PopoverTitle>Select Date</PopoverTitle>
+                    <PopoverDescription>
+                      Choose a date from the options
+                    </PopoverDescription>
+                  </PopoverHeader>
+                  <div className="mt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Calendar component would go here
+                    </p>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </SectionCard>
+          <ComponentHighlightProps>
+            Popover (open?: boolean, onOpenChange?: (open: boolean) =&gt; void),
+            PopoverTrigger (asChild?: boolean, children: ReactNode),
+            PopoverContent (align?: "center" | "start" | "end", sideOffset?:
+            number, className?: string, children: ReactNode), PopoverHeader
+            (className?: string, children: ReactNode), PopoverTitle (className?:
+            string, children: ReactNode), PopoverDescription (className?:
+            string, children: ReactNode)
+          </ComponentHighlightProps>
+        </ComponentHighlightShowcase>
+      </ComponentHighlight>
+
+      <hr />
+
       {/* ResponsiveGrid Section */}
       <ComponentHighlight>
         <ComponentHighlightTitle>ResponsiveGrid</ComponentHighlightTitle>

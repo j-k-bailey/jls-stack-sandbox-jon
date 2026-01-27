@@ -1,13 +1,14 @@
 import {
-  FaLayerGroup,
-  FaCube,
-  FaFlask,
-  FaClipboardCheck,
-  FaQuestion,
-  FaHouse,
-  FaGear,
-  FaEnvelope,
-} from "react-icons/fa6";
+  Home,
+  Layers,
+  Box,
+  CalendarDays,
+  FlaskConical,
+  ClipboardCheck,
+  CircleHelp,
+  Settings,
+  Mail,
+} from "lucide-react";
 import type { NavConfig } from "@/components/ui/NavigationItem";
 
 export const NAVIGATION_CONFIG: NavConfig[] = [
@@ -19,19 +20,25 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
     type: "item",
     label: "Dashboard",
     to: "/",
-    icon: FaHouse,
+    icon: Home,
   },
   {
     type: "item",
     label: "Layout Sandbox",
     to: "/layout-sandbox",
-    icon: FaLayerGroup,
+    icon: Layers,
   },
   {
     type: "item",
     label: "Components",
     to: "/components",
-    icon: FaCube,
+    icon: Box,
+  },
+  {
+    type: "item",
+    label: "Task Manager",
+    to: "/create-Task",
+    icon: CalendarDays,
   },
   {
     type: "heading",
@@ -41,13 +48,13 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
     type: "item",
     label: "Playground",
     to: "/playground",
-    icon: FaFlask,
+    icon: FlaskConical,
   },
   {
     type: "item",
     label: "Quality Log",
     to: "/quality-check",
-    icon: FaClipboardCheck,
+    icon: ClipboardCheck,
   },
   {
     type: "heading",
@@ -57,19 +64,19 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
     type: "item",
     label: "Help",
     to: "/help",
-    icon: FaQuestion,
+    icon: CircleHelp,
   },
   {
     type: "item",
     label: "Settings",
     to: "/settings",
-    icon: FaGear,
+    icon: Settings,
   },
   {
     type: "item",
     label: "Inbox",
     to: "/inbox",
-    icon: FaEnvelope,
+    icon: Mail,
     badge: {
       label: "Alpha",
       variant: "accent",
