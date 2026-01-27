@@ -1,13 +1,10 @@
-"use client";
-
 import * as React from "react";
-import { format, parse, isValid } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, RotateCcw } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/BrandButton";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -27,101 +24,96 @@ interface DatePickerProps {
 export function DatePicker({
   value,
   onChange,
-  placeholder = "MM/DD/YYYY",
+  placeholder = "Select date",
   disabled = false,
   className,
-  name,
   id,
 }: DatePickerProps) {
-  const [inputValue, setInputValue] = React.useState("");
   const [isOpen, setIsOpen] = React.useState(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
 
-  /* ------------------------------------------------------------------ */
-  /* Sync committed value → input                                        */
-  /* ------------------------------------------------------------------ */
-  React.useEffect(() => {
-    if (value) {
-      setInputValue(format(value, "MM/dd/yyyy"));
-    } else {
-      setInputValue("");
-    }
-  }, [value]);
-
-  /* ------------------------------------------------------------------ */
-  /* Draft typing (NO validation / commit here)                           */
-  /* ------------------------------------------------------------------ */
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+  const close = () => {
+    setIsOpen(false);
+    requestAnimationFrame(() => {
+      triggerRef.current?.focus();
+    });
   };
 
-  /* ------------------------------------------------------------------ */
-  /* Commit draft → value (on blur / Enter)                               */
-  /* ------------------------------------------------------------------ */
-  const commitInputValue = () => {
-    const draft = inputValue.trim();
-
-    if (draft === "") {
-      onChange?.(undefined);
+  const handleCalendarSelect = (date: Date | undefined) => {
+    if (!date || (value && date.getTime() === value.getTime())) {
+      close();
       return;
     }
 
-    const parsed = parse(draft, "MM/dd/yyyy", new Date());
+    onChange?.(date);
+    close();
+  };
 
-    if (isValid(parsed) && format(parsed, "MM/dd/yyyy") === draft) {
-      onChange?.(parsed);
-    } else {
-      // Revert to last committed value
-      setInputValue(value ? format(value, "MM/dd/yyyy") : "");
-    }
+  const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange?.(undefined);
+    requestAnimationFrame(() => {
+      triggerRef.current?.focus();
+    });
   };
 
   return (
-    <div className="flex gap-2 items-center">
-      <Input
-        type="text"
-        id={id}
-        value={inputValue}
-        onChange={handleInputChange}
-        onBlur={commitInputValue}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            commitInputValue();
-          }
-        }}
-        placeholder={placeholder}
-        disabled={disabled}
-        name={name}
-        className={cn("flex-1", className)}
-      />
-
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <div className="relative w-full">
         <PopoverTrigger asChild>
           <Button
+            ref={triggerRef}
+            id={id}
             type="button"
-            variant="outline"
-            semantic="primary"
+            variant="input"
             disabled={disabled}
-            className="px-compact"
-            aria-label="Open calendar"
+            aria-haspopup="dialog"
+            aria-expanded={isOpen}
+            aria-controls={id ? `${id}-calendar` : undefined}
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !value && "text-muted-foreground",
+              value && "pr-10",
+              className,
+            )}
           >
-            <CalendarIcon className="h-4 w-4" />
+            <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+            <span className="flex-1 button-text">
+              {value ? format(value, "MM/dd/yyyy") : placeholder}
+            </span>
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-auto p-0" align="end">
-          <Calendar
-            mode="single"
-            selected={value}
-            defaultMonth={value}
-            onSelect={(date) => {
-              onChange?.(date);
-              setIsOpen(false);
-            }}
-            disabled={disabled}
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
+        {value && !disabled && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground hover:text-foreground hover:bg-surface-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-colors"
+            aria-label="Clear date"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      <PopoverContent
+        id={id ? `${id}-calendar` : undefined}
+        role="dialog"
+        aria-modal="false"
+        className="w-auto p-0"
+        align="start"
+      >
+        <Calendar
+          mode="single"
+          selected={value}
+          defaultMonth={value}
+          onSelect={handleCalendarSelect}
+          disabled={disabled}
+          captionLayout="dropdown"
+          required={false}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }

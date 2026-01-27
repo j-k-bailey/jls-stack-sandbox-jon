@@ -24,6 +24,12 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
   },
   {
     type: "item",
+    label: "Manage Tasks",
+    to: "/create-Task",
+    icon: CalendarDays,
+  },
+  {
+    type: "item",
     label: "Layout Sandbox",
     to: "/layout-sandbox",
     icon: Layers,
@@ -33,12 +39,6 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
     label: "Components",
     to: "/components",
     icon: Box,
-  },
-  {
-    type: "item",
-    label: "Task Manager",
-    to: "/create-Task",
-    icon: CalendarDays,
   },
   {
     type: "heading",

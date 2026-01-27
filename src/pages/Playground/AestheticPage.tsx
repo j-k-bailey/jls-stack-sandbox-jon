@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { InlineAlert } from "@/components/ui/InlineAlert";
-import { FaCircleInfo } from "react-icons/fa6";
 
 export function AestheticPage() {
   return (
@@ -8,9 +7,6 @@ export function AestheticPage() {
       <PageHeader pageTitle="Aesthetic Playground" level="h2" />
 
       <InlineAlert variant="primary">
-        <div className="shrink-0 py-1">
-          <FaCircleInfo className="h-6 w-6" />
-        </div>
         <div className="flex-1">
           <p className="font-bold">Creative Experimentation Zone</p>
           <p className="text-sm mt-1">

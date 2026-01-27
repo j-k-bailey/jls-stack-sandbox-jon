@@ -1,18 +1,7 @@
-"use client";
-
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Check, ChevronsUpDown, X } from "lucide-react";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Check, ChevronsUpDown, X, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -42,17 +31,31 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { useState } from "react";
+import { fakerApi } from "@/lib/fakerApi";
+import { InlineAlert } from "@/components/ui/InlineAlert";
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+} from "@/components/ui/field";
+import { FeatureCard } from "@/components/ui/FeatureCard";
+import { format } from "date-fns";
 
 // Constants
 const CATEGORIES = [
   "Development",
   "Design",
+  "Finance",
+  "HR",
   "Marketing",
+  "Operations",
   "Sales",
   "Support",
-  "HR",
-  "Finance",
-  "Operations",
 ] as const;
 
 const TAGS = [
@@ -95,7 +98,6 @@ const tagsSchema = z
   .max(5, "Maximum 5 tags allowed")
   .optional();
 
-// Schema with more comprehensive validation
 const createTaskSchema = z.object({
   taskName: taskNameSchema,
   visibility: visibilitySchema,
@@ -109,267 +111,340 @@ const createTaskSchema = z.object({
 type CreateTaskFormFields = z.infer<typeof createTaskSchema>;
 
 export const CreateTaskPage = () => {
-  const form = useForm<CreateTaskFormFields>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors, isDirty, isSubmitting },
+    setError,
+  } = useForm<CreateTaskFormFields>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
       taskName: "",
-      visibility: undefined,
       description: "",
-      priority: undefined,
-      deadlineDate: undefined,
-      category: "",
       tags: [],
     },
   });
 
-  const onSubmit = (data: CreateTaskFormFields) => {
-    console.log(data);
-    // Handle submission
+  const [submittedTask, setSubmittedTask] =
+    useState<CreateTaskFormFields | null>(null);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+
+  const onSubmit: SubmitHandler<CreateTaskFormFields> = async (data) => {
+    try {
+      await fakerApi({ data });
+      setSubmittedTask(data);
+      handleReset();
+    } catch (error) {
+      setError("root", {
+        type: "server",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again.",
+      });
+    }
   };
 
   const handleReset = () => {
-    form.reset();
+    reset();
   };
 
-  const [categoryOpen, setCategoryOpen] = useState(false);
+  const handleCreateAnother = () => {
+    setSubmittedTask(null);
+  };
+
+  const getPriorityBadgeVariant = (priority: string): "primary" | "accent" => {
+    return priority === "high" ? "accent" : "primary";
+  };
 
   return (
-    <Card>
-      <CardTitle level="h2">Create Task</CardTitle>
-
-      <CardContent className="space-y-section">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-section"
-          >
-            {/* =============================
-            ESSENTIAL INFORMATION
-           ============================= */}
-            <div className="space-y-standard">
+    <div className="space-y-section">
+      {/* Success Message */}
+      {submittedTask && (
+        <FeatureCard
+          layout="horizontal"
+          emphasis="bold"
+          icon={<CheckCircle2 className="text-success" />}
+          heading="Task Created Successfully!"
+          headingLevel="h3"
+          description={
+            <div className="space-y-compact">
               <div>
-                <h3 className="headline-5 text-foreground">Core Information</h3>
+                <p className="text-sm text-muted-foreground mb-1">Task Name</p>
+                <p className="font-semibold text-foreground">
+                  {submittedTask.taskName}
+                </p>
               </div>
 
-              <div className="space-y-standard">
-                {/* Task Name */}
-                <FormField
-                  control={form.control}
+              {submittedTask.description && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Description
+                  </p>
+                  <p className="text-foreground">{submittedTask.description}</p>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-compact">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Visibility
+                  </p>
+                  <Badge variant="neutral-subtle">
+                    {submittedTask.visibility}
+                  </Badge>
+                </div>
+
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Priority</p>
+                  <Badge
+                    variant={
+                      submittedTask.priority === "high"
+                        ? "warning-subtle"
+                        : submittedTask.priority === "medium"
+                          ? "primary-subtle"
+                          : "muted-subtle"
+                    }
+                  >
+                    {submittedTask.priority}
+                  </Badge>
+                </div>
+
+                {submittedTask.category && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Category
+                    </p>
+                    <Badge variant="neutral-subtle">
+                      {submittedTask.category}
+                    </Badge>
+                  </div>
+                )}
+
+                {submittedTask.deadlineDate && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      Deadline
+                    </p>
+                    <Badge variant="neutral-subtle">
+                      {format(submittedTask.deadlineDate, "MMM dd, yyyy")}
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              {submittedTask.tags && submittedTask.tags.length > 0 && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Tags</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {submittedTask.tags.map((tag) => (
+                      <Badge key={tag} variant="accent-subtle">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          }
+          badges={[
+            {
+              text: "NEW",
+              variant: getPriorityBadgeVariant(submittedTask.priority),
+            },
+          ]}
+          cta={{
+            label: "Create Another Task",
+            onClick: handleCreateAnother,
+            variant: "primary",
+          }}
+        />
+      )}
+
+      {/* Form Card */}
+      <Card>
+        <CardTitle level="h2">Create Task</CardTitle>
+
+        <CardContent className="space-y-section">
+          {errors.root?.message && (
+            <InlineAlert variant="warning" dismissible>
+              {errors.root.message}
+            </InlineAlert>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FieldSet>
+              <FieldGroup>
+                <FieldLegend>Core Information</FieldLegend>
+
+                <Controller
+                  control={control}
                   name="taskName"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Task Name <span className="text-warning">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="e.g., Complete Q1 performance review"
-                          className="text-base"
-                          {...field}
-                        />
-                      </FormControl>
-                      <div className="flex justify-between items-start">
-                        <FormMessage />
-                        <span className="caption text-muted-foreground">
+                    <Field invalid={!!errors.taskName}>
+                      <FieldLabel htmlFor="taskName" required>
+                        Task Name
+                      </FieldLabel>
+                      <Input
+                        id="taskName"
+                        placeholder="e.g., Refactor hero component"
+                        {...field}
+                      />
+                      <div className="flex items-center justify-between gap-2">
+                        <FieldError errors={[errors.taskName]} />
+                        <span className="caption text-muted-foreground shrink-0">
                           {field.value.length}/100
                         </span>
                       </div>
-                    </FormItem>
+                    </Field>
                   )}
                 />
+
                 <ResponsiveGrid maxColumns="two" align="start">
-                  {/* Visibility */}
-                  <FormField
-                    control={form.control}
+                  <Controller
+                    control={control}
                     name="visibility"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Visibility <span className="text-warning">*</span>
-                        </FormLabel>
+                      <Field invalid={!!errors.visibility}>
+                        <FieldLabel htmlFor="visibility" required>
+                          Visibility
+                        </FieldLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value || ""}
                           name={field.name}
                         >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select visibility" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger id="visibility">
+                            <SelectValue placeholder="Select visibility" />
+                          </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="personal">
-                              <strong>Personal</strong> — Only visible to you
+                              <strong>Personal:</strong> Only visible to you
                             </SelectItem>
                             <SelectItem value="team">
-                              <strong>Team</strong> — Shared with your team
+                              <strong>Team:</strong> Shared with your team
                             </SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormDescription>
-                          Choose who can view this task
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={[errors.visibility]} />
+                      </Field>
                     )}
                   />
 
-                  {/* Priority */}
-                  <FormField
-                    control={form.control}
+                  <Controller
+                    control={control}
                     name="priority"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Priority <span className="text-warning">*</span>
-                        </FormLabel>
+                      <Field invalid={!!errors.priority}>
+                        <FieldLabel htmlFor="priority" required>
+                          Priority
+                        </FieldLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value || ""}
                           name={field.name}
                         >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select priority" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger id="priority">
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="high">
                               <span className="flex items-center gap-2">
                                 <span className="h-2 w-2 rounded-full bg-warning" />
-                                High
+                                High Priority
                               </span>
                             </SelectItem>
                             <SelectItem value="medium">
                               <span className="flex items-center gap-2">
                                 <span className="h-2 w-2 rounded-full bg-primary" />
-                                Medium
+                                Medium Priority
                               </span>
                             </SelectItem>
                             <SelectItem value="low">
                               <span className="flex items-center gap-2">
                                 <span className="h-2 w-2 rounded-full bg-muted-foreground" />
-                                Low
+                                Low Priority
                               </span>
                             </SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={[errors.priority]} />
+                      </Field>
                     )}
                   />
                 </ResponsiveGrid>
-              </div>
-            </div>
+              </FieldGroup>
 
-            {/* Divider */}
-            <div className="border-t border-border" />
+              <FieldSeparator />
 
-            {/* =============================
-            ADDITIONAL DETAILS
-           ============================= */}
-            <div className="space-y-standard">
-              <div>
-                <h3 className="headline-5 text-foreground">
-                  Additional Details
-                </h3>
-                <p className="caption text-muted-foreground mt-tight">
-                  Optional fields to organize and prioritize your task
-                </p>
-              </div>
+              <FieldGroup>
+                <FieldLegend>Additional Details</FieldLegend>
 
-              <div className="space-y-standard">
-                {/* Description */}
-                <FormField
-                  control={form.control}
+                <Controller
+                  control={control}
                   name="description"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Description{" "}
-                        <span className="text-muted-foreground caption">
-                          (optional)
-                        </span>
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Add more context about this task..."
-                          className="min-h-32 resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <div className="flex justify-between items-start">
-                        <FormMessage />
-                        <span className="caption text-muted-foreground">
+                    <Field invalid={!!errors.description}>
+                      <FieldLabel htmlFor="description">Description</FieldLabel>
+                      <Textarea
+                        id="description"
+                        placeholder="Add more context about this task..."
+                        className="min-h-32 resize-none"
+                        {...field}
+                      />
+                      <div className="flex items-center justify-between gap-2">
+                        <FieldError errors={[errors.description]} />
+                        <span className="caption text-muted-foreground shrink-0">
                           {field.value?.length || 0}/500
                         </span>
                       </div>
-                    </FormItem>
+                    </Field>
                   )}
                 />
 
-                {/* Organization Fields Grid */}
-                <ResponsiveGrid
-                  maxColumns="two"
-                  align="start"
-                  className="gap-section"
-                >
-                  {/* Deadline */}
-                  <FormField
-                    control={form.control}
+                <ResponsiveGrid maxColumns="two" align="start">
+                  <Controller
+                    control={control}
                     name="deadlineDate"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Deadline{" "}
-                          <span className="text-muted-foreground caption">
-                            (optional)
-                          </span>
-                        </FormLabel>
-                        <FormControl>
-                          <DatePicker
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="Select deadline"
-                            name={field.name}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                      <Field invalid={!!errors.deadlineDate}>
+                        <FieldLabel htmlFor="deadlineDate">Deadline</FieldLabel>
+                        <DatePicker
+                          id="deadlineDate"
+                          name={field.name}
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <FieldError errors={[errors.deadlineDate]} />
+                      </Field>
                     )}
                   />
 
-                  {/* Category */}
-                  <FormField
-                    control={form.control}
+                  <Controller
+                    control={control}
                     name="category"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Category{" "}
-                          <span className="text-muted-foreground caption">
-                            (optional)
-                          </span>
-                        </FormLabel>
+                      <Field invalid={!!errors.category}>
+                        <FieldLabel htmlFor="category">Category</FieldLabel>
                         <Popover
                           open={categoryOpen}
                           onOpenChange={setCategoryOpen}
                         >
                           <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="input"
-                                className={cn(
-                                  "w-full justify-between",
-                                  !field.value && "text-muted-foreground",
-                                )}
-                              >
-                                {field.value || "Select category"}
-                                <ChevronsUpDown className="h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
+                            <Button
+                              id="category"
+                              variant="input"
+                              className={cn(
+                                "w-full justify-between",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              {field.value || "Select category"}
+                              <ChevronsUpDown className="h-4 w-4 opacity-50" />
+                            </Button>
                           </PopoverTrigger>
-
                           <PopoverContent className="w-full p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search category..." />
@@ -381,7 +456,7 @@ export const CreateTaskPage = () => {
                                       key={category}
                                       value={category}
                                       onSelect={() => {
-                                        form.setValue("category", category, {
+                                        setValue("category", category, {
                                           shouldDirty: true,
                                         });
                                         setCategoryOpen(false);
@@ -403,69 +478,58 @@ export const CreateTaskPage = () => {
                             </Command>
                           </PopoverContent>
                         </Popover>
-                        <FormDescription>
-                          Organize by department
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={[errors.category]} />
+                      </Field>
                     )}
                   />
                 </ResponsiveGrid>
 
-                {/* Tags - Full Width */}
-                <FormField
-                  control={form.control}
+                <Controller
+                  control={control}
                   name="tags"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Tags{" "}
-                        <span className="text-muted-foreground caption">
-                          (optional, max 5)
-                        </span>
-                      </FormLabel>
+                    <Field invalid={!!errors.tags}>
+                      <FieldLabel htmlFor="tags">Tags</FieldLabel>
+                      <FieldDescription>
+                        Add up to 5 tags to help categorize tasks
+                      </FieldDescription>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="input"
-                              className={cn(
-                                "w-full justify-between min-h-10 h-auto",
-                                !field.value?.length && "text-muted-foreground",
+                          <Button
+                            id="tags"
+                            variant="input"
+                            className={cn(
+                              "w-full justify-between min-h-10 h-auto py-2",
+                              !field.value?.length && "text-muted-foreground",
+                            )}
+                          >
+                            <div className="flex flex-wrap gap-1.5 flex-1">
+                              {field.value?.length ? (
+                                field.value.map((tag) => (
+                                  <Badge
+                                    key={tag}
+                                    variant="accent-subtle"
+                                    className="cursor-pointer hover:bg-accent-hover"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setValue(
+                                        "tags",
+                                        field.value?.filter((t) => t !== tag) ||
+                                          [],
+                                      );
+                                    }}
+                                  >
+                                    {tag}
+                                    <X className="ml-1 h-3 w-3" />
+                                  </Badge>
+                                ))
+                              ) : (
+                                <span>Select tags</span>
                               )}
-                            >
-                              <div className="flex flex-wrap gap-1 flex-1">
-                                {field.value?.length ? (
-                                  field.value.map((tag) => (
-                                    <Badge
-                                      key={tag}
-                                      variant="accent-subtle"
-                                      className="cursor-pointer hover:bg-secondary-foreground/10"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        form.setValue(
-                                          "tags",
-                                          field.value?.filter(
-                                            (t) => t !== tag,
-                                          ) || [],
-                                        );
-                                      }}
-                                    >
-                                      {tag}
-                                      <X className="ml-1 h-3 w-3" />
-                                    </Badge>
-                                  ))
-                                ) : (
-                                  <span>
-                                    Select tags to help categorize this task
-                                  </span>
-                                )}
-                              </div>
-                              <ChevronsUpDown className="h-4 w-4 opacity-50 ml-2" />
-                            </Button>
-                          </FormControl>
+                            </div>
+                            <ChevronsUpDown className="h-4 w-4 opacity-50 ml-2 shrink-0" />
+                          </Button>
                         </PopoverTrigger>
-
                         <PopoverContent className="w-full p-0" align="start">
                           <Command>
                             <CommandInput placeholder="Search tags..." />
@@ -485,7 +549,7 @@ export const CreateTaskPage = () => {
                                       onSelect={() => {
                                         if (isDisabled) return;
                                         const current = field.value || [];
-                                        form.setValue(
+                                        setValue(
                                           "tags",
                                           isSelected
                                             ? current.filter((t) => t !== tag)
@@ -510,38 +574,34 @@ export const CreateTaskPage = () => {
                           </Command>
                         </PopoverContent>
                       </Popover>
-                      <FormDescription>
-                        Add up to 5 tags ({field.value?.length || 0}/5 selected)
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                      <FieldError errors={[errors.tags]} />
+                    </Field>
                   )}
                 />
-              </div>
-            </div>
+              </FieldGroup>
+            </FieldSet>
 
-            {/* =============================
-            ACTIONS
-           ============================= */}
-            <div className="flex justify-between items-center pt-section border-t border-border">
+            <div className="flex justify-between items-center pt-section border-t border-border mt-section">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={handleReset}
-                disabled={!form.formState.isDirty}
+                disabled={!isDirty || isSubmitting}
               >
                 Reset Form
               </Button>
               <div className="flex gap-compact">
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" disabled={isSubmitting}>
                   Cancel
                 </Button>
-                <Button type="submit">Create Task</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating…" : "Create Task"}
+                </Button>
               </div>
             </div>
           </form>
-        </Form>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

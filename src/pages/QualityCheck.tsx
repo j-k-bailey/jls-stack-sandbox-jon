@@ -22,6 +22,9 @@ const updates = [
     items: [
       "Imported Dialog, Form, Popover from shadcn",
       "Updated ButtonVariants, Command, Dialog, Form, Input, Label, and Popover from shadcn to better align with brand kit",
+      "Decided to refactor to leave shadcn architecture AS predictable as possible so no issues with types, variants, etc. not being available to other components that depend on them.",
+      "Added form and updated dashboard for kanban-like dash mockup",
+      "Added fakerAPI to lib for simple fail/success testing with async/await state",
     ],
   },
   {

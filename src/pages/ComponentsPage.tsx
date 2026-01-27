@@ -9,6 +9,7 @@ import { TaskItem } from "@/components/layoutSandbox/TaskItem";
 import {
   ComponentHighlight,
   ComponentHighlightDescription,
+  ComponentHighlightNotes,
   ComponentHighlightProps,
   ComponentHighlightShowcase,
   ComponentHighlightTitle,
@@ -67,20 +68,6 @@ import {
   CommandDialog,
 } from "@/components/ui/command";
 import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  FaCircleInfo,
-  FaBell,
-  FaFaceSmile,
-  FaCircleCheck,
-  FaTriangleExclamation,
   FaLightbulb,
   FaCode,
   FaRocket,
@@ -88,47 +75,13 @@ import {
   FaMagnifyingGlass,
   FaCalendar,
 } from "react-icons/fa6";
+import { Atom } from "lucide-react";
 import { FeatureCard } from "@/components/ui/FeatureCard";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import React from "react";
-
-// Form schema for the example form
-const formSchema = z
-  .object({
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    email: z.string().email("Please enter a valid email"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
-    bio: z.string().optional(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type FormValues = z.infer<typeof formSchema>;
 
 export function ComponentsPage() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [commandOpen, setCommandOpen] = React.useState(false);
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      bio: "",
-    },
-  });
-
-  const onSubmit = (data: FormValues) => {
-    console.log("Form submitted:", data);
-    alert("Form submitted successfully! Check console for data.");
-  };
 
   return (
     <div className="space-y-section container px-standard pb-section">
@@ -670,250 +623,95 @@ export function ComponentsPage() {
       </ComponentHighlight>
 
       <hr />
-
-      {/* Form Section */}
-      <ComponentHighlight>
-        <ComponentHighlightTitle>Form</ComponentHighlightTitle>
-        <ComponentHighlightDescription>
-          Form components built on react-hook-form with built-in validation,
-          error handling, and accessibility. Uses FormField, FormItem,
-          FormLabel, FormControl, FormDescription, and FormMessage for
-          structured field layouts.
-        </ComponentHighlightDescription>
-        <ComponentHighlightShowcase>
-          <SectionCard title="Form Example">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-standard"
-              >
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="johndoe" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Your public display name. Min 3 characters.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="john@example.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        We'll use this for account notifications
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Must be at least 8 characters
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>Re-enter your password</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="bio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bio (Optional)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Tell us about yourself..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>Maximum 200 characters</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => form.reset()}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" semantic="primary">
-                    Create Account
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </SectionCard>
-          <ComponentHighlightProps>
-            Form (Spread react-hook-form methods), FormField (control: Control,
-            name: string, render: (field) =&gt; ReactNode), FormItem
-            (className?: string), FormLabel (className?: string, children:
-            ReactNode), FormControl (children: ReactNode - wraps input),
-            FormDescription (className?: string, children: ReactNode),
-            FormMessage (className?: string - auto-displays errors)
-          </ComponentHighlightProps>
-        </ComponentHighlightShowcase>
-      </ComponentHighlight>
-
-      <hr />
-
       {/* InlineAlert Section */}
       <ComponentHighlight>
         <ComponentHighlightTitle>InlineAlert</ComponentHighlightTitle>
         <ComponentHighlightDescription>
-          Container component for displaying contextual notifications and
-          messages with visual emphasis via top accent border. Fills parent
-          container width.
+          Contextual notification component with semantic color variants,
+          optional icons, and dismissible functionality. Features a prominent
+          top border accent and fills parent container width.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
           <SectionCard title="Inline Alert Variants">
             <div className="space-y-standard">
               {/* Primary Alert */}
               <InlineAlert variant="primary">
-                <div className="shrink-0 py-1">
-                  <FaCircleInfo className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold">New Feature Available</p>
-                  <p className="text-sm mt-1">
-                    Check out our latest automation tools in the dashboard.
-                  </p>
-                </div>
+                <p className="font-bold">New Feature Available</p>
+                <p className="text-sm mt-1">
+                  Check out our latest automation tools in the dashboard.
+                </p>
               </InlineAlert>
 
               {/* Neutral Alert with Dismissal */}
-              <InlineAlert variant="neutral">
-                <div className="shrink-0 py-1">
-                  <FaBell className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold">System Maintenance Scheduled</p>
-                  <p className="text-sm mt-1">
-                    We'll be performing routine maintenance on Saturday from 2-4
-                    AM EST.
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  semantic="neutral"
-                  onClick={() => console.log("Dismissed")}
-                  aria-label="Dismiss"
-                >
-                  ×
-                </Button>
+              <InlineAlert variant="neutral" dismissible>
+                <p className="font-bold">System Maintenance Scheduled</p>
+                <p className="text-sm mt-1">
+                  We'll be performing routine maintenance on Saturday from 2-4
+                  AM EST.
+                </p>
               </InlineAlert>
 
-              {/* Accent Alert with Action */}
+              {/* Accent Alert */}
               <InlineAlert variant="accent">
-                <div className="shrink-0 py-1">
-                  <FaFaceSmile className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold">Welcome to the JLS Stack Sandbox!</p>
-                  <p className="text-sm mt-1">
-                    Explore our design system and component library. Start with
-                    the navigation above.
-                  </p>
-                </div>
-                <Button semantic="accent" size="sm">
-                  Get Started
-                </Button>
+                <p className="font-bold">Welcome to the JLS Stack Sandbox!</p>
+                <p className="text-sm mt-1">
+                  Explore our design system and component library. Start with
+                  the navigation above.
+                </p>
               </InlineAlert>
 
-              {/* Success Alert */}
-              <InlineAlert variant="success">
-                <div className="shrink-0 py-1">
-                  <FaCircleCheck className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold">Changes Saved Successfully</p>
-                  <p className="text-sm mt-1">
-                    Your preferences have been updated and are now active.
-                  </p>
-                </div>
+              {/* Success Alert with Dismissal */}
+              <InlineAlert variant="success" dismissible>
+                <p className="font-bold">Changes Saved Successfully</p>
+                <p className="text-sm mt-1">
+                  Your preferences have been updated and are now active.
+                </p>
               </InlineAlert>
 
-              {/* Warning Alert with Link */}
+              {/* Warning Alert */}
               <InlineAlert variant="warning">
-                <div className="shrink-0 py-1">
-                  <FaTriangleExclamation className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold">API Rate Limit Approaching</p>
-                  <p className="text-sm mt-1">
-                    You've used 85% of your monthly API quota.
-                    <Button
-                      variant="link"
-                      semantic="warning"
-                      size="sm"
-                      className="ml-1 p-0 h-auto"
-                    >
-                      Upgrade your plan
-                    </Button>
-                  </p>
-                </div>
+                <p className="font-bold">API Rate Limit Approaching</p>
+                <p className="text-sm mt-1">
+                  You've used 85% of your monthly API quota. Consider upgrading
+                  your plan.
+                </p>
+              </InlineAlert>
+
+              {/* Text-Only Alert (No Icon) */}
+              <InlineAlert variant="primary" textOnly>
+                <p className="font-bold">Minimal Alert Style</p>
+                <p className="text-sm mt-1">
+                  This alert has no icon for a cleaner, text-focused appearance.
+                </p>
+              </InlineAlert>
+
+              {/* Custom Icon Alert */}
+              <InlineAlert variant="accent" icon={Atom}>
+                <p className="font-bold">Custom Icon Example</p>
+                <p className="text-sm mt-1">
+                  You can override the default icon with any Lucide icon.
+                </p>
               </InlineAlert>
             </div>
           </SectionCard>
           <ComponentHighlightProps>
             variant ("primary" | "neutral" | "accent" | "success" | "warning"),
-            children (ReactNode), className (string)
+            children (ReactNode), className (string), dismissible (boolean),
+            onDismiss (function), textOnly (boolean), icon (LucideIcon)
           </ComponentHighlightProps>
+          <ComponentHighlightNotes>
+            <strong>Default Icons:</strong> primary/neutral (Info), accent
+            (Sparkles), success (CheckCircle), warning (AlertCircle)
+            <br />
+            <strong>Dismissible:</strong> Set dismissible=true to show close
+            button. Use onDismiss callback to handle dismissal.
+            <br />
+            <strong>Text-Only:</strong> Set textOnly=true to hide the icon for
+            minimal styling.
+            <br />
+            <strong>Custom Icons:</strong> Pass any Lucide icon to the icon prop
+            to override the default.
+          </ComponentHighlightNotes>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
       <hr />

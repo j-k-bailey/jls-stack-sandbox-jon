@@ -16,6 +16,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-4",
         "aria-invalid:ring-warning/20 aria-invalid:border-warning",
         "hover:border-accent/50 hover:shadow-xs hover:shadow-accent/40",
+
         "my-1",
         className,
       )}

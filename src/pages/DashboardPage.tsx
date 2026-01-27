@@ -1,152 +1,286 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { SectionCard } from "@/components/common/SectionCard";
-import { StatsRow } from "@/components/dashboard/StatsRow";
 import { StatCard } from "@/components/layoutSandbox/StatCard";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { FeatureCard } from "@/components/ui/FeatureCard";
 import { InlineAlert } from "@/components/ui/InlineAlert";
-import { ActivityItem } from "@/components/layoutSandbox/ActivityItem";
 import {
-  FaRocket,
-  FaCode,
-  FaPalette,
-  FaCircleInfo,
-  FaChartLine,
-} from "react-icons/fa6";
+  ClipboardList,
+  Plus,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  Package,
+} from "lucide-react";
 
 export function DashboardPage() {
+  // This would come from your data layer in a real app
+  const hasTasks = false;
+  const taskStats = {
+    total: 0,
+    completed: 0,
+    inProgress: 0,
+    overdue: 0,
+  };
+
   return (
     <div className="space-y-section container px-standard pb-section">
       <PageHeader
-        pageTitle="JLS Stack Dashboard"
-        pageDescription="Your central hub for metrics, quick links, and key actions."
+        pageTitle="Task Dashboard"
+        pageDescription="Manage your tasks and track your productivity."
       />
 
-      <InlineAlert variant="primary">
-        <div className="shrink-0 py-1">
-          <FaCircleInfo className="h-6 w-6" />
-        </div>
-        <div className="flex-1">
-          <p className="font-bold">Dashboard System Online</p>
-          <p className="text-sm mt-1">
-            All systems operational. Routing, theming, and component library
-            fully functional.
-          </p>
-        </div>
-      </InlineAlert>
+      {/* Stats Overview */}
+      <ResponsiveGrid maxColumns="four">
+        <StatCard
+          label="Total Tasks"
+          value={taskStats.total.toString()}
+          description="All tasks"
+          variant="default"
+        />
+        <StatCard
+          label="In Progress"
+          value={taskStats.inProgress.toString()}
+          description="Active tasks"
+          variant="featured"
+        />
+        <StatCard
+          label="Completed"
+          value={taskStats.completed.toString()}
+          description="Finished tasks"
+          variant="success"
+        />
+        <StatCard
+          label="Overdue"
+          value={taskStats.overdue.toString()}
+          description="Need attention"
+          variant="error"
+        />
+      </ResponsiveGrid>
 
-      <div className="space-y-section">
-        <ResponsiveGrid maxColumns="three">
-          <StatCard
-            label="Active Users"
-            value="1234"
-            description="Users online right now"
-            variant="featured"
-          />
-          <StatCard
-            label="Failed Requests"
-            value="12"
-            description="Errors in last 24h"
-            variant="error"
-          />
-          <StatCard
-            label="System Health"
-            value="98.5%"
-            description="Overall uptime"
-          />
-        </ResponsiveGrid>
+      {/* Empty State or Task Board */}
+      {!hasTasks ? (
+        <div className="space-y-standard">
+          <InlineAlert variant="primary">
+            <div className="shrink-0 py-1">
+              <ClipboardList className="h-6 w-6" />
+            </div>
+            <div className="flex-1">
+              <p className="font-bold">Welcome to Your Task Manager!</p>
+              <p className="text-sm mt-1">
+                Get started by creating your first task. Organize your work with
+                priorities, deadlines, and categories.
+              </p>
+            </div>
+          </InlineAlert>
 
-        <ResponsiveGrid maxColumns="three">
-          <div className="lg:col-span-2">
-            <SectionCard title="Performance Metrics">
-              <div className="h-64 bg-muted-background border border-border-muted rounded-lg flex items-center justify-center text-muted-foreground">
-                <div className="text-center">
-                  <FaChartLine className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>Graph placeholder</p>
+          <SectionCard
+            title="Your Task Board"
+            description="Organize tasks into columns and track progress visually"
+          >
+            <div className="py-spacious">
+              <div className="max-w-2xl mx-auto text-center space-y-standard">
+                {/* Empty State Illustration */}
+                <div className="flex justify-center">
+                  <div className="relative">
+                    <Package className="h-24 w-24 text-muted-foreground opacity-50" />
+                    <div className="absolute -top-2 -right-2">
+                      <Plus className="h-8 w-8 text-primary animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Empty State Message */}
+                <div className="space-y-compact">
+                  <h3 className="headline-4 text-foreground">No Tasks Yet</h3>
+                  <p className="text-muted-foreground">
+                    Your task board is empty. Create your first task to start
+                    organizing your work and boosting your productivity.
+                  </p>
+                </div>
+
+                {/* Kanban Preview */}
+                <div className="grid grid-cols-3 gap-compact mt-section">
+                  <div className="bg-surface-1 border border-border rounded-lg p-compact text-center">
+                    <p className="text-sm font-semibold text-muted-foreground mb-2">
+                      To Do
+                    </p>
+                    <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
+                      <p className="text-xs text-muted-foreground">
+                        Tasks will appear here
+                      </p>
+                    </div>
+                  </div>
+                  <div className="bg-surface-1 border border-border rounded-lg p-compact text-center">
+                    <p className="text-sm font-semibold text-muted-foreground mb-2">
+                      In Progress
+                    </p>
+                    <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
+                      <p className="text-xs text-muted-foreground">
+                        Active tasks
+                      </p>
+                    </div>
+                  </div>
+                  <div className="bg-surface-1 border border-border rounded-lg p-compact text-center">
+                    <p className="text-sm font-semibold text-muted-foreground mb-2">
+                      Done
+                    </p>
+                    <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
+                      <p className="text-xs text-muted-foreground">Completed</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div className="pt-compact">
+                  <FeatureCard
+                    layout="vertical"
+                    emphasis="bold"
+                    icon={<Plus className="h-12 w-12" />}
+                    heading="Create Your First Task"
+                    headingLevel="h4"
+                    description="Start organizing your work with our intuitive task creation form. Add priorities, deadlines, categories, and tags."
+                    cta={{
+                      label: "Create Task",
+                      href: "/create-task",
+                      variant: "primary",
+                    }}
+                    badges={[
+                      {
+                        text: "GET STARTED",
+                        variant: "primary",
+                      },
+                    ]}
+                  />
                 </div>
               </div>
-            </SectionCard>
-          </div>
-
-          <div className="lg:col-span-1">
-            <SectionCard title="Recent Activity" className="h-full">
-              <div className="space-y-compact">
-                <ActivityItem
-                  name="System"
-                  action="Dashboard loaded"
-                  timestamp="Just now"
-                />
-                <ActivityItem
-                  name="Theme"
-                  action="Mode switched"
-                  timestamp="2 min ago"
-                />
-                <ActivityItem
-                  name="Router"
-                  action="Navigation updated"
-                  timestamp="5 min ago"
-                  isLast
-                />
-              </div>
-            </SectionCard>
-          </div>
-        </ResponsiveGrid>
-
-        <StatsRow
-          stats={[
-            {
-              label: "Routes",
-              value: "3+",
-            },
-            {
-              label: "Shell",
-              value: "Online",
-            },
-            {
-              label: "UI System",
-              value: "Growing",
-            },
-          ]}
-        />
-
+            </div>
+          </SectionCard>
+        </div>
+      ) : (
+        // This section would show when tasks exist
         <SectionCard
-          title="Quick Actions"
-          description="Explore the key features of the JLS Stack Sandbox"
+          title="Your Task Board"
+          description="Drag and drop tasks between columns"
         >
-          <ResponsiveGrid maxColumns="three">
-            <FeatureCard
-              icon={<FaPalette />}
-              heading="Design System"
-              description="Explore the brand kit, typography, and spacing utilities that power the interface."
-              cta={{
-                label: "View Brand Kit",
-                href: "/playground/brand-kit",
-                variant: "primary",
-              }}
-            />
-            <FeatureCard
-              icon={<FaCode />}
-              heading="Components"
-              description="Browse the full component library with live examples and usage documentation."
-              cta={{
-                label: "View Components",
-                href: "/components",
-                variant: "accent",
-              }}
-            />
-            <FeatureCard
-              icon={<FaRocket />}
-              heading="Layout Sandbox"
-              description="See different layout patterns and responsive behaviors in the layout sandbox."
-              cta={{
-                label: "Open Sandbox",
-                href: "/layout-sandbox",
-                variant: "neutral",
-              }}
-            />
-          </ResponsiveGrid>
+          <div className="h-96 bg-muted-background border border-border-muted rounded-lg flex items-center justify-center text-muted-foreground">
+            <div className="text-center">
+              <ClipboardList className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <p>Kanban board would appear here</p>
+            </div>
+          </div>
         </SectionCard>
-      </div>
+      )}
+
+      {/* Quick Actions */}
+      <SectionCard
+        title="Quick Actions"
+        description="Common task management actions"
+      >
+        <ResponsiveGrid maxColumns="three">
+          <FeatureCard
+            icon={<Plus className="h-12 w-12" />}
+            heading="Create Task"
+            description="Add a new task with priority, deadline, and category to stay organized."
+            cta={{
+              label: "New Task",
+              href: "/create-task",
+              variant: "primary",
+            }}
+          />
+          <FeatureCard
+            icon={<TrendingUp className="h-12 w-12" />}
+            heading="View Analytics"
+            description="Track your productivity with insights on completed tasks and time management."
+            cta={{
+              label: "View Stats",
+              href: "/analytics",
+              variant: "accent",
+            }}
+          />
+          <FeatureCard
+            icon={<CheckCircle2 className="h-12 w-12" />}
+            heading="Manage Tasks"
+            description="Review all your tasks, update statuses, and mark items as complete."
+            cta={{
+              label: "View All",
+              href: "/tasks",
+              variant: "neutral",
+            }}
+          />
+        </ResponsiveGrid>
+      </SectionCard>
+
+      {/* Tips for Getting Started */}
+      {!hasTasks && (
+        <SectionCard
+          title="Getting Started Tips"
+          description="Make the most of your task manager"
+        >
+          <div className="grid md:grid-cols-2 gap-compact">
+            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+              <div className="text-primary shrink-0">
+                <Clock className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm mb-1">
+                  Set Realistic Deadlines
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Add deadline dates to your tasks to stay on track and
+                  prioritize effectively.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+              <div className="text-accent shrink-0">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm mb-1">
+                  Use Priority Levels
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Mark tasks as high, medium, or low priority to focus on what
+                  matters most.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+              <div className="text-success shrink-0">
+                <ClipboardList className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm mb-1">
+                  Organize with Categories
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Group related tasks by department or project for better
+                  organization.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+              <div className="text-warning shrink-0">
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm mb-1">
+                  Tag for Quick Filtering
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Add tags like "urgent" or "blocked" to quickly find and filter
+                  tasks.
+                </p>
+              </div>
+            </div>
+          </div>
+        </SectionCard>
+      )}
     </div>
   );
 }

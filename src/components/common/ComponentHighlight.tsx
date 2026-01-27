@@ -26,6 +26,11 @@ interface ComponentHighlightPropsProps {
   className?: string;
 }
 
+interface ComponentHighlightNotesProps {
+  children: ReactNode;
+  className?: string;
+}
+
 export function ComponentHighlight({
   children,
   className,
@@ -72,6 +77,24 @@ export function ComponentHighlightProps({
       <p className="text-foreground text-sm">
         <strong>Props:</strong> {children}
       </p>
+    </div>
+  );
+}
+
+export function ComponentHighlightNotes({
+  children,
+  className,
+}: ComponentHighlightNotesProps) {
+  return (
+    <div
+      className={cn(
+        "bg-primary-background border-l-4 border-primary rounded-r-lg mt-compact p-compact",
+        className,
+      )}
+    >
+      <div className="text-primary-on-background text-sm leading-relaxed">
+        {children}
+      </div>
     </div>
   );
 }
