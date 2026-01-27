@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/BrandButton";
 
 // Helper function to get initial theme
 const getInitialTheme = () => {

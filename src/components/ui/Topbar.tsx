@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/BrandButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { FaBars } from "react-icons/fa6";
 import AppLogo from "@/components//common/AppLogo";

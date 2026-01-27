@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/Card";
-import { FilledButton } from "@/components/ui/ButtonVariants";
+import { Card } from "@/components/ui/card";
+import { FilledButton } from "@/components/ui/BrandButtonVariants";
 
 const featureCardVariants = cva("relative", {
   variants: {

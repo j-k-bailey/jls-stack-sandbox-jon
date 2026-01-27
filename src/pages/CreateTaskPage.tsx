@@ -1,809 +1,547 @@
-import * as React from "react";
+"use client";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/Button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardAction,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/Card";
-import {
-  Command,
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandShortcut,
-  CommandSeparator,
-} from "@/components/ui/Command";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/Dialog";
+import { z } from "zod";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import {
   Form,
-  FormItem,
-  FormField,
-  FormLabel,
   FormControl,
   FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
   FormMessage,
-} from "@/components/ui/Form";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/DatePicker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import {
   Popover,
-  PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverDescription,
-} from "@/components/ui/Popover";
-import { FaGears, FaCalendar, FaMagnifyingGlass } from "react-icons/fa6";
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
+import { useState } from "react";
 
-type CreateTaskFormFields = {
-  taskName: string;
-  visibility: "team" | "personal";
-  description?: string;
-  priority?: "high" | "medium" | "low";
-  category?: string;
-  tags?: string[];
-};
+// Constants
+const CATEGORIES = [
+  "Development",
+  "Design",
+  "Marketing",
+  "Sales",
+  "Support",
+  "HR",
+  "Finance",
+  "Operations",
+] as const;
 
-// export const CreateTaskPage = () => {
-//   //   const { register } = useForm<CreateTaskFormFields>();
+const TAGS = [
+  "urgent",
+  "bug-fix",
+  "feature",
+  "enhancement",
+  "documentation",
+  "testing",
+  "review-needed",
+  "blocked",
+  "in-progress",
+  "backlog",
+] as const;
 
-//   //   return (
-//   //     <div>
-//   //       <Card>
-//   //         <CardTitle>Create Task</CardTitle>
-//   //         <CardContent className="space-y-section">
-//   //           <form>
-//   //             <input
-//   //               {...register("taskName")}
-//   //               type="text"
-//   //               placeholder="Task Name"
-//   //             />
-//   //             <p>visibility</p>
-//   //             <p>description</p>
+const taskNameSchema = z
+  .string()
+  .min(1, "Task name is required")
+  .max(100, "Task name must be 100 characters or less");
 
-//   //             <p>Priority</p>
-//   //             <p>category selection</p>
-//   //             <p>tags</p>
-//   //           </form>
+const visibilitySchema = z.enum(["team", "personal"], {
+  error: "Please select task visibility",
+});
 
-//   //           <Command className="max-w-sm rounded-lg border">
-//   //             <CommandInput placeholder="Type a command or search..." />
-//   //             <CommandList>
-//   //               <CommandEmpty>No results found.</CommandEmpty>
-//   //               <CommandGroup heading="Suggestions">
-//   //                 <CommandItem>Calendar</CommandItem>
-//   //                 <CommandItem>Search Emoji</CommandItem>
-//   //                 <CommandItem>Calculator</CommandItem>
-//   //               </CommandGroup>
-//   //               <CommandSeparator />
-//   //               <CommandGroup heading="Settings">
-//   //                 <CommandItem>Profile</CommandItem>
-//   //                 <CommandItem>Billing</CommandItem>
-//   //                 <CommandItem>Settings</CommandItem>
-//   //               </CommandGroup>
-//   //             </CommandList>
-//   //           </Command>
+const descriptionSchema = z
+  .string()
+  .max(500, "Description must be 500 characters or less")
+  .optional();
 
-//   //           <Dialog>
-//   //             <DialogTrigger>Open</DialogTrigger>
-//   //             <DialogContent>
-//   //               <DialogHeader>
-//   //                 <DialogTitle>Are you absolutely sure?</DialogTitle>
-//   //                 <DialogDescription>
-//   //                   This action cannot be undone. This will permanently delete
-//   //                   your account and remove your data from our servers.
-//   //                 </DialogDescription>
-//   //               </DialogHeader>
-//   //             </DialogContent>
-//   //           </Dialog>
+const prioritySchema = z.enum(["high", "medium", "low"], {
+  error: "Please select task priority",
+});
 
-//   //         </CardContent>
-//   //       </Card>
-//   //     </div>
-//   );
-// };
+const deadlineDateSchema = z.date().optional();
 
-// Minimal validation schema
-const formSchema = z
-  .object({
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    email: z.string().email("Please enter a valid email"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
-    bio: z.string().optional(),
-    fullName: z.string().min(1, "Name is required"),
-    testField: z.string().min(1, "This field is required"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+const categorySchema = z.string().optional();
 
-type FormValues = z.infer<typeof formSchema>;
+const tagsSchema = z
+  .array(z.string())
+  .max(5, "Maximum 5 tags allowed")
+  .optional();
 
-export function CreateTaskPage() {
-  const [commandOpen, setCommandOpen] = React.useState(false);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+// Schema with more comprehensive validation
+const createTaskSchema = z.object({
+  taskName: taskNameSchema,
+  visibility: visibilitySchema,
+  description: descriptionSchema,
+  priority: prioritySchema,
+  deadlineDate: deadlineDateSchema,
+  category: categorySchema,
+  tags: tagsSchema,
+});
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+type CreateTaskFormFields = z.infer<typeof createTaskSchema>;
+
+export const CreateTaskPage = () => {
+  const form = useForm<CreateTaskFormFields>({
+    resolver: zodResolver(createTaskSchema),
     defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      bio: "",
-      fullName: "",
-      testField: "",
+      taskName: "",
+      visibility: undefined,
+      description: "",
+      priority: undefined,
+      deadlineDate: undefined,
+      category: "",
+      tags: [],
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form submitted:", data);
-    alert("Form submitted successfully! Check console for data.");
+  const onSubmit = (data: CreateTaskFormFields) => {
+    console.log(data);
+    // Handle submission
   };
 
-  const triggerErrors = () => {
-    form.trigger(); // Validate all fields to show errors
+  const handleReset = () => {
+    form.reset();
   };
+
+  const [categoryOpen, setCategoryOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background p-8 space-y-12">
-      {/* BUTTONS SECTION */}
-      <section className="space-y-6">
-        <h1 className="text-3xl font-bold">Button Component Variants</h1>
+    <Card>
+      <CardTitle level="h2">Create Task</CardTitle>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Filled Variants (All Semantics)</CardTitle>
-            <CardDescription>
-              Default button style with all semantic colors
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-4">
-            <Button variant="filled" semantic="neutral">
-              Neutral
-            </Button>
-            <Button variant="filled" semantic="primary">
-              Primary
-            </Button>
-            <Button variant="filled" semantic="accent">
-              Accent
-            </Button>
-            <Button variant="filled" semantic="success">
-              Success
-            </Button>
-            <Button variant="filled" semantic="warning">
-              Warning
-            </Button>
-          </CardContent>
-        </Card>
+      <CardContent className="space-y-section">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-section"
+          >
+            {/* =============================
+            ESSENTIAL INFORMATION
+           ============================= */}
+            <div className="space-y-standard">
+              <div>
+                <h3 className="headline-5 text-foreground">Core Information</h3>
+              </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Outline Variants (All Semantics)</CardTitle>
-            <CardDescription>
-              Outline style with all semantic colors
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-4">
-            <Button variant="outline" semantic="neutral">
-              Neutral
-            </Button>
-            <Button variant="outline" semantic="primary">
-              Primary
-            </Button>
-            <Button variant="outline" semantic="accent">
-              Accent
-            </Button>
-            <Button variant="outline" semantic="success">
-              Success
-            </Button>
-            <Button variant="outline" semantic="warning">
-              Warning
-            </Button>
-          </CardContent>
-        </Card>
+              <div className="space-y-standard">
+                {/* Task Name */}
+                <FormField
+                  control={form.control}
+                  name="taskName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Task Name <span className="text-warning">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g., Complete Q1 performance review"
+                          className="text-base"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="flex justify-between items-start">
+                        <FormMessage />
+                        <span className="caption text-muted-foreground">
+                          {field.value.length}/100
+                        </span>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <ResponsiveGrid maxColumns="two" align="start">
+                  {/* Visibility */}
+                  <FormField
+                    control={form.control}
+                    name="visibility"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Visibility <span className="text-warning">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                          name={field.name}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select visibility" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="personal">
+                              <strong>Personal</strong> — Only visible to you
+                            </SelectItem>
+                            <SelectItem value="team">
+                              <strong>Team</strong> — Shared with your team
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Choose who can view this task
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Ghost Variants (All Semantics)</CardTitle>
-            <CardDescription>
-              Ghost style with all semantic colors
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-4">
-            <Button variant="ghost" semantic="neutral">
-              Neutral
-            </Button>
-            <Button variant="ghost" semantic="primary">
-              Primary
-            </Button>
-            <Button variant="ghost" semantic="accent">
-              Accent
-            </Button>
-            <Button variant="ghost" semantic="success">
-              Success
-            </Button>
-            <Button variant="ghost" semantic="warning">
-              Warning
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Link Variants (All Semantics)</CardTitle>
-            <CardDescription>
-              Link style with all semantic colors
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-4">
-            <Button variant="link" semantic="neutral">
-              Neutral
-            </Button>
-            <Button variant="link" semantic="primary">
-              Primary
-            </Button>
-            <Button variant="link" semantic="accent">
-              Accent
-            </Button>
-            <Button variant="link" semantic="success">
-              Success
-            </Button>
-            <Button variant="link" semantic="warning">
-              Warning
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Button Sizes</CardTitle>
-            <CardDescription>All available size variants</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap items-center gap-4">
-            <Button size="sm">Small</Button>
-            <Button size="default">Default</Button>
-            <Button size="lg">Large</Button>
-            <Button size="icon-sm">
-              <FaGears />
-            </Button>
-            <Button size="icon">
-              <FaGears />
-            </Button>
-            <Button size="icon-lg">
-              <FaGears />
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Disabled States</CardTitle>
-            <CardDescription>Buttons in disabled state</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-4">
-            <Button variant="filled" disabled>
-              Filled Disabled
-            </Button>
-            <Button variant="outline" disabled>
-              Outline Disabled
-            </Button>
-            <Button variant="ghost" disabled>
-              Ghost Disabled
-            </Button>
-            <Button variant="link" disabled>
-              Link Disabled
-            </Button>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* CARD SECTION */}
-      <section className="space-y-6">
-        <h1 className="text-3xl font-bold">Card Component Structure</h1>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Card with Header and Description</CardTitle>
-            <CardDescription>
-              This shows the header area with title and description
-            </CardDescription>
-            <CardAction>
-              <Button variant="ghost" size="icon-sm">
-                <FaGears />
-              </Button>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <p>
-              This is the main content area of the card. It can contain any
-              content.
-            </p>
-          </CardContent>
-          <CardFooter>
-            <Button variant="outline">Cancel</Button>
-            <Button variant="filled" semantic="primary">
-              Save
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Card Without Action</CardTitle>
-            <CardDescription>A simpler card layout</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Content goes here without a footer.</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <p>Minimal card with only content, no header or footer.</p>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* INPUT & LABEL SECTION */}
-      <section className="space-y-6">
-        <h1 className="text-3xl font-bold">
-          Input & Label Components (Static)
-        </h1>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Input States</CardTitle>
-            <CardDescription>
-              Various input field states without form context
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="normal">Normal Input</Label>
-              <Input id="normal" type="text" placeholder="Enter text..." />
+                  {/* Priority */}
+                  <FormField
+                    control={form.control}
+                    name="priority"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Priority <span className="text-warning">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                          name={field.name}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select priority" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="high">
+                              <span className="flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full bg-warning" />
+                                High
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="medium">
+                              <span className="flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full bg-primary" />
+                                Medium
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="low">
+                              <span className="flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full bg-muted-foreground" />
+                                Low
+                              </span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </ResponsiveGrid>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="filled">Input with Value</Label>
-              <Input id="filled" type="text" defaultValue="Some text content" />
+            {/* Divider */}
+            <div className="border-t border-border" />
+
+            {/* =============================
+            ADDITIONAL DETAILS
+           ============================= */}
+            <div className="space-y-standard">
+              <div>
+                <h3 className="headline-5 text-foreground">
+                  Additional Details
+                </h3>
+                <p className="caption text-muted-foreground mt-tight">
+                  Optional fields to organize and prioritize your task
+                </p>
+              </div>
+
+              <div className="space-y-standard">
+                {/* Description */}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Description{" "}
+                        <span className="text-muted-foreground caption">
+                          (optional)
+                        </span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Add more context about this task..."
+                          className="min-h-32 resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="flex justify-between items-start">
+                        <FormMessage />
+                        <span className="caption text-muted-foreground">
+                          {field.value?.length || 0}/500
+                        </span>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {/* Organization Fields Grid */}
+                <ResponsiveGrid
+                  maxColumns="two"
+                  align="start"
+                  className="gap-section"
+                >
+                  {/* Deadline */}
+                  <FormField
+                    control={form.control}
+                    name="deadlineDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Deadline{" "}
+                          <span className="text-muted-foreground caption">
+                            (optional)
+                          </span>
+                        </FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="Select deadline"
+                            name={field.name}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Category */}
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Category{" "}
+                          <span className="text-muted-foreground caption">
+                            (optional)
+                          </span>
+                        </FormLabel>
+                        <Popover
+                          open={categoryOpen}
+                          onOpenChange={setCategoryOpen}
+                        >
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="input"
+                                className={cn(
+                                  "w-full justify-between",
+                                  !field.value && "text-muted-foreground",
+                                )}
+                              >
+                                {field.value || "Select category"}
+                                <ChevronsUpDown className="h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+
+                          <PopoverContent className="w-full p-0" align="start">
+                            <Command>
+                              <CommandInput placeholder="Search category..." />
+                              <CommandList>
+                                <CommandEmpty>No category found.</CommandEmpty>
+                                <CommandGroup>
+                                  {CATEGORIES.map((category) => (
+                                    <CommandItem
+                                      key={category}
+                                      value={category}
+                                      onSelect={() => {
+                                        form.setValue("category", category, {
+                                          shouldDirty: true,
+                                        });
+                                        setCategoryOpen(false);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          category === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                      {category}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                        <FormDescription>
+                          Organize by department
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </ResponsiveGrid>
+
+                {/* Tags - Full Width */}
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Tags{" "}
+                        <span className="text-muted-foreground caption">
+                          (optional, max 5)
+                        </span>
+                      </FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="input"
+                              className={cn(
+                                "w-full justify-between min-h-10 h-auto",
+                                !field.value?.length && "text-muted-foreground",
+                              )}
+                            >
+                              <div className="flex flex-wrap gap-1 flex-1">
+                                {field.value?.length ? (
+                                  field.value.map((tag) => (
+                                    <Badge
+                                      key={tag}
+                                      variant="accent-subtle"
+                                      className="cursor-pointer hover:bg-secondary-foreground/10"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        form.setValue(
+                                          "tags",
+                                          field.value?.filter(
+                                            (t) => t !== tag,
+                                          ) || [],
+                                        );
+                                      }}
+                                    >
+                                      {tag}
+                                      <X className="ml-1 h-3 w-3" />
+                                    </Badge>
+                                  ))
+                                ) : (
+                                  <span>
+                                    Select tags to help categorize this task
+                                  </span>
+                                )}
+                              </div>
+                              <ChevronsUpDown className="h-4 w-4 opacity-50 ml-2" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="w-full p-0" align="start">
+                          <Command>
+                            <CommandInput placeholder="Search tags..." />
+                            <CommandList>
+                              <CommandEmpty>No tag found.</CommandEmpty>
+                              <CommandGroup>
+                                {TAGS.map((tag) => {
+                                  const isSelected = field.value?.includes(tag);
+                                  const isDisabled =
+                                    (field.value?.length || 0) >= 5 &&
+                                    !isSelected;
+                                  return (
+                                    <CommandItem
+                                      key={tag}
+                                      value={tag}
+                                      disabled={isDisabled}
+                                      onSelect={() => {
+                                        if (isDisabled) return;
+                                        const current = field.value || [];
+                                        form.setValue(
+                                          "tags",
+                                          isSelected
+                                            ? current.filter((t) => t !== tag)
+                                            : [...current, tag],
+                                        );
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          isSelected
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                      {tag}
+                                    </CommandItem>
+                                  );
+                                })}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormDescription>
+                        Add up to 5 tags ({field.value?.length || 0}/5 selected)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
-            <div className="group space-y-2">
-              <Label htmlFor="disabled">Disabled Input</Label>
-              <Input
-                id="disabled"
-                type="text"
-                disabled
-                placeholder="Disabled field"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="error">Input with Error State</Label>
-              <Input
-                id="error"
-                type="text"
-                aria-invalid={true}
-                placeholder="Invalid input"
-              />
-              <p className="text-destructive text-sm">
-                This field has an error
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Input</Label>
-              <Input id="email" type="email" placeholder="email@example.com" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password Input</Label>
-              <Input id="password" type="password" placeholder="••••••••" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="number">Number Input</Label>
-              <Input id="number" type="number" placeholder="0" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="file">File Input</Label>
-              <Input id="file" type="file" />
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* DIALOG SECTION */}
-      <section className="space-y-6">
-        <h1 className="text-3xl font-bold">Dialog Component</h1>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Dialog Trigger</CardTitle>
-            <CardDescription>Click to see dialog variations</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline">Open Dialog</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Dialog Title</DialogTitle>
-                  <DialogDescription>
-                    This is a description that explains what the dialog is
-                    about.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label>Name</Label>
-                    <Input placeholder="Enter your name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Email</Label>
-                    <Input type="email" placeholder="email@example.com" />
-                  </div>
-                </div>
-                <DialogFooter showCloseButton={true}>
-                  <Button variant="filled" semantic="primary">
-                    Save Changes
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* POPOVER SECTION */}
-      <section className="space-y-6">
-        <h1 className="text-3xl font-bold">Popover Component</h1>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Popover Examples</CardTitle>
-            <CardDescription>Various popover configurations</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">Simple Popover</Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <p>This is a simple popover with just text content.</p>
-              </PopoverContent>
-            </Popover>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">Popover with Header</Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverHeader>
-                  <PopoverTitle>Popover Title</PopoverTitle>
-                  <PopoverDescription>
-                    This popover includes a structured header with title and
-                    description.
-                  </PopoverDescription>
-                </PopoverHeader>
-                <div className="mt-4 space-y-2">
-                  <Input placeholder="Input in popover" />
-                  <Button
-                    variant="filled"
-                    semantic="primary"
-                    className="w-full"
-                  >
-                    Submit
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">
-                  <FaCalendar className="mr-2" />
-                  Date Picker Example
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverHeader>
-                  <PopoverTitle>Select Date</PopoverTitle>
-                  <PopoverDescription>
-                    Choose a date from the options
-                  </PopoverDescription>
-                </PopoverHeader>
-                <div className="mt-4">
-                  <p className="text-sm text-muted-foreground">
-                    Calendar would go here
-                  </p>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* COMMAND SECTION */}
-      <section className="space-y-6">
-        <h1 className="text-3xl font-bold">Command Component</h1>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Command Palette (Static)</CardTitle>
-            <CardDescription>Command menu structure showcase</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Command className="rounded-lg border">
-              <CommandInput placeholder="Type a command or search..." />
-              <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup heading="Suggestions">
-                  <CommandItem>
-                    <FaCalendar className="mr-2" />
-                    <span>Calendar</span>
-                  </CommandItem>
-                  <CommandItem>
-                    <FaMagnifyingGlass className="mr-2" />
-                    <span>Search Emoji</span>
-                  </CommandItem>
-                  <CommandItem>
-                    <FaGears className="mr-2" />
-                    <span>Settings</span>
-                  </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="Settings">
-                  <CommandItem>
-                    <span>Profile</span>
-                    <CommandShortcut>⌘P</CommandShortcut>
-                  </CommandItem>
-                  <CommandItem>
-                    <span>Billing</span>
-                    <CommandShortcut>⌘B</CommandShortcut>
-                  </CommandItem>
-                  <CommandItem>
-                    <span>Settings</span>
-                    <CommandShortcut>⌘S</CommandShortcut>
-                  </CommandItem>
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Command Dialog</CardTitle>
-            <CardDescription>Full-screen command palette</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" onClick={() => setCommandOpen(true)}>
-              Open Command Dialog
-            </Button>
-            <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-              <CommandInput placeholder="Type a command or search..." />
-              <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup heading="Actions">
-                  <CommandItem>Create New Document</CommandItem>
-                  <CommandItem>Open File</CommandItem>
-                  <CommandItem>Save All</CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="Recent">
-                  <CommandItem>Project Alpha</CommandItem>
-                  <CommandItem>Design System</CommandItem>
-                  <CommandItem>Documentation</CommandItem>
-                </CommandGroup>
-              </CommandList>
-            </CommandDialog>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* FUNCTIONAL FORM SECTION */}
-      <section className="space-y-6">
-        <h1 className="text-3xl font-bold">Form Components (Functional)</h1>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Form Testing Area</CardTitle>
-            <CardDescription>
-              Try submitting empty or invalid data to see error states
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-4 flex gap-2">
-              <Button variant="outline" onClick={triggerErrors}>
-                Trigger All Errors
-              </Button>
-              <Button variant="outline" onClick={() => form.reset()}>
+            {/* =============================
+            ACTIONS
+           ============================= */}
+            <div className="flex justify-between items-center pt-section border-t border-border">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleReset}
+                disabled={!form.formState.isDirty}
+              >
                 Reset Form
               </Button>
+              <div className="flex gap-compact">
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+                <Button type="submit">Create Task</Button>
+              </div>
             </div>
-
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="fullName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Enter your first and last name
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="johndoe" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        This is your public display name. Min 3 characters.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email Address</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="john@example.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        We'll use this for account notifications
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Must be at least 8 characters
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>Re-enter your password</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="bio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bio (Optional)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Tell us about yourself..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>Maximum 200 characters</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="testField"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Required Test Field</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="This field is required"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Test required field validation
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => form.reset()}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="button" variant="outline">
-                    Save Draft
-                  </Button>
-                  <Button type="submit" variant="filled" semantic="primary">
-                    Create Account
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </section>
-    </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
-}
+};

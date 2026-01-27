@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/common/PageHeader";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/BrandButton";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { FeatureCard } from "@/components/ui/FeatureCard";
 import { FaPalette, FaShapes, FaFont, FaRulerCombined } from "react-icons/fa6";

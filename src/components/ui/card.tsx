@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -28,11 +29,30 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+const cardTitleVariants = cva("leading-none", {
+  variants: {
+    level: {
+      h1: "headline-1",
+      h2: "headline-2",
+      h3: "headline-3",
+      h4: "headline-4",
+    },
+  },
+  defaultVariants: {
+    level: "h4",
+  },
+});
+
+export interface CardTitleProps
+  extends
+    React.ComponentPropsWithoutRef<"div">,
+    VariantProps<typeof cardTitleVariants> {}
+
+function CardTitle({ level, className, ...props }: CardTitleProps) {
   return (
     <div
       data-slot="card-title"
-      className={cn("leading-none headline-4", className)}
+      className={cn(cardTitleVariants({ level }), className)}
       {...props}
     />
   );
@@ -72,7 +92,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center border-t border-border pt-standard",
+        "flex items-center border-t border-border pt-standard gap-compact",
         className,
       )}
       {...props}

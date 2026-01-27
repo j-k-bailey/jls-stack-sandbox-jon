@@ -13,9 +13,9 @@ import {
   ComponentHighlightShowcase,
   ComponentHighlightTitle,
 } from "@/components/common/ComponentHighlight";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/BrandButton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   UpdateCard,
   UpdateCardContent,
@@ -37,7 +37,7 @@ import {
   CardContent,
   CardFooter,
   CardAction,
-} from "@/components/ui/Card";
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogTrigger,
@@ -46,7 +46,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/Dialog";
+} from "@/components/ui/dialog";
 import {
   Popover,
   PopoverTrigger,
@@ -54,7 +54,7 @@ import {
   PopoverHeader,
   PopoverTitle,
   PopoverDescription,
-} from "@/components/ui/Popover";
+} from "@/components/ui/popover";
 import {
   Command,
   CommandInput,
@@ -65,7 +65,7 @@ import {
   CommandSeparator,
   CommandShortcut,
   CommandDialog,
-} from "@/components/ui/Command";
+} from "@/components/ui/command";
 import {
   Form,
   FormField,
@@ -74,7 +74,7 @@ import {
   FormControl,
   FormDescription,
   FormMessage,
-} from "@/components/ui/Form";
+} from "@/components/ui/form";
 import {
   FaCircleInfo,
   FaBell,
