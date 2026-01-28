@@ -34,15 +34,14 @@ const displayNameSchema = z
   .min(2, "Display name must be at least 2 characters")
   .max(50, "Display name must be 50 characters or less");
 
-const emailSchema = z.string().email("Please enter a valid email address");
+const emailSchema = z.email("Please enter a valid email address");
 
 const bioSchema = z
   .string()
   .max(200, "Bio must be 200 characters or less")
-  .optional()
-  .or(z.literal(""));
+  .optional();
 
-const languageSchema = z.enum(["en", "es", "fr", "de", "ja"], {
+const languageSchema = z.enum(["en"], {
   message: "Please select a language",
 });
 
@@ -89,6 +88,8 @@ export const SettingsPage = () => {
     setError,
   } = useForm<SettingsFormFields>({
     resolver: zodResolver(settingsSchema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
     defaultValues: {
       displayName: "John Doe",
       email: "john.doe@example.com",
@@ -109,8 +110,6 @@ export const SettingsPage = () => {
     try {
       await fakerApi({ data });
       setSubmitStatus("success");
-      // Auto-dismiss success message after 5 seconds
-      setTimeout(() => setSubmitStatus(null), 5000);
     } catch (error) {
       setSubmitStatus("error");
       setError("root", {
