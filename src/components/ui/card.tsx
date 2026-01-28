@@ -45,12 +45,16 @@ const cardTitleVariants = cva("leading-none", {
 
 export interface CardTitleProps
   extends
-    React.ComponentPropsWithoutRef<"div">,
-    VariantProps<typeof cardTitleVariants> {}
+    React.ComponentPropsWithoutRef<"h3">,
+    VariantProps<typeof cardTitleVariants> {
+  as?: React.ElementType;
+}
 
-function CardTitle({ level, className, ...props }: CardTitleProps) {
+function CardTitle({ level = "h3", className, ...props }: CardTitleProps) {
+  const Comp = level as React.ElementType;
+
   return (
-    <div
+    <Comp
       data-slot="card-title"
       className={cn(cardTitleVariants({ level }), className)}
       {...props}

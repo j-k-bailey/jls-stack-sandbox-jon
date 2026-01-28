@@ -84,7 +84,7 @@ export function ComponentsPage() {
   const [commandOpen, setCommandOpen] = React.useState(false);
 
   return (
-    <div className="space-y-section container px-standard pb-section">
+    <div className="space-y-section container">
       <PageHeader
         pageTitle="Component Gallery"
         pageDescription="A showcase of UI components created for JLS Stack Sandbox"
@@ -275,8 +275,12 @@ export function ComponentsPage() {
                     together
                   </CardDescription>
                   <CardAction>
-                    <Button variant="ghost" size="icon-sm">
-                      <FaGears />
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label="Card settings"
+                    >
+                      <FaGears aria-hidden="true" />
                     </Button>
                   </CardAction>
                 </CardHeader>
@@ -505,6 +509,7 @@ export function ComponentsPage() {
               {/* Vertical - Default */}
               <FeatureCard
                 heading="Vertical Layout"
+                headingLevel="h3"
                 description="Default vertical layout with image, description, CTA, and multiple badges."
                 image={{
                   src: "https://picsum.photos/seed/vertical/800/450",
@@ -544,6 +549,7 @@ export function ComponentsPage() {
               <FeatureCard
                 icon={<FaCode />}
                 heading="Icon-Based"
+                headingLevel="h3"
                 description="Card with icon instead of image, perfect for abstract concepts."
                 cta={{
                   label: "Explore",
@@ -554,7 +560,7 @@ export function ComponentsPage() {
               {/* Text Only */}
               <FeatureCard
                 heading="Text-Only Card"
-                headingLevel="h4"
+                headingLevel="h3"
                 description="No image or icon needed. Useful for documentation or simple feature lists."
                 cta={{
                   label: "Read Docs",
@@ -567,6 +573,7 @@ export function ComponentsPage() {
               <FeatureCard
                 icon={<FaLightbulb />}
                 heading="Entire Card Clickable"
+                headingLevel="h3"
                 description="Using onClick makes the whole card interactive with hover effects."
                 badges={[{ text: "Interactive", variant: "accent" }]}
                 onClick={() => alert("Card clicked!")}

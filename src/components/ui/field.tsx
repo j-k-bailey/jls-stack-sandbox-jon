@@ -4,6 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { XCircle } from "lucide-react";
 
 function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   return (
@@ -191,31 +192,40 @@ function FieldError({
 }: React.ComponentProps<"div"> & {
   errors?: Array<{ message?: string } | undefined>;
 }) {
-  const content = useMemo(() => {
+  const { content, hasError } = useMemo(() => {
     if (children) {
-      return children;
+      return { content: children, hasError: false };
     }
 
     if (!errors?.length) {
-      return null;
+      return { content: null, hasError: false };
     }
 
     const uniqueErrors = [
       ...new Map(errors.map((error) => [error?.message, error])).values(),
-    ];
+    ].filter((e) => e?.message);
 
-    if (uniqueErrors?.length == 1) {
-      return uniqueErrors[0]?.message;
+    if (!uniqueErrors.length) {
+      return { content: null, hasError: false };
     }
 
-    return (
-      <ul className="ml-4 flex list-disc flex-col gap-1">
-        {uniqueErrors.map(
-          (error, index) =>
-            error?.message && <li key={index}>{error.message}</li>,
-        )}
-      </ul>
-    );
+    if (uniqueErrors.length === 1) {
+      return {
+        content: <span>{uniqueErrors[0]!.message}</span>,
+        hasError: true,
+      };
+    }
+
+    return {
+      content: (
+        <ul className="ml-4 list-disc space-y-1">
+          {uniqueErrors.map((error, index) => (
+            <li key={index}>{error!.message}</li>
+          ))}
+        </ul>
+      ),
+      hasError: true,
+    };
   }, [children, errors]);
 
   if (!content) {
@@ -224,12 +234,18 @@ function FieldError({
 
   return (
     <div
-      role="alert"
+      role={hasError ? "alert" : undefined}
       data-slot="field-error"
-      className={cn("text-warning text-sm font-normal", className)}
+      className={cn(
+        "text-sm font-normal",
+        hasError ? "flex items-start gap-2 text-warning" : className,
+      )}
       {...props}
     >
-      {content}
+      {hasError && (
+        <XCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+      )}
+      <div>{content}</div>
     </div>
   );
 }

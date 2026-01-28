@@ -12,9 +12,21 @@ import {
 const toDoItems = [
   "Change pages to not need styling for proper spacing/padding (outlet at app layout should provide)",
   "z-index usage should probably be in brand-kit to define levels and their usage",
+  "The Field and component pattern could probably be separated into visual-only components that take props; wrapped/bridge components that set the visuals up as Fields; and then used to create a 'quick form' library for an app that needs devs to easily make unique zod + RHF forms.",
 ];
 
 const updates = [
+  {
+    version: "v0.0.6",
+    date: "January 28, 2026",
+    title: "Lesson 2.7 - WCAG",
+    items: [
+      "Updated FieldError to always include icon prior to error for visual accessibility",
+      "Updated type system and shifted from hardcoding to using relative values",
+      "Tweaked colors for more contrast.",
+      "Refined some spacing issues.",
+    ],
+  },
   {
     version: "v0.0.5",
     date: "January 27, 2026",
@@ -85,7 +97,7 @@ const updates = [
 
 export function QualityCheckPage() {
   return (
-    <div className="space-y-section container px-standard pb-section">
+    <div className="space-y-section container">
       <PageHeader
         pageTitle="Quality Check & Changelog"
         pageDescription="Polish validation, accessibility self-audit, and design system updates."
@@ -96,7 +108,7 @@ export function QualityCheckPage() {
           CHANGELOG
           =============================== */}
       <section className="space-y-standard">
-        <h2 className="mb-compact">To Do</h2>
+        <h2 className="mb-compact">To Do/Thoughts for Later</h2>
         <div className="space-y-compact">
           <div className="bg-surface-1 border-l-4 border-primary p-standard rounded">
             <ul className="space-y-1 body-2 list-disc ml-standard">

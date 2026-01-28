@@ -6,7 +6,7 @@ import { FaPalette, FaShapes, FaFont, FaRulerCombined } from "react-icons/fa6";
 
 export function BrandKitPage() {
   return (
-    <div className="space-y-section container px-standard pb-section">
+    <div className="space-y-section container">
       <PageHeader
         pageTitle="JLS Stack Sandbox Design System"
         level="h2"

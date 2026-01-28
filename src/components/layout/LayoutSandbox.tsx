@@ -39,14 +39,17 @@ export function LayoutSandbox() {
           {/* Sidebar */}
           <div className="md:basis-1/4 space-y-compact">
             <SelectInput
+              id="task-status"
               label="Status"
               options={["All Tasks", "Open", "In Progress", "Completed"]}
             />
             <SelectInput
+              id="task-priority"
               label="Priority"
               options={["All Priorities", "High", "Medium", "Low"]}
             />
             <SelectInput
+              id="task-assignee"
               label="Assignee"
               options={["All Team", "Me", "Unassigned"]}
             />
@@ -98,7 +101,7 @@ export function LayoutSandbox() {
             </div>
           </div>
 
-          {/* Right Sidebar - Hidden on mobile */}
+          {/* Right Sidebar */}
           <div className="hidden md:block md:basis-1/3 space-y-compact">
             <h3 className="font-heading text-base font-semibold">
               Recent Activity

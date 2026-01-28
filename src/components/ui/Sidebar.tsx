@@ -35,21 +35,31 @@ export function Sidebar({
 
   return (
     <div className="fixed inset-0 z-50 flex md:hidden">
-      {/* Backdrop */}
-      <div className="flex-1 bg-overlay/40" onClick={onClose} />
+      {/* Decorative backdrop */}
+      <div className="flex-1 bg-overlay/40" aria-hidden="true" />
 
       {/* Panel */}
-      <aside className="w-64 min-h-screen border-l border-border bg-surface-2 p-compact flex flex-col">
+      <div
+        id="mobile-navigation"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mobile-nav-title"
+        className="w-64 min-h-screen border-l border-border bg-surface-2 p-compact flex flex-col"
+      >
         <div className="flex items-center justify-between">
-          <span className="overline-text">Navigation</span>
+          <span id="mobile-nav-title" className="overline-text">
+            Navigation
+          </span>
+
           <Button
             variant="default"
             size="lg"
             className="inline-flex transition-colors"
             semantic="primary"
+            aria-label="Close navigation menu"
             onClick={onClose}
           >
-            <FaX />
+            <FaX aria-hidden="true" />
           </Button>
         </div>
 
@@ -64,7 +74,7 @@ export function Sidebar({
             <ThemeToggle />
           </div>
         </div>
-      </aside>
+      </div>
     </div>
   );
 }

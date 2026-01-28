@@ -25,12 +25,11 @@ export function DashboardPage() {
   };
 
   return (
-    <div className="space-y-section container px-standard pb-section">
+    <div className="space-y-section container">
       <PageHeader
         pageTitle="Task Dashboard"
         pageDescription="Manage your tasks and track your productivity."
       />
-
       {/* Stats Overview */}
       <ResponsiveGrid maxColumns="four">
         <StatCard
@@ -58,14 +57,10 @@ export function DashboardPage() {
           variant="error"
         />
       </ResponsiveGrid>
-
       {/* Empty State or Task Board */}
       {!hasTasks ? (
         <div className="space-y-standard">
-          <InlineAlert variant="primary">
-            <div className="shrink-0 py-1">
-              <ClipboardList className="h-6 w-6" />
-            </div>
+          <InlineAlert variant="primary" icon={ClipboardList}>
             <div className="flex-1">
               <p className="font-bold">Welcome to Your Task Manager!</p>
               <p className="text-sm mt-1">
@@ -172,7 +167,6 @@ export function DashboardPage() {
           </div>
         </SectionCard>
       )}
-
       {/* Quick Actions */}
       <SectionCard
         title="Quick Actions"
@@ -182,6 +176,7 @@ export function DashboardPage() {
           <FeatureCard
             icon={<Plus className="h-12 w-12" />}
             heading="Create Task"
+            headingLevel="h3"
             description="Add a new task with priority, deadline, and category to stay organized."
             cta={{
               label: "New Task",
@@ -192,6 +187,7 @@ export function DashboardPage() {
           <FeatureCard
             icon={<TrendingUp className="h-12 w-12" />}
             heading="View Analytics"
+            headingLevel="h3"
             description="Track your productivity with insights on completed tasks and time management."
             cta={{
               label: "View Stats",
@@ -202,6 +198,7 @@ export function DashboardPage() {
           <FeatureCard
             icon={<CheckCircle2 className="h-12 w-12" />}
             heading="Manage Tasks"
+            headingLevel="h3"
             description="Review all your tasks, update statuses, and mark items as complete."
             cta={{
               label: "View All",
@@ -211,7 +208,6 @@ export function DashboardPage() {
           />
         </ResponsiveGrid>
       </SectionCard>
-
       {/* Tips for Getting Started */}
       {!hasTasks && (
         <SectionCard
@@ -224,9 +220,9 @@ export function DashboardPage() {
                 <Clock className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm mb-1">
+                <h3 className="font-semibold text-sm mb-1">
                   Set Realistic Deadlines
-                </h4>
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   Add deadline dates to your tasks to stay on track and
                   prioritize effectively.
@@ -239,9 +235,9 @@ export function DashboardPage() {
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm mb-1">
+                <h3 className="font-semibold text-sm mb-1">
                   Use Priority Levels
-                </h4>
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   Mark tasks as high, medium, or low priority to focus on what
                   matters most.
@@ -254,9 +250,9 @@ export function DashboardPage() {
                 <ClipboardList className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm mb-1">
+                <h3 className="font-semibold text-sm mb-1">
                   Organize with Categories
-                </h4>
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   Group related tasks by department or project for better
                   organization.
@@ -269,9 +265,9 @@ export function DashboardPage() {
                 <CheckCircle2 className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm mb-1">
+                <h3 className="font-semibold text-sm mb-1">
                   Tag for Quick Filtering
-                </h4>
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   Add tags like "urgent" or "blocked" to quickly find and filter
                   tasks.

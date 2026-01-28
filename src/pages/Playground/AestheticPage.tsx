@@ -3,7 +3,7 @@ import { InlineAlert } from "@/components/ui/InlineAlert";
 
 export function AestheticPage() {
   return (
-    <div className="space-y-section container px-standard pb-section">
+    <div className="space-y-section container">
       <PageHeader pageTitle="Aesthetic Playground" level="h2" />
 
       <InlineAlert variant="primary">

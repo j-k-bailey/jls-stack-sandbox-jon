@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/field";
 import { FeatureCard } from "@/components/ui/FeatureCard";
 import { format } from "date-fns";
+import { PageHeader } from "@/components/common/PageHeader";
 
 // Constants
 const CATEGORIES = [
@@ -120,6 +121,8 @@ export const CreateTaskPage = () => {
     setError,
   } = useForm<CreateTaskFormFields>({
     resolver: zodResolver(createTaskSchema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
     defaultValues: {
       taskName: "",
       description: "",
@@ -262,6 +265,8 @@ export const CreateTaskPage = () => {
           }}
         />
       )}
+
+      <PageHeader pageTitle="Manage Your Tasks" />
 
       {/* Form Card */}
       <Card>

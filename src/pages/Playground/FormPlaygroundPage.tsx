@@ -10,7 +10,7 @@ export function FormPlaygroundPage() {
         level="h2"
         pageDescription="Exploring common form patterns in React"
       />
-      <div className="space-y-section">
+      <div className="space-y-section container">
         {/* Pattern 1: Basic Contact Form */}
         <section className="space-y-compact">
           <div>

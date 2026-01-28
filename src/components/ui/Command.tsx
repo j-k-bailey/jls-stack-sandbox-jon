@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
@@ -154,6 +152,8 @@ function CommandSeparator({
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
+      role="presentation"
+      aria-hidden="true"
       className={cn("bg-border -mx-1 h-px", className)}
       {...props}
     />

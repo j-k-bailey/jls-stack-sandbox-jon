@@ -10,7 +10,10 @@ export function AppLayout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <Topbar onMenuClick={() => setSidebarOpen((prev) => !prev)} />
+      <Topbar
+        onMenuClick={() => setSidebarOpen((prev) => !prev)}
+        isMenuOpen={sidebarOpen}
+      />
 
       <div className="flex flex-1 pt-16">
         <Sidebar variant="desktop" navigationConfig={NAVIGATION_CONFIG} />

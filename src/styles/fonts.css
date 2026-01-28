@@ -1,0 +1,48 @@
+/* ================================
+   INTER
+   ================================ */
+@font-face {
+  font-family: "Inter";
+  src: url("/src/assets/fonts/inter/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/src/assets/fonts/inter/Inter-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ================================
+   ROBOTO MONO
+   ================================ */
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("/src/assets/fonts/roboto-mono/RobotoMono-Light.woff2")
+    format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("/src/assets/fonts/roboto-mono/RobotoMono-Regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("/src/assets/fonts/roboto-mono/RobotoMono-Medium.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
