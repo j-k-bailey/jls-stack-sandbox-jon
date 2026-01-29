@@ -16,13 +16,13 @@ export function TaskItem({
     priority === "high"
       ? "border-accent"
       : priority === "medium"
-        ? "border-muted-foreground"
+        ? "border-neutral-foreground"
         : "border-border";
 
   return (
     <div
       className={cn(
-        `bg-muted/50 rounded-lg p-compact border-l-2 ${borderColor}`,
+        `bg-neutral-background text-neutral rounded-interactive p-inset-xs border-l-2 ${borderColor}`,
         className,
       )}
     >

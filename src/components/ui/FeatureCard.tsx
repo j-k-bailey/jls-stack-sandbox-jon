@@ -6,8 +6,8 @@ import { FilledButton } from "@/components/ui/BrandButtonVariants";
 const featureCardVariants = cva("relative", {
   variants: {
     layout: {
-      vertical: "flex flex-col",
-      horizontal: "flex flex-col md:flex-row",
+      vertical: "flex flex-col ",
+      horizontal: "flex flex-col p-inset-lg md:flex-row",
     },
     emphasis: {
       subtle: "bg-surface-1 border-border",
@@ -23,24 +23,21 @@ const featureCardVariants = cva("relative", {
 const imageContainerVariants = cva("overflow-hidden", {
   variants: {
     layout: {
-      vertical: "w-full aspect-video rounded-t-lg",
+      vertical: "w-full aspect-video rounded-t-nested",
       horizontal:
-        "w-full md:w-2/5 lg:w-1/3 aspect-video md:aspect-square rounded-t-lg md:rounded-l-lg md:rounded-tr-none",
+        "w-full md:w-2/5 lg:w-1/3 aspect-video md:aspect-square rounded-t-nested md:rounded-l-nested md:rounded-tr-none",
     },
   },
 });
 
-const contentContainerVariants = cva(
-  "flex flex-col gap-comfortable p-comfortable",
-  {
-    variants: {
-      layout: {
-        vertical: "",
-        horizontal: "md:flex-1",
-      },
+const contentContainerVariants = cva("flex flex-col gap-inline", {
+  variants: {
+    layout: {
+      vertical: "",
+      horizontal: "md:flex-1",
     },
   },
-);
+});
 
 export interface FeatureCardProps extends VariantProps<
   typeof featureCardVariants
@@ -87,11 +84,13 @@ export const FeatureCard = ({
       className={cn(
         featureCardVariants({ layout, emphasis }),
         onClick && "cursor-pointer hover:shadow-lg transition-shadow",
+        "p-inset-lg rounded-large",
         className,
       )}
       onClick={onClick}
     >
-      {/* Badges */}
+      {/* Badges 
+      TODO: clean up and replace with actual badge*/}
       {badges && badges.length > 0 && (
         <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
           {badges.map((badge, index) => (
@@ -139,15 +138,15 @@ export const FeatureCard = ({
 
       {/* Content */}
       <div className={cn(contentContainerVariants({ layout }))}>
-        <HeadingTag className="text-heading-3 font-bold">{heading}</HeadingTag>
+        <HeadingTag className="headline-3 font-bold">{heading}</HeadingTag>
 
-        <div className="text-body text-muted-on-background flex-1">
+        <div className="body-1 text-muted-on-background flex-1">
           {description}
         </div>
 
         {/* CTA */}
         {cta && (
-          <div className="mt-compact">
+          <div className="mt-stack">
             {cta.href ? (
               <FilledButton asChild semantic={cta.variant || "primary"}>
                 <a href={cta.href}>{cta.label}</a>

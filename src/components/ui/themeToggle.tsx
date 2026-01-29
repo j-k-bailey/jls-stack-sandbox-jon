@@ -26,8 +26,13 @@ export function ThemeToggle() {
   };
 
   return (
-    <Button semantic="primary" onClick={toggleTheme} aria-label="Toggle theme">
-      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+    <Button
+      semantic="primary"
+      size="icon-sm"
+      onClick={toggleTheme}
+      aria-label="Toggle theme"
+    >
+      {isDark ? <Sun /> : <Moon />}
     </Button>
   );
 }

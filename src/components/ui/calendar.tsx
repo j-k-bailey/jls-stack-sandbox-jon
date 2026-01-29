@@ -31,7 +31,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        "p-compact [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] bg-background",
+        "p-inset [--cell-radius:var(--radius-interactive)] [--cell-size:--spacing(7)] bg-background",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className,
@@ -46,12 +46,12 @@ function Calendar({
       classNames={{
         root: cn("w-fit", defaultClassNames.root),
         months: cn(
-          "flex gap-standard flex-col md:flex-row relative",
+          "flex gap-stack flex-col md:flex-row relative",
           defaultClassNames.months,
         ),
-        month: cn("flex flex-col w-full gap-compact", defaultClassNames.month),
+        month: cn("flex flex-col w-full gap-stack", defaultClassNames.month),
         nav: cn(
-          "flex items-center gap-2 w-full absolute top-0 inset-x-0 justify-between",
+          "flex items-center gap-inline w-full absolute top-0 inset-x-0 justify-between",
           defaultClassNames.nav,
         ),
         button_previous: cn(
@@ -69,11 +69,11 @@ function Calendar({
           defaultClassNames.month_caption,
         ),
         dropdowns: cn(
-          "w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-2",
+          "w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-inline",
           defaultClassNames.dropdowns,
         ),
         dropdown_root: cn(
-          "relative rounded-lg",
+          "relative rounded-interactive",
           defaultClassNames.dropdown_root,
         ),
         dropdown: cn(
@@ -86,16 +86,16 @@ function Calendar({
           "select-none font-medium pointer-events-none",
           captionLayout === "label"
             ? "text-sm"
-            : "rounded-lg flex items-center gap-2 text-sm px-compact py-1.5 border border-border bg-background hover:bg-surface-1 transition-colors [&>svg]:text-muted-foreground [&>svg]:size-4",
+            : "rounded-interactive flex items-center gap-inline text-sm px-inset py-inline border border-border bg-background hover:bg-surface-1 transition-colors [&>svg]:text-muted-foreground [&>svg]:size-4",
           defaultClassNames.caption_label,
         ),
-        table: "w-full border-collapse mt-compact",
+        table: "w-full border-collapse mt-stack",
         weekdays: cn("flex", defaultClassNames.weekdays),
         weekday: cn(
-          "text-muted-foreground rounded-md flex-1 font-medium text-xs select-none pb-2",
+          "text-muted-foreground rounded-interactive flex-1 font-medium text-xs select-none pb-inline",
           defaultClassNames.weekday,
         ),
-        week: cn("flex w-full mt-1", defaultClassNames.week),
+        week: cn("flex w-full mt-inline", defaultClassNames.week),
         week_number_header: cn(
           "select-none w-(--cell-size)",
           defaultClassNames.week_number_header,
@@ -105,11 +105,11 @@ function Calendar({
           defaultClassNames.week_number,
         ),
         day: cn(
-          "relative w-full rounded-md h-full p-0 text-center group/day aspect-square select-none",
+          "relative w-full rounded-interactive h-full p-0 text-center group/day aspect-square select-none",
           defaultClassNames.day,
         ),
         range_start: cn(
-          "rounded-l-md bg-primary-background",
+          "rounded-l-interactive bg-primary-background",
           defaultClassNames.range_start,
         ),
         range_middle: cn(
@@ -117,11 +117,11 @@ function Calendar({
           defaultClassNames.range_middle,
         ),
         range_end: cn(
-          "rounded-r-md bg-primary-background",
+          "rounded-r-interactive bg-primary-background",
           defaultClassNames.range_end,
         ),
         today: cn(
-          "bg-neutral-background text-foreground font-semibold rounded-md",
+          "bg-neutral-background text-foreground font-semibold rounded-interactive",
           defaultClassNames.today,
         ),
         outside: cn(
@@ -220,7 +220,7 @@ function CalendarDayButton({
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) items-center justify-center",
         "border-0 leading-none font-normal text-sm",
-        "rounded-md",
+        "rounded-interactive",
         "transition-colors",
         defaultClassNames.day,
         className,

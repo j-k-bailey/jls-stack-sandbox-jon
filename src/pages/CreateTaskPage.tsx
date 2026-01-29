@@ -163,7 +163,7 @@ export const CreateTaskPage = () => {
   };
 
   return (
-    <div className="space-y-section">
+    <div className="p-inset-2xl space-y-section container">
       {/* Success Message */}
       {submittedTask && (
         <FeatureCard
@@ -307,7 +307,11 @@ export const CreateTaskPage = () => {
                   )}
                 />
 
-                <ResponsiveGrid maxColumns="two" align="start">
+                <ResponsiveGrid
+                  maxColumns="two"
+                  align="start"
+                  className="gap-section"
+                >
                   <Controller
                     control={control}
                     name="visibility"
@@ -409,7 +413,11 @@ export const CreateTaskPage = () => {
                   )}
                 />
 
-                <ResponsiveGrid maxColumns="two" align="start">
+                <ResponsiveGrid
+                  maxColumns="two"
+                  align="start"
+                  className="gap-section"
+                >
                   <Controller
                     control={control}
                     name="deadlineDate"
@@ -595,7 +603,7 @@ export const CreateTaskPage = () => {
               >
                 Reset Form
               </Button>
-              <div className="flex gap-compact">
+              <div className="flex gap-inline">
                 <Button type="button" variant="outline" disabled={isSubmitting}>
                   Cancel
                 </Button>

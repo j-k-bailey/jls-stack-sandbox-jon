@@ -13,7 +13,7 @@ export function SimpleFeatureCard({
   return (
     <div
       className={cn(
-        "bg-surface-1 text-foreground border border-border rounded-lg p-compact",
+        "bg-surface-1 text-foreground border border-border rounded-nested p-inset",
         className,
       )}
     >

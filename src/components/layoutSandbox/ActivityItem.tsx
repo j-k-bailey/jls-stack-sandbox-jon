@@ -12,10 +12,12 @@ export function ActivityItem({
   isLast = false,
 }: ActivityItemProps) {
   return (
-    <div className={isLast ? "pb-tight" : "pb-tight border-b border-border"}>
+    <div className={isLast ? "pb-tight" : "pb-inset-xs border-b border-border"}>
       <div className="text-accent font-semibold body-2">{name}</div>
-      <div className="text-foreground mt-tight caption">{action}</div>
-      <div className="text-muted-foreground mt-tight caption">{timestamp}</div>
+      <div className="text-foreground mt-inset-xs caption">{action}</div>
+      <div className="text-muted-foreground mt-inset-xs caption">
+        {timestamp}
+      </div>
     </div>
   );
 }

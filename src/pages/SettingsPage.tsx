@@ -123,7 +123,7 @@ export const SettingsPage = () => {
   };
 
   return (
-    <div className="space-y-section container px-standard pb-section">
+    <div className="space-y-section container p-inset-2xl">
       <PageHeader
         pageTitle="Settings"
         pageDescription="Manage your account preferences and profile information"

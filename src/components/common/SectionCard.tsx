@@ -22,7 +22,7 @@ export function SectionCard({
     <section aria-labelledby={title ? titleId : undefined}>
       <Card className={cn("border-border bg-surface-1", className)}>
         {hasHeader && (
-          <CardHeader className="space-y-tight pb-relaxed">
+          <CardHeader className="space-y-stack pb-inline">
             {title && (
               <CardTitle id={titleId} level="h2" className="headline-4">
                 {title}

@@ -97,7 +97,7 @@ const updates = [
 
 export function QualityCheckPage() {
   return (
-    <div className="space-y-section container">
+    <div className="space-y-section container p-inset-2xl">
       <PageHeader
         pageTitle="Quality Check & Changelog"
         pageDescription="Polish validation, accessibility self-audit, and design system updates."
@@ -107,10 +107,10 @@ export function QualityCheckPage() {
       {/* ===============================
           CHANGELOG
           =============================== */}
-      <section className="space-y-standard">
-        <h2 className="mb-compact">To Do/Thoughts for Later</h2>
-        <div className="space-y-compact">
-          <div className="bg-surface-1 border-l-4 border-primary p-standard rounded">
+      <section className="space-y-stack">
+        <h2 className="mb-stack">To Do/Thoughts for Later</h2>
+        <div className="space-y-stack">
+          <div className="bg-surface-1 border-l-4 border-border-primary px-inset-xl py-inset rounded">
             <ul className="space-y-1 body-2 list-disc ml-standard">
               {toDoItems.map((toDoItem, index) => (
                 <li key={index}>{toDoItem}</li>
@@ -119,9 +119,9 @@ export function QualityCheckPage() {
           </div>
         </div>
 
-        <h2 className="mb-compact">Changelog</h2>
+        <h2 className="mt-section mb-stack">Changelog</h2>
 
-        <div className="space-y-section">
+        <div className="space-y-stack">
           {updates.map((update, index) => (
             <UpdateCard key={index}>
               <UpdateCardHeader>

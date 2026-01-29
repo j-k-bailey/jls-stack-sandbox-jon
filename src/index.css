@@ -8,126 +8,146 @@
      FONT FAMILIES
      ================================ */
   --font-heading:
-    "Roboto Mono", ui-monospace, "SF Mono", "Cascadia Code", "Consolas",
-    monospace;
+    "Josefin Sans", system-ui, -apple-system, "BlinkMacSystemFont", "Segoe UI",
+    sans-serif;
   --font-body:
     "Inter", system-ui, -apple-system, "BlinkMacSystemFont", "Segoe UI",
     "Roboto", sans-serif;
 
   /* ==========================================
-     RADIUS SCALE
+     SPACING SYSTEM - Semantic, Content-Based
+     
+     Philosophy: Name tokens after WHAT they separate
+     
+     FLOW SPACING (gaps between elements):
+     inline (4-6px)       → Related items (buttons, icon+text)
+     stack (8-12px)       → Vertical content flow (label→input)
+     section (24-40px)    → Content blocks (between cards)
+     layout (32-48px)     → Page structure (header, main, footer)
+     
+     INSET SPACING (padding inside containers):
+     inset-xs (6-8px)     → Compact badges, tight table cells
+     inset-sm (8-12px)       → Buttons, small cards, tags
+     inset (16-24px)   → Cards, dialogs, panels (default)
+     inset-lg (24-32px)   → Hero sections, feature cards
+     inset-xl (32-48px)  → Large immersive containers
+     inset-2xl (48-64px)  → Full-page containers, landing pages
      ========================================== */
-  --radius: 0.5rem;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Flow Spacing */
+  --spacing-inline: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+  --spacing-stack: clamp(0.5rem, 0.375rem + 0.5vw, 0.75rem);
+  --spacing-section: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  --spacing-layout: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+
+  /* Inset Spacing */
+  --spacing-inset-xs: clamp(0.375rem, 0.3125rem + 0.25vw, 0.5rem);
+  --spacing-inset-sm: clamp(0.5rem, 0.375rem + 0.5vw, 0.75rem);
+  --spacing-inset: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+  --spacing-inset-lg: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  --spacing-inset-xl: clamp(2rem, 1.5rem + 2vw, 3rem);
+  --spacing-inset-2xl: clamp(3rem, 2.5rem + 2vw, 4rem);
 
   /* ==========================================
-      Semantic aliases for common use cases
+     HITBOX SYSTEM - Ensures minimum WCAG hitbox size for interactables
+     
+     Philosophy: THE smallest visual (24px) and an industry-comfort 44px for the hitbox
+     
      ========================================== */
-
-  --spacing-tight: 0.375rem; /* micro-interactions */
-  --spacing-compact: 0.75rem; /* dense displays */
-  --spacing-standard: 1.5rem; /* 24px - default padding */
-  --spacing-section: 2rem; /* 32px - large sections */
-
-  /* ==========================================
-     TEXT SIZE UTILITIES
-     Overrides Tailwind defaults to match our type scale
-     ========================================== */
-  --text-xs: 0.75rem; /* 12px - caption/overline */
-  --text-sm: 0.875rem; /* 14px - body-2/subtitle-2 */
-  --text-base: 1rem; /* 16px - body-1/subtitle-1/h6 */
-  --text-lg: 1.125rem; /* 18px - h5 */
-  --text-xl: 1.375rem; /* 22px - h4 */
-  --text-2xl: 1.75rem; /* 28px - h3 */
-  --text-3xl: 2.25rem; /* 36px - h2 */
-  --text-4xl: 3rem; /* 48px - h1 */
-  --text-5xl: 4rem; /* 64px - extra large display */
-  --text-6xl: 5.375rem; /* 86px - hero display */
-  /* ==========================================
-     BRAND IDENTITY COLORS (Cyan/Aqua Scale)
-     ========================================== */
-  --color-cyan-50: var(--color-cyan-50);
-  --color-cyan-100: var(--color-cyan-100);
-  --color-cyan-200: var(--color-cyan-200);
-  --color-cyan-300: var(--color-cyan-300);
-  --color-cyan-400: var(--color-cyan-400);
-  --color-cyan-500: var(--color-cyan-500);
-  --color-cyan-600: var(--color-cyan-600);
-  --color-cyan-700: var(--color-cyan-700);
-  --color-cyan-800: var(--color-cyan-800);
-  --color-cyan-900: var(--color-cyan-900);
-  --color-cyan-950: var(--color-cyan-950);
+  --spacing-hit-target: 24px;
 
   /* ==========================================
-     BRAND IDENTITY COLORS (Magenta/Fuchsia Scale)
+     BORDER RADIUS - Semantic Usage-Based
+     
+     interactive (4px)  → Buttons, inputs, small badges
+     nested (6px)       → Elements inside rounded containers
+     container (8px)    → Cards, panels, dialogs (default)
+     large (12px)       → Hero cards, feature sections
+     icon (2px)         → Icon backgrounds
+     full (9999px)      → Pills, badges
      ========================================== */
-  --color-fuchsia-50: var(--color-fuchsia-50);
-  --color-fuchsia-100: var(--color-fuchsia-100);
-  --color-fuchsia-200: var(--color-fuchsia-200);
-  --color-fuchsia-300: var(--color-fuchsia-300);
-  --color-fuchsia-400: var(--color-fuchsia-400);
-  --color-fuchsia-500: var(--color-fuchsia-500);
-  --color-fuchsia-600: var(--color-fuchsia-600);
-  --color-fuchsia-700: var(--color-fuchsia-700);
-  --color-fuchsia-800: var(--color-fuchsia-800);
-  --color-fuchsia-900: var(--color-fuchsia-900);
-  --color-fuchsia-950: var(--color-fuchsia-950);
+  --radius-interactive: 4px;
+  --radius-nested: 6px;
+  --radius-container: 8px;
+  --radius-large: 12px;
+  --radius-icon: 2px;
+  --radius-full: 9999px;
 
   /* ==========================================
-     CORE FOUNDATION
+     SHADOWS - Minimal Use Preferred
+     
+     none → Default (use surface colors instead)
+     low → Subtle lift for cards
+     medium → Dropdowns, sticky elements
+     high → Modals, high priority overlays
+     glow-{semantic} → Hero moments, primary CTAs
+     ========================================== */
+  --shadow-none: none;
+
+  --shadow-low: 0 1px 2px 0
+    color-mix(in oklch, var(--foreground) 5%, transparent);
+
+  --shadow-medium:
+    0 4px 6px -1px color-mix(in oklch, var(--foreground) 10%, transparent),
+    0 2px 4px -2px color-mix(in oklch, var(--foreground) 10%, transparent);
+
+  --shadow-high:
+    0 20px 25px -5px color-mix(in oklch, var(--foreground) 10%, transparent),
+    0 8px 10px -6px color-mix(in oklch, var(--foreground) 10%, transparent);
+
+  /* ==========================================
+     FOCUS STATES - High Contrast Keyboard Nav
+     ========================================== */
+  --focus-ring: oklch(75% 0.19 195);
+  --focus-ring-offset: 2px;
+  --focus-ring-width: 3px;
+
+  /* ==========================================
+     GRID SYSTEM
+     
+     basic (12 col) → Main content (default)
+     extended (14 col) → Stretched containers
+     wide (16 col) → With persistent sidebar
+     Gap aligns with spacing-section
+     ========================================== */
+  --grid-basic-columns: 12;
+  --grid-extended-columns: 14;
+  --grid-wide-columns: 16;
+  --grid-gap: var(--spacing-section);
+
+  /* ==========================================
+     COLOR MAPPINGS (for Tailwind utilities)
      ========================================== */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-border: var(--border);
   --color-overlay: var(--overlay);
 
-  /* ==========================================
-     SURFACES
-     ========================================== */
   --color-surface-1: var(--surface-1);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
   --color-surface-4: var(--surface-4);
 
-  /* ==========================================
-     LINKS
-     ========================================== */
   --color-link: var(--link);
   --color-link-hover: var(--link-hover);
   --color-link-visited: var(--link-visited);
 
-  /* ==========================================
-     SHADCN/UI COMPATIBILITY
-     ========================================== */
+  /* Shadcn/UI compatibility */
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* ==========================================
-     CHART COLORS
-     ========================================== */
+  /* Charts */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* ==========================================
-     SIDEBAR/NAVIGATION
-     ========================================== */
+  /* Sidebar */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -137,111 +157,71 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* ==========================================
-     MUTED
-     ========================================== */
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border-muted: var(--border-muted);
-  --color-muted-background: var(--muted-background);
-  --color-muted-hover: var(--muted-hover);
-  --color-muted-on-background: var(--muted-on-background);
-
-  /* ==========================================
-     PRIMARY
-     ========================================== */
+  /* Semantic Colors (6-token pattern) */
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-on-background: var(--primary-on-background);
   --color-border-primary: var(--border-primary);
   --color-primary-background: var(--primary-background);
   --color-primary-hover: var(--primary-hover);
-  --color-primary-on-background: var(--primary-on-background);
 
-  /* ==========================================
-     NEUTRAL
-     ========================================== */
-  --color-neutral: var(--neutral);
-  --color-neutral-foreground: var(--neutral-foreground);
-  --color-border-neutral: var(--border-neutral);
-  --color-neutral-background: var(--neutral-background);
-  --color-neutral-hover: var(--neutral-hover);
-  --color-neutral-on-background: var(--neutral-on-background);
-
-  /* ==========================================
-     ACCENT
-     ========================================== */
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-on-background: var(--accent-on-background);
   --color-border-accent: var(--border-accent);
   --color-accent-background: var(--accent-background);
   --color-accent-hover: var(--accent-hover);
-  --color-accent-on-background: var(--accent-on-background);
 
-  /* ==========================================
-     SUCCESS
-     ========================================== */
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-success-on-background: var(--success-on-background);
   --color-border-success: var(--border-success);
   --color-success-background: var(--success-background);
   --color-success-hover: var(--success-hover);
-  --color-success-on-background: var(--success-on-background);
 
-  /* ==========================================
-     WARNING
-     ========================================== */
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-on-background: var(--warning-on-background);
   --color-border-warning: var(--border-warning);
   --color-warning-background: var(--warning-background);
   --color-warning-hover: var(--warning-hover);
-  --color-warning-on-background: var(--warning-on-background);
 
-  /* ==========================================
-     DISABLED
-     ========================================== */
+  --color-neutral: var(--neutral);
+  --color-neutral-foreground: var(--neutral-foreground);
+  --color-neutral-on-background: var(--neutral-on-background);
+  --color-border-neutral: var(--border-neutral);
+  --color-neutral-background: var(--neutral-background);
+  --color-neutral-hover: var(--neutral-hover);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted-on-background: var(--muted-on-background);
+  --color-border-muted: var(--border-muted);
+  --color-muted-background: var(--muted-background);
+  --color-muted-hover: var(--muted-hover);
+
   --color-disabled: var(--disabled);
   --color-disabled-foreground: var(--disabled-foreground);
+  --color-disabled-on-background: var(--disabled-on-background);
   --color-border-disabled: var(--border-disabled);
   --color-disabled-background: var(--disabled-background);
   --color-disabled-hover: var(--disabled-hover);
-  --color-disabled-on-background: var(--disabled-on-background);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
 }
 
 :root {
-  /* === Cyan/Aqua Brand Scale === */
-  --color-cyan-50: oklch(0.9848 0.021 189.59);
-  --color-cyan-100: oklch(0.9651 0.0507 193.32);
-  --color-cyan-200: oklch(0.9417 0.0894 195.74);
-  --color-cyan-300: oklch(0.902 0.141 197.18);
-  --color-cyan-400: oklch(0.8633 0.1442 199.24);
-  --color-cyan-500: oklch(0.7832 0.1332 201.55);
-  --color-cyan-600: oklch(0.6664 0.1145 208.31);
-  --color-cyan-700: oklch(0.563 0.096 210.77);
-  --color-cyan-800: oklch(0.4832 0.0798 212.53);
-  --color-cyan-900: oklch(0.4234 0.0684 216.42);
-  --color-cyan-950: oklch(0.3228 0.0546 218);
-
-  /* === Magenta/Fuchsia Brand Scale === */
-  --color-fuchsia-50: oklch(0.9766 0.0193 328.27);
-  --color-fuchsia-100: oklch(0.9516 0.0418 324.69);
-  --color-fuchsia-200: oklch(0.9042 0.0868 325.64);
-  --color-fuchsia-300: oklch(0.8361 0.1561 327.61);
-  --color-fuchsia-400: oklch(0.7622 0.2386 328.68);
-  --color-fuchsia-500: oklch(0.7193 0.2966 327.9);
-  --color-fuchsia-600: oklch(0.6445 0.287 329.28);
-  --color-fuchsia-700: oklch(0.5596 0.2493 330.06);
-  --color-fuchsia-800: oklch(0.4813 0.2108 330.78);
-  --color-fuchsia-900: oklch(0.4182 0.1759 331.72);
-  --color-fuchsia-950: oklch(0.3112 0.1405 331.95);
-
   /* === Foundation === */
   --background: oklch(97% 0.008 200);
   --foreground: oklch(18% 0.015 200);
   --border: oklch(82% 0.018 200);
-  --overlay: oklch(18% 0.015 200);
+  --overlay: oklch(18% 0.015 200 / 0.5);
 
-  /* === Surface Elevation (4 levels with cyan tint progression) === */
+  /* === Surface Elevation (4 levels with cyan tint) === */
   --surface-1: oklch(94% 0.015 198);
   --surface-2: oklch(91% 0.018 197);
   --surface-3: oklch(88% 0.021 196);
@@ -249,7 +229,7 @@
 
   /* === Links === */
   --link: oklch(42% 0.19 195);
-  --link-hover: oklch(35% 0.2 195);
+  --link-hover: oklch(55% 0.21 195); /* +13% lightness for obvious feedback */
   --link-visited: oklch(45% 0.18 310);
 
   /* === Shadcn/UI === */
@@ -262,9 +242,9 @@
   --destructive: oklch(48% 0.21 10);
   --destructive-foreground: oklch(98% 0.005 10);
   --input: oklch(85% 0.008 220);
-  --ring: oklch(42% 0.19 195);
+  --ring: oklch(75% 0.19 195);
 
-  /* === Charts (Cyberpunk Spectrum) === */
+  /* === Charts === */
   --chart-1: oklch(42% 0.19 195);
   --chart-2: oklch(48% 0.23 325);
   --chart-3: oklch(45% 0.19 280);
@@ -279,63 +259,76 @@
   --sidebar-accent: oklch(92% 0.006 216);
   --sidebar-accent-foreground: oklch(18% 0.012 195);
   --sidebar-border: oklch(85% 0.008 220);
-  --sidebar-ring: oklch(42% 0.19 195);
+  --sidebar-ring: oklch(75% 0.19 195);
 
-  /* === Muted (Blue-Gray Professional) === */
-  --muted: oklch(89% 0.012 240);
-  --muted-foreground: oklch(45% 0.018 240);
-  --border-muted: oklch(82% 0.015 240);
-  --muted-background: oklch(95% 0.008 240);
-  --muted-hover: oklch(85% 0.015 240);
-  --muted-on-background: oklch(28% 0.022 240);
+  /* === Semantic Colors (6-token pattern) === */
 
-  /* === Primary (Electric Cyan Hero) === */
+  /* Primary (Electric Cyan) */
   --primary: oklch(42% 0.19 195);
   --primary-foreground: oklch(98% 0.005 195);
+  --primary-on-background: oklch(25% 0.21 195);
   --border-primary: oklch(35% 0.2 195);
   --primary-background: oklch(95% 0.045 195);
-  --primary-hover: oklch(48% 0.2 195);
-  --primary-on-background: oklch(25% 0.21 195);
+  --primary-hover: oklch(55% 0.21 195);
 
-  /* === Neutral (Steel-Fuchsia Cyberpunk) === */
-  --neutral: oklch(87% 0.018 315);
-  --neutral-foreground: oklch(18% 0.012 315);
-  --border-neutral: oklch(70% 0.022 315);
-  --neutral-background: oklch(95% 0.01 315);
-  --neutral-hover: oklch(82% 0.022 315);
-  --neutral-on-background: oklch(24% 0.018 315);
-
-  /* === Accent (Hot Fuchsia Vaporwave) === */
+  /* Accent (Vaporwave Fuchsia) */
   --accent: oklch(48% 0.23 325);
   --accent-foreground: oklch(98% 0.005 325);
+  --accent-on-background: oklch(30% 0.25 325);
   --border-accent: oklch(40% 0.24 325);
   --accent-background: oklch(95% 0.048 325);
-  --accent-hover: oklch(54% 0.25 325);
-  --accent-on-background: oklch(30% 0.25 325);
+  --accent-hover: oklch(63% 0.26 325);
 
-  /* === Success (Matrix Green-Teal) === */
+  /* Success (Matrix Teal) */
   --success: oklch(45% 0.17 160);
   --success-foreground: oklch(98% 0.005 160);
+  --success-on-background: oklch(28% 0.19 160);
   --border-success: oklch(37% 0.18 160);
   --success-background: oklch(95% 0.04 160);
-  --success-hover: oklch(51% 0.19 160);
-  --success-on-background: oklch(28% 0.19 160);
+  --success-hover: oklch(60% 0.2 160);
 
-  /* === Warning (Hot Coral Danger) === */
+  /* Warning (Hot Coral) */
   --warning: oklch(48% 0.21 10);
   --warning-foreground: oklch(98% 0.005 10);
+  --warning-on-background: oklch(32% 0.23 10);
   --border-warning: oklch(39% 0.22 10);
   --warning-background: oklch(95% 0.045 10);
-  --warning-hover: oklch(54% 0.23 10);
-  --warning-on-background: oklch(32% 0.23 10);
+  --warning-hover: oklch(63% 0.24 10);
 
-  /* === Disabled === */
+  /* Neutral (Steel-Fuchsia) */
+  --neutral: oklch(87% 0.018 315);
+  --neutral-foreground: oklch(18% 0.012 315);
+  --neutral-on-background: oklch(24% 0.018 315);
+  --border-neutral: oklch(70% 0.022 315);
+  --neutral-background: oklch(95% 0.01 315);
+  --neutral-hover: oklch(92% 0.022 315);
+
+  /* Muted (Blue-Gray) */
+  --muted: oklch(89% 0.012 240);
+  --muted-foreground: oklch(45% 0.018 240);
+  --muted-on-background: oklch(28% 0.022 240);
+  --border-muted: oklch(82% 0.015 240);
+  --muted-background: oklch(95% 0.008 240);
+  --muted-hover: oklch(94% 0.015 240);
+
+  /* Disabled */
   --disabled: oklch(91% 0.004 220);
   --disabled-foreground: oklch(55% 0.005 220);
+  --disabled-on-background: oklch(55% 0.005 220);
   --border-disabled: oklch(87% 0.004 220);
   --disabled-background: oklch(95% 0.003 220);
   --disabled-hover: oklch(91% 0.004 220);
-  --disabled-on-background: oklch(55% 0.005 220);
+
+  /* === Semantic Glow Shadows === */
+  --shadow-glow-primary:
+    0 0 20px 0 oklch(42% 0.19 195 / 0.3), 0 0 40px 0 oklch(42% 0.19 195 / 0.15);
+
+  --shadow-glow-accent:
+    0 0 20px 0 oklch(48% 0.23 325 / 0.3), 0 0 40px 0 oklch(48% 0.23 325 / 0.15);
+
+  --shadow-glow-success: 0 0 20px 0 oklch(45% 0.17 160 / 0.25);
+
+  --shadow-glow-warning: 0 0 20px 0 oklch(48% 0.21 10 / 0.3);
 }
 
 .dark {
@@ -343,9 +336,9 @@
   --background: oklch(12% 0.015 200);
   --foreground: oklch(95% 0.01 200);
   --border: oklch(35% 0.03 200);
-  --overlay: oklch(10% 0.015 200);
+  --overlay: oklch(10% 0.015 200 / 0.8);
 
-  /* === Surface Elevation (4 levels with increasing cyan glow) === */
+  /* === Surface Elevation (increasing cyan glow) === */
   --surface-1: oklch(16% 0.025 198);
   --surface-2: oklch(20% 0.035 196);
   --surface-3: oklch(24% 0.045 194);
@@ -353,8 +346,11 @@
 
   /* === Links === */
   --link: oklch(78% 0.19 195);
-  --link-hover: oklch(88% 0.21 195);
+  --link-hover: oklch(93% 0.22 195); /* +15% lightness + glow */
   --link-visited: oklch(75% 0.19 310);
+
+  /* === Focus Ring (Brighter in dark mode) === */
+  --focus-ring: oklch(88% 0.22 195);
 
   /* === Shadcn/UI === */
   --card: oklch(14% 0.02 210);
@@ -366,9 +362,9 @@
   --destructive: oklch(68% 0.23 10);
   --destructive-foreground: oklch(8% 0.012 10);
   --input: oklch(28% 0.025 220);
-  --ring: oklch(78% 0.19 195);
+  --ring: oklch(88% 0.22 195);
 
-  /* === Charts (Neon Spectrum) === */
+  /* === Charts (Neon) === */
   --chart-1: oklch(78% 0.19 195);
   --chart-2: oklch(74% 0.25 325);
   --chart-3: oklch(72% 0.21 280);
@@ -383,63 +379,76 @@
   --sidebar-accent: oklch(20% 0.028 205);
   --sidebar-accent-foreground: oklch(94% 0.012 195);
   --sidebar-border: oklch(28% 0.025 220);
-  --sidebar-ring: oklch(78% 0.19 195);
+  --sidebar-ring: oklch(88% 0.22 195);
 
-  /* === Muted (Blue-Gray Professional) === */
-  --muted: oklch(26% 0.02 240);
-  --muted-foreground: oklch(70% 0.018 240);
-  --border-muted: oklch(35% 0.025 240);
-  --muted-background: oklch(16% 0.015 240);
-  --muted-hover: oklch(30% 0.025 240);
-  --muted-on-background: oklch(80% 0.02 240);
+  /* === Semantic Colors (6-token pattern) === */
 
-  /* === Primary (Electric Cyan Glowing) === */
-  --primary: oklch(78% 0.19 195);
+  /* Primary (Electric Cyan Glow) */
+  --primary: oklch(75% 0.18 195);
   --primary-foreground: oklch(8% 0.012 195);
-  --border-primary: oklch(90% 0.21 195);
+  --primary-on-background: oklch(88% 0.21 195);
+  --border-primary: oklch(88% 0.21 195);
   --primary-background: oklch(18% 0.08 195);
-  --primary-hover: oklch(88% 0.21 195);
-  --primary-on-background: oklch(90% 0.21 195);
+  --primary-hover: oklch(92% 0.23 195);
 
-  /* === Neutral (Steel-Fuchsia Glow) === */
+  /* Accent (Hot Fuchsia Neon) */
+  --accent: oklch(72% 0.25 325);
+  --accent-foreground: oklch(8% 0.012 325);
+  --accent-on-background: oklch(90% 0.27 325);
+  --border-accent: oklch(86% 0.27 325);
+  --accent-background: oklch(18% 0.1 325);
+  --accent-hover: oklch(88% 0.29 325);
+
+  /* Success (Matrix Green Digital) */
+  --success: oklch(72% 0.19 160);
+  --success-foreground: oklch(8% 0.012 160);
+  --success-on-background: oklch(88% 0.21 160);
+  --border-success: oklch(86% 0.21 160);
+  --success-background: oklch(18% 0.08 160);
+  --success-hover: oklch(88% 0.23 160);
+
+  /* Warning (Hot Coral Danger) */
+  --warning: oklch(68% 0.23 10);
+  --warning-foreground: oklch(8% 0.012 10);
+  --warning-on-background: oklch(86% 0.25 10);
+  --border-warning: oklch(82% 0.25 10);
+  --warning-background: oklch(18% 0.1 10);
+  --warning-hover: oklch(84% 0.27 10);
+
+  /* Neutral (Steel-Fuchsia Glow) */
   --neutral: oklch(28% 0.022 315);
   --neutral-foreground: oklch(94% 0.012 315);
+  --neutral-on-background: oklch(88% 0.022 315);
   --border-neutral: oklch(42% 0.028 315);
   --neutral-background: oklch(16% 0.018 315);
-  --neutral-hover: oklch(35% 0.028 315);
-  --neutral-on-background: oklch(90% 0.022 315);
+  --neutral-hover: oklch(38% 0.028 315);
 
-  /* === Accent (Hot Fuchsia Neon) === */
-  --accent: oklch(74% 0.25 325);
-  --accent-foreground: oklch(8% 0.012 325);
-  --border-accent: oklch(88% 0.27 325);
-  --accent-background: oklch(18% 0.1 325);
-  --accent-hover: oklch(84% 0.27 325);
-  --accent-on-background: oklch(92% 0.27 325);
+  /* Muted (Blue-Gray) */
+  --muted: oklch(26% 0.02 240);
+  --muted-foreground: oklch(70% 0.018 240);
+  --muted-on-background: oklch(80% 0.02 240);
+  --border-muted: oklch(35% 0.025 240);
+  --muted-background: oklch(16% 0.015 240);
+  --muted-hover: oklch(36% 0.025 240);
 
-  /* === Success (Matrix Green Digital) === */
-  --success: oklch(74% 0.19 160);
-  --success-foreground: oklch(8% 0.012 160);
-  --border-success: oklch(88% 0.21 160);
-  --success-background: oklch(18% 0.08 160);
-  --success-hover: oklch(84% 0.21 160);
-  --success-on-background: oklch(90% 0.21 160);
-
-  /* === Warning (Hot Coral Danger) === */
-  --warning: oklch(70% 0.23 10);
-  --warning-foreground: oklch(8% 0.012 10);
-  --border-warning: oklch(84% 0.25 10);
-  --warning-background: oklch(18% 0.1 10);
-  --warning-hover: oklch(80% 0.25 10);
-  --warning-on-background: oklch(88% 0.25 10);
-
-  /* === Disabled === */
+  /* Disabled */
   --disabled: oklch(20% 0.004 220);
   --disabled-foreground: oklch(50% 0.005 220);
+  --disabled-on-background: oklch(50% 0.005 220);
   --border-disabled: oklch(26% 0.004 220);
   --disabled-background: oklch(14% 0.003 220);
   --disabled-hover: oklch(20% 0.004 220);
-  --disabled-on-background: oklch(50% 0.005 220);
+
+  /* === Semantic Glow Shadows (Brighter in dark) === */
+  --shadow-glow-primary:
+    0 0 20px 0 oklch(75% 0.18 195 / 0.4), 0 0 40px 0 oklch(75% 0.18 195 / 0.2);
+
+  --shadow-glow-accent:
+    0 0 20px 0 oklch(72% 0.25 325 / 0.4), 0 0 40px 0 oklch(72% 0.25 325 / 0.2);
+
+  --shadow-glow-success: 0 0 20px 0 oklch(72% 0.19 160 / 0.35);
+
+  --shadow-glow-warning: 0 0 20px 0 oklch(68% 0.23 10 / 0.4);
 }
 
 /* ==========================================
@@ -447,30 +456,34 @@
    ========================================== */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
 
   html {
     font-family: var(--font-body);
     font-size: 16px;
-    /* Allow user overrides without breaking layout */
     overflow-wrap: break-word;
     word-wrap: break-word;
   }
 
   body {
     @apply antialiased bg-background text-foreground scroll-smooth;
-    font-size: 1rem; /* 16px base - optimized for readability */
-    line-height: 1.6; /* 160% - WCAG AA recommended minimum for body text */
-    letter-spacing: normal; /* Let font's natural spacing work */
-    word-spacing: normal; /* Let font's natural spacing work */
-    /* Enable smooth text rendering across browsers */
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: normal;
+    word-spacing: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    /* Ensure content doesn't break on resize */
     overflow-wrap: break-word;
     hyphens: auto;
+    font-optical-sizing: auto;
+    font-feature-settings:
+      "cv02" 1,
+      "cv03" 1,
+      "cv04" 1,
+      "cv08" 1,
+      "ss01" 1;
   }
 
   ::selection {
@@ -489,7 +502,7 @@
     @apply rounded-full bg-muted-foreground;
   }
 
-  /* Ensure autofill doesn't break design */
+  /* Autofill styling */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
@@ -508,16 +521,7 @@
     transition: background-color 5000s ease-in-out 0s;
   }
 
-  /* ===== HEADINGS (Roboto Mono) ===== 
-   * DESIGN PHILOSOPHY:
-   * - Perfect fourth scale (1.333) for strong hierarchy
-   * - Tighter line-height (1.1-1.25) for display text
-   * - Negative letter-spacing on large sizes for optical balance
-   * - Light weights (300) on largest sizes, medium (500) on smallest
-   * - Zero margins - explicit spacing via utility classes
-   * - All values scale gracefully with user font-size overrides
-   */
-
+  /* === HEADINGS (Josefin Sans) === */
   h1,
   h2,
   h3,
@@ -527,126 +531,118 @@
     margin: 0;
     padding: 0;
     font-family: var(--font-heading);
-    /* Tighter line-height for headings improves visual density */
     line-height: 1.2;
-    /* Prevent awkward breaks in headings */
     overflow-wrap: break-word;
-    hyphens: manual; /* Only break where explicitly marked */
+    hyphens: manual;
   }
 
-  /* H1 - Hero/Page Title (3rem = 48px @ 16px base) */
   h1 {
-    font-size: 3rem; /* 1.333^5 ≈ 3rem from 1rem base */
-    font-weight: 300; /* Light weight prevents overwhelming presence */
-    line-height: 1.1; /* Tightest line-height for largest text */
-    letter-spacing: -0.02em; /* Optical correction for large sizes */
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
 
-  /* H2 - Major Section (2.25rem = 36px @ 16px base) */
   h2 {
-    font-size: 2.25rem; /* 1.333^4 ≈ 2.25rem */
+    font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
     font-weight: 300;
     line-height: 1.15;
     letter-spacing: -0.015em;
   }
 
-  /* H3 - Subsection (1.75rem = 28px @ 16px base) */
   h3 {
-    font-size: 1.75rem; /* 1.333^3 ≈ 1.75rem */
-    font-weight: 400; /* Regular weight starts here */
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    font-weight: 400;
     line-height: 1.2;
     letter-spacing: -0.01em;
   }
 
-  /* H4 - Card/Component Title (1.375rem = 22px @ 16px base) */
   h4 {
-    font-size: 1.375rem; /* 1.333^2 ≈ 1.375rem */
+    font-size: clamp(1.125rem, 0.9375rem + 0.75vw, 1.375rem);
     font-weight: 400;
     line-height: 1.25;
-    letter-spacing: -0.005em; /* Minimal negative tracking */
+    letter-spacing: -0.005em;
   }
 
-  /* H5 - Small Section (1.125rem = 18px @ 16px base) */
   h5 {
-    font-size: 1.125rem; /* 1.333^1 ≈ 1.125rem */
-    font-weight: 500; /* Medium weight for smaller headings */
+    font-size: clamp(1rem, 0.875rem + 0.5vw, 1.125rem);
+    font-weight: 500;
     line-height: 1.3;
-    letter-spacing: 0; /* Neutral spacing */
+    letter-spacing: 0;
   }
 
-  /* H6 - Smallest Heading (1rem = 16px @ 16px base) */
   h6 {
-    font-size: 1rem; /* Same as body, differentiated by weight */
-    font-weight: 600; /* Semi-bold for clear distinction from body */
+    font-size: clamp(0.875rem, 0.8125rem + 0.25vw, 1rem);
+    font-weight: 500;
     line-height: 1.35;
-    letter-spacing: 0.005em; /* Slight positive tracking for emphasis */
+    letter-spacing: 0.005em;
   }
 
-  /* ===== BODY TEXT (Inter) ===== 
-   * DESIGN PHILOSOPHY:
-   * - 16px base (1rem) - industry standard for optimal readability
-   * - 1.6 line-height - WCAG AA minimum, improves comprehension
-   * - Normal letter/word spacing - let Inter's metrics shine
-   * - Zero margins - explicit spacing control
-   * - Graceful degradation with user overrides
-   */
-
+  /* === BODY TEXT (Inter) === */
   p {
     margin: 0;
     padding: 0;
     font-family: var(--font-body);
-    font-size: 1rem; /* 16px - optimal for extended reading */
+    font-size: 1rem;
     font-weight: 400;
-    line-height: 1.6; /* 160% - WCAG AA compliant, aids comprehension */
-    letter-spacing: normal; /* Inter's built-in spacing is excellent */
+    line-height: 1.6;
+    letter-spacing: normal;
     word-spacing: normal;
   }
 
-  /* Small text - use sparingly, accessibility concern */
   small {
     font-family: var(--font-body);
-    font-size: 0.875rem; /* 14px - minimum readable size */
+    font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.5;
-    letter-spacing: 0.01em; /* Slight tracking aids readability at small sizes */
+    letter-spacing: 0.01em;
   }
 
-  /* Links - accessible by default */
+  /* === LINKS === */
   a {
     @apply text-link hover:text-link-hover visited:text-link-visited transition-colors;
-    text-underline-offset: 0.2em; /* Improve readability */
-    /* Ensure focus is visible */
+    text-underline-offset: 0.2em;
     outline-offset: 2px;
   }
 
   a:hover {
-    text-decoration-thickness: 2px; /* Emphasize hover state */
+    text-decoration-thickness: 2px;
   }
 
-  /* Remove underline on non-text links (icons, buttons styled as links) */
   a[aria-label]:not([href*="://"]) {
     text-decoration: none;
   }
 
-  /* Ensure keyboard focus is highly visible */
+  /* === FOCUS STATES (High Contrast, Keyboard Only) === */
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
-  select:focus-visible {
-    @apply outline-ring outline-2 outline-offset-2;
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: inherit;
+  }
+
+  /* Remove default browser outline */
+  *:focus {
+    outline: none;
+  }
+
+  /* Only show on keyboard focus, not mouse */
+  *:focus:not(:focus-visible) {
+    outline: none;
   }
 }
 
 /* ==========================================
-     TYPOGRAPHY UTILITIES
-     ========================================== */
-
-/* === HEADINGS === */
+   TYPOGRAPHY UTILITIES
+   ========================================== */
 
 @utility headline-1 {
   font-family: var(--font-heading);
-  font-size: 3rem; /* 48px */
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
   font-weight: 300;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -654,7 +650,7 @@
 
 @utility headline-2 {
   font-family: var(--font-heading);
-  font-size: 2.25rem; /* 36px */
+  font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
   font-weight: 300;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -662,7 +658,7 @@
 
 @utility headline-3 {
   font-family: var(--font-heading);
-  font-size: 1.75rem; /* 28px */
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -670,7 +666,7 @@
 
 @utility headline-4 {
   font-family: var(--font-heading);
-  font-size: 1.375rem; /* 22px */
+  font-size: clamp(1.125rem, 0.9375rem + 0.75vw, 1.375rem);
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: -0.005em;
@@ -678,7 +674,7 @@
 
 @utility headline-5 {
   font-family: var(--font-heading);
-  font-size: 1.125rem; /* 18px */
+  font-size: clamp(1rem, 0.875rem + 0.5vw, 1.125rem);
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0;
@@ -686,99 +682,135 @@
 
 @utility headline-6 {
   font-family: var(--font-heading);
-  font-size: 1rem; /* 16px */
-  font-weight: 600;
+  font-size: clamp(0.875rem, 0.8125rem + 0.25vw, 1rem);
+  font-weight: 500;
   line-height: 1.35;
   letter-spacing: 0.005em;
 }
 
-/* === SUBTITLES === 
- * Roboto Mono for technical/data-focused content
- * Medium weight, generous tracking for clarity
- */
-
 @utility subtitle-1 {
   font-family: var(--font-heading);
-  font-size: 1rem; /* 16px */
+  font-size: clamp(0.875rem, 0.8125rem + 0.25vw, 1rem);
   font-weight: 500;
-  line-height: 1.5; /* Matches body for mixed content */
+  line-height: 1.5;
   letter-spacing: 0.01em;
 }
 
 @utility subtitle-2 {
   font-family: var(--font-heading);
-  font-size: 0.875rem; /* 14px */
+  font-size: clamp(0.8125rem, 0.78125rem + 0.125vw, 0.875rem);
   font-weight: 500;
   line-height: 1.5;
-  letter-spacing: 0.015em; /* More tracking at smaller size */
+  letter-spacing: 0.015em;
 }
-
-/* === BODY TEXT === 
- * Inter optimized for readability
- * Two sizes for content hierarchy
- */
 
 @utility body-1 {
   font-family: var(--font-body);
-  font-size: 1rem; /* 16px - primary body size */
+  font-size: clamp(0.875rem, 0.8125rem + 0.25vw, 1rem);
   font-weight: 400;
-  line-height: 1.6; /* WCAG AA compliant */
+  line-height: 1.6;
   letter-spacing: normal;
 }
 
 @utility body-2 {
   font-family: var(--font-body);
-  font-size: 0.875rem; /* 14px - secondary/metadata */
+  font-size: clamp(0.8125rem, 0.78125rem + 0.125vw, 0.875rem);
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: 0.01em; /* Aid readability at smaller size */
+  letter-spacing: 0.01em;
 }
-
-/* === UI TEXT === 
- * Specialized styles for interface elements
- */
 
 @utility button-text {
   font-family: var(--font-body);
-  font-size: 0.875rem; /* 14px - touch-friendly */
-  font-weight: 600; /* Semi-bold for emphasis */
-  line-height: 1; /* Tight for buttons */
-  letter-spacing: 0.05em; /* Spacing for uppercase clarity */
+  font-size: clamp(0.8125rem, 0.78125rem + 0.125vw, 0.875rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 @utility caption {
   font-family: var(--font-body);
-  font-size: 0.75rem; /* 12px - minimum accessible size */
+  font-size: clamp(0.75rem, 0.71875rem + 0.125vw, 0.8125rem);
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: 0.02em; /* Extra tracking for legibility */
-  color: var(--muted-foreground); /* De-emphasize by default */
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
 }
 
 @utility overline-text {
   font-family: var(--font-heading);
-  font-size: 0.75rem; /* 12px */
-  font-weight: 600; /* Bold for labels */
+  font-size: clamp(0.75rem, 0.71875rem + 0.125vw, 0.8125rem);
+  font-weight: 500;
   line-height: 1.5;
-  letter-spacing: 0.15em; /* Wide tracking for uppercase labels */
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--muted-foreground); /* De-emphasize by default */
+  color: var(--muted-foreground);
 }
 
-/* === SPECIAL UTILITIES === 
- * Additional helpers for specific use cases
- */
-
 @utility monospace {
-  font-family: var(--font-heading);
-  font-variant-numeric: tabular-nums; /* Align numbers */
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", "Consolas", monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 @utility tabular-nums {
-  font-variant-numeric: tabular-nums; /* Fixed-width numbers for tables */
+  font-variant-numeric: tabular-nums;
 }
 
 @utility balanced {
-  text-wrap: balance; /* Better multi-line text distribution */
+  text-wrap: balance;
+}
+
+/* ==========================================
+   GRID UTILITIES
+   ========================================== */
+
+@utility grid-basic {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--spacing-section);
+}
+
+@utility grid-extended {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: var(--grid-gap);
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: var(--spacing-section);
+}
+
+@utility grid-wide {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: var(--grid-gap);
+  max-width: 1920px;
+  margin-inline: auto;
+  padding-inline: var(--spacing-section);
+}
+
+@utility grid-fullbleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
+/* Mobile: All grids collapse to 6 columns */
+@media (max-width: 640px) {
+  .grid-basic,
+  .grid-extended,
+  .grid-wide {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* ==========================================
+   INTERACTIVE UTILITIES
+   ========================================== */
+
+@utility hit-target {
+  min-width: var(--spacing-hit-target);
+  min-height: var(--spacing-hit-target);
 }

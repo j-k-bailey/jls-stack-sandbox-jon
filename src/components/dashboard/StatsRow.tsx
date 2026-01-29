@@ -18,16 +18,16 @@ export function StatsRow({ stats = defaultStats }: { stats?: Stat[] }) {
       title="Sandbox Status"
       description="High-level snapshot of what your app supports."
     >
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-inline md:grid-cols-3">
         {stats.map((s, idx) => (
           <div
             key={idx}
-            className="rounded-lg border border-border bg-surface-1 p-standard"
+            className="rounded-container border border-border bg-surface-1 p-inset-sm"
           >
             <div className="text-xs text-foreground">{s.label}</div>
             <div className="text-lg font-semibold">{s.value}</div>
             {s.hint ? (
-              <div className="text-xs text-surface-muted mt-compact">
+              <div className="text-xs text-surface-muted mt-inset-xs">
                 {s.hint}
               </div>
             ) : null}

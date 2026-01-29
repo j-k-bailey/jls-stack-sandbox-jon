@@ -84,7 +84,7 @@ export function ComponentsPage() {
   const [commandOpen, setCommandOpen] = React.useState(false);
 
   return (
-    <div className="space-y-section container">
+    <div className="p-inset-2xl space-y-section container">
       <PageHeader
         pageTitle="Component Gallery"
         pageDescription="A showcase of UI components created for JLS Stack Sandbox"
@@ -207,7 +207,7 @@ export function ComponentsPage() {
                 <h3 className="font-heading text-base font-semibold mb-compact">
                   Combined Variants
                 </h3>
-                <div className="space-y-standard">
+                <div className="space-y-stack">
                   <div className="flex flex-wrap gap-2">
                     <Button semantic="primary">Primary Default</Button>
                     <Button variant="outline" semantic="primary">
@@ -264,63 +264,55 @@ export function ComponentsPage() {
           and CardFooter subcomponents for flexible layouts.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
-          <SectionCard title="Card Structures">
-            <div className="space-y-compact">
-              {/* Full Card with All Parts */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Complete Card Example</CardTitle>
-                  <CardDescription>
-                    This card demonstrates all available subcomponents working
-                    together
-                  </CardDescription>
-                  <CardAction>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label="Card settings"
-                    >
-                      <FaGears aria-hidden="true" />
-                    </Button>
-                  </CardAction>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm">
-                    Card content goes here. This is the main body area for your
-                    card's information.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline">Cancel</Button>
-                  <Button semantic="primary">Save</Button>
-                </CardFooter>
-              </Card>
+          <div className="space-y-stack">
+            {/* Full Card with All Parts */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Complete Card Example</CardTitle>
+                <CardDescription>
+                  This card demonstrates all available subcomponents working
+                  together
+                </CardDescription>
+                <CardAction>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="Card settings"
+                  >
+                    <FaGears aria-hidden="true" />
+                  </Button>
+                </CardAction>
+              </CardHeader>
+              <CardContent>
+                Card content goes here. This is the main body area for your
+                card's information.
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline">Cancel</Button>
+                <Button semantic="primary">Save</Button>
+              </CardFooter>
+            </Card>
 
-              {/* Card Without Action */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Card Without Action Button</CardTitle>
-                  <CardDescription>
-                    A simpler card without the action slot
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm">
-                    Content can include any React components or text
-                  </p>
-                </CardContent>
-              </Card>
+            {/* Card Without Action */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Card Without Action Button</CardTitle>
+                <CardDescription>
+                  A simpler card without the action slot
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                Content can include any React components or text
+              </CardContent>
+            </Card>
 
-              {/* Minimal Card */}
-              <Card>
-                <CardContent>
-                  <p className="text-sm">
-                    Minimal card with only content - no header or footer
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </SectionCard>
+            {/* Minimal Card */}
+            <Card>
+              <CardContent>
+                Minimal card with only content - no header or footer
+              </CardContent>
+            </Card>
+          </div>
           <ComponentHighlightProps>
             Card (className?: string), CardHeader (className?: string),
             CardTitle (className?: string, children: ReactNode), CardDescription
@@ -452,7 +444,7 @@ export function ComponentsPage() {
                       done.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-standard py-4">
+                  <div className="space-y-stack py-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
                       <Input id="name" placeholder="Enter your name" />
@@ -502,7 +494,7 @@ export function ComponentsPage() {
           both vertical and horizontal layouts with subtle or bold emphasis
           variants.
         </ComponentHighlightDescription>
-        <ComponentHighlightShowcase className="space-y-compact">
+        <ComponentHighlightShowcase className="space-y-stack">
           {/* Core Layouts */}
           <SectionCard title="Layout Variants">
             <ResponsiveGrid maxColumns="two">
@@ -640,56 +632,53 @@ export function ComponentsPage() {
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
           <SectionCard title="Inline Alert Variants">
-            <div className="space-y-standard">
+            <div className="space-y-stack">
               {/* Primary Alert */}
-              <InlineAlert variant="primary">
-                <p className="font-bold">New Feature Available</p>
-                <p className="text-sm mt-1">
-                  Check out our latest automation tools in the dashboard.
-                </p>
+              <InlineAlert variant="primary" title="New Feature Available">
+                Check out our latest automation tools in the dashboard.
               </InlineAlert>
 
               {/* Neutral Alert with Dismissal */}
-              <InlineAlert variant="neutral" dismissible>
-                <p className="font-bold">System Maintenance Scheduled</p>
-                <p className="text-sm mt-1">
-                  We'll be performing routine maintenance on Saturday from 2-4
-                  AM EST.
-                </p>
+              <InlineAlert
+                variant="neutral"
+                title="System Maintenance Scheduled"
+                dismissible
+              >
+                We'll be performing routine maintenance on Saturday from 2-4 AM
+                EST.
               </InlineAlert>
 
               {/* Accent Alert */}
-              <InlineAlert variant="accent">
-                <p className="font-bold">Welcome to the JLS Stack Sandbox!</p>
-                <p className="text-sm mt-1">
-                  Explore our design system and component library. Start with
-                  the navigation above.
-                </p>
+              <InlineAlert
+                variant="accent"
+                title="Welcome to the JLS Stack Sandbox!"
+              >
+                Explore our design system and component library. Start with the
+                navigation above.
               </InlineAlert>
 
               {/* Success Alert with Dismissal */}
-              <InlineAlert variant="success" dismissible>
-                <p className="font-bold">Changes Saved Successfully</p>
-                <p className="text-sm mt-1">
-                  Your preferences have been updated and are now active.
-                </p>
+              <InlineAlert
+                variant="success"
+                title="Changes Saved Successfully"
+                dismissible
+              >
+                Your preferences have been updated and are now active.
               </InlineAlert>
 
               {/* Warning Alert */}
-              <InlineAlert variant="warning">
-                <p className="font-bold">API Rate Limit Approaching</p>
-                <p className="text-sm mt-1">
-                  You've used 85% of your monthly API quota. Consider upgrading
-                  your plan.
-                </p>
+              <InlineAlert variant="warning" title="API Rate Limit Approaching">
+                You've used 85% of your monthly API quota. Consider upgrading
+                your plan.
               </InlineAlert>
 
               {/* Text-Only Alert (No Icon) */}
-              <InlineAlert variant="primary" textOnly>
-                <p className="font-bold">Minimal Alert Style</p>
-                <p className="text-sm mt-1">
-                  This alert has no icon for a cleaner, text-focused appearance.
-                </p>
+              <InlineAlert
+                variant="primary"
+                title="Minimal Alert Style"
+                textOnly
+              >
+                This alert has no icon for a cleaner, text-focused appearance.
               </InlineAlert>
 
               {/* Custom Icon Alert */}
@@ -734,7 +723,7 @@ export function ComponentsPage() {
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
           <SectionCard title="Input Variants">
-            <div className="space-y-standard max-w-sm">
+            <div className="space-y-stack max-w-sm">
               <div className="space-y-2">
                 <Label htmlFor="text">Text Input</Label>
                 <Input id="text" placeholder="Enter text here..." />
@@ -748,12 +737,6 @@ export function ComponentsPage() {
                   placeholder="email@example.com"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password Input</Label>
-                <Input id="password" type="password" placeholder="••••••••" />
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="number">Number Input</Label>
                 <Input id="number" type="number" placeholder="0" />
@@ -805,7 +788,7 @@ export function ComponentsPage() {
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
           <SectionCard title="Label Examples">
-            <div className="space-y-standard max-w-sm">
+            <div className="space-y-stack max-w-sm">
               <div className="space-y-2">
                 <Label htmlFor="example1">Standard Label</Label>
                 <Input id="example1" placeholder="Associated input" />
@@ -950,7 +933,7 @@ export function ComponentsPage() {
           breakpoint, then to 2, 3, or 4 columns at lg based on maxColumns
           variant.
         </ComponentHighlightDescription>
-        <ComponentHighlightShowcase className="space-y-standard">
+        <ComponentHighlightShowcase className="space-y-stack">
           {/* Default Grid - 4 columns */}
           <SectionCard title="Default Grid (1 → 2 → 4)">
             <ResponsiveGrid>
@@ -1245,25 +1228,23 @@ export function ComponentsPage() {
           emphasized.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
-          <SectionCard title="Task Items">
-            <div className="space-y-compact">
-              <TaskItem
-                title="Low Priority Task"
-                metadata="Due: Tomorrow"
-                priority="low"
-              />
-              <TaskItem
-                title="Medium Priority Task"
-                metadata="Due: This week"
-                priority="medium"
-              />
-              <TaskItem
-                title="High Priority Task"
-                metadata="Due: Today"
-                priority="high"
-              />
-            </div>
-          </SectionCard>
+          <div className="space-y-stack mb-stack">
+            <TaskItem
+              title="Low Priority Task"
+              metadata="Due: Tomorrow"
+              priority="low"
+            />
+            <TaskItem
+              title="Medium Priority Task"
+              metadata="Due: This week"
+              priority="medium"
+            />
+            <TaskItem
+              title="High Priority Task"
+              metadata="Due: Today"
+              priority="high"
+            />
+          </div>
           <ComponentHighlightProps>
             title (string), metadata (string), priority ("high" | "medium" |
             "low")
@@ -1281,14 +1262,12 @@ export function ComponentsPage() {
           persistent localStorage support.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
-          <SectionCard title="Theme Toggle">
-            <div className="flex items-center gap-standard">
-              <ThemeToggle />
-              <p className="text-sm text-muted-foreground">
-                Click to toggle between light and dark themes
-              </p>
-            </div>
-          </SectionCard>
+          <div className="flex items-center gap-inline mb-stack">
+            <ThemeToggle />
+            <p className="text-sm text-muted-foreground">
+              Click to toggle between light and dark themes
+            </p>
+          </div>
           <ComponentHighlightProps>No props required</ComponentHighlightProps>
         </ComponentHighlightShowcase>
       </ComponentHighlight>
@@ -1303,20 +1282,18 @@ export function ComponentsPage() {
           version, date, title, and content list.
         </ComponentHighlightDescription>
         <ComponentHighlightShowcase>
-          <SectionCard title="Update Cards">
-            <UpdateCard>
-              <UpdateCardHeader>
-                <UpdateCardVersion>v2.1.0</UpdateCardVersion>
-                <UpdateCardDate>March 15, 2024</UpdateCardDate>
-              </UpdateCardHeader>
-              <UpdateCardTitle>New Features Released</UpdateCardTitle>
-              <UpdateCardContent>
-                <UpdateCardItem>Added dark mode support</UpdateCardItem>
-                <UpdateCardItem>Improved performance</UpdateCardItem>
-                <UpdateCardItem>Fixed accessibility issues</UpdateCardItem>
-              </UpdateCardContent>
-            </UpdateCard>
-          </SectionCard>
+          <UpdateCard className="mb-stack">
+            <UpdateCardHeader>
+              <UpdateCardVersion>v2.1.0</UpdateCardVersion>
+              <UpdateCardDate>March 15, 2024</UpdateCardDate>
+            </UpdateCardHeader>
+            <UpdateCardTitle>New Features Released</UpdateCardTitle>
+            <UpdateCardContent>
+              <UpdateCardItem>Added dark mode support</UpdateCardItem>
+              <UpdateCardItem>Improved performance</UpdateCardItem>
+              <UpdateCardItem>Fixed accessibility issues</UpdateCardItem>
+            </UpdateCardContent>
+          </UpdateCard>
           <ComponentHighlightProps>
             UpdateCard, UpdateCardHeader, UpdateCardVersion, UpdateCardDate,
             UpdateCardTitle, UpdateCardContent, UpdateCardItem

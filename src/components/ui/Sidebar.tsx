@@ -22,7 +22,7 @@ export function Sidebar({
   // Desktop sidebar
   if (variant === "desktop") {
     return (
-      <aside className="hidden md:flex fixed left-0 top-16 bottom-0 w-56 border-r border-border bg-surface-1 h-full flex-col">
+      <aside className="hidden md:flex fixed left-0 top-16 bottom-0 w-56 border-r border-border bg-surface-1 h-full flex-col p-inset-xs">
         <nav className="flex flex-1 flex-col px-compact overflow-y-auto">
           <NavigationGroup items={navigationConfig} />
         </nav>
@@ -44,17 +44,16 @@ export function Sidebar({
         role="dialog"
         aria-modal="true"
         aria-labelledby="mobile-nav-title"
-        className="w-64 min-h-screen border-l border-border bg-surface-2 p-compact flex flex-col"
+        className="w-64 min-h-screen border-l border-border bg-surface-2 flex flex-col"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between p-inset ">
           <span id="mobile-nav-title" className="overline-text">
             Navigation
           </span>
 
           <Button
-            variant="default"
-            size="lg"
-            className="inline-flex transition-colors"
+            variant="filled"
+            size="sm"
             semantic="primary"
             aria-label="Close navigation menu"
             onClick={onClose}
@@ -63,12 +62,12 @@ export function Sidebar({
           </Button>
         </div>
 
-        <nav className="flex flex-1 flex-col overflow-y-auto">
+        <nav className="flex flex-1 flex-col overflow-y-auto p-inset">
           <NavigationGroup items={navigationConfig} onItemClick={onClose} />
         </nav>
 
         {/* Theme toggle at bottom */}
-        <div className="border-t border-border pt-compact mt-compact">
+        <div className="border-t border-border p-inset">
           <div className="flex items-center justify-between">
             <span className="caption text-muted-foreground">Theme</span>
             <ThemeToggle />

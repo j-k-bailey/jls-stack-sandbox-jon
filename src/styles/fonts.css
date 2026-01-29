@@ -3,46 +3,39 @@
    ================================ */
 @font-face {
   font-family: "Inter";
-  src: url("/src/assets/fonts/inter/Inter-Regular.woff2") format("woff2");
-  font-weight: 400;
   font-style: normal;
+  font-weight: 100 900;
   font-display: swap;
+  src: url("/src/assets/fonts/InterVariable.woff2") format("woff2");
+  font-optical-sizing: auto;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("/src/assets/fonts/inter/Inter-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
+  font-style: italic;
+  font-weight: 100 900;
   font-display: swap;
+  src: url("/src/assets/fonts/InterVariable-Italic.woff2") format("woff2");
+  font-optical-sizing: auto;
 }
 
 /* ================================
-   ROBOTO MONO
+   JOSEFIN SANS
    ================================ */
 @font-face {
-  font-family: "Roboto Mono";
-  src: url("/src/assets/fonts/roboto-mono/RobotoMono-Light.woff2")
-    format("woff2");
-  font-weight: 300;
+  font-family: "Josefin Sans";
   font-style: normal;
+  font-weight: 100 900;
   font-display: swap;
+  src: url("/src/assets/fonts/JosefinSansVariable.woff2") format("woff2");
+  font-optical-sizing: auto;
 }
 
 @font-face {
-  font-family: "Roboto Mono";
-  src: url("/src/assets/fonts/roboto-mono/RobotoMono-Regular.woff2")
-    format("woff2");
-  font-weight: 400;
-  font-style: normal;
+  font-family: "Josefin Sans";
+  font-style: italic;
+  font-weight: 100 900;
   font-display: swap;
-}
-
-@font-face {
-  font-family: "Roboto Mono";
-  src: url("/src/assets/fonts/roboto-mono/RobotoMono-Medium.woff2")
-    format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+  src: url("/src/assets/fonts/JosefinSansVariable-Italic.woff2") format("woff2");
+  font-optical-sizing: auto;
 }

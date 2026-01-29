@@ -55,14 +55,14 @@ function CommandDialog({
           className={cn(
             "[&_[cmdk-group-heading]]:text-muted-foreground",
             "[&_[cmdk-group-heading]]:overline-text",
-            "[&_[cmdk-group-heading]]:px-compact",
-            "[&_[cmdk-group]]:px-compact",
+            "[&_[cmdk-group-heading]]:px-inset-sm",
+            "[&_[cmdk-group]]:px-inset-sm",
             "[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0",
             "[&_[cmdk-input-wrapper]]:h-12",
             "[&_[cmdk-input-wrapper]_svg]:size-5",
             "[&_[cmdk-input]]:h-12",
-            "[&_[cmdk-item]]:px-compact",
-            "[&_[cmdk-item]]:py-3",
+            "[&_[cmdk-item]]:px-inset-sm",
+            "[&_[cmdk-item]]:py-inline",
             "[&_[cmdk-item]_svg]:size-5",
           )}
         >
@@ -80,7 +80,7 @@ function CommandInput({
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex h-12 items-center gap-compact border-b px-compact"
+      className="flex h-12 items-center gap-inline border-b px-inset-sm"
     >
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
@@ -133,11 +133,11 @@ function CommandGroup({
     <CommandPrimitive.Group
       data-slot="command-group"
       className={cn(
-        "text-foreground overflow-hidden p-tight",
+        "text-foreground overflow-hidden p-inset-xs",
         "[&_[cmdk-group-heading]]:text-muted-foreground",
         "[&_[cmdk-group-heading]]:overline-text",
-        "[&_[cmdk-group-heading]]:px-compact",
-        "[&_[cmdk-group-heading]]:py-1.5",
+        "[&_[cmdk-group-heading]]:px-inset-sm",
+        "[&_[cmdk-group-heading]]:pt-inline",
         className,
       )}
       {...props}
@@ -169,7 +169,7 @@ function CommandItem({
       data-slot="command-item"
       className={cn(
         "body-2 relative flex cursor-default items-center gap-compact",
-        "rounded-md px-compact py-1.5",
+        "rounded-interactive px-inset-sm py-stack",
         "outline-hidden select-none",
         "data-[selected=true]:bg-primary-background data-[selected=true]:text-primary-on-background",
         "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",

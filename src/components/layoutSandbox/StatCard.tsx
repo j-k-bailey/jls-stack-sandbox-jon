@@ -1,9 +1,90 @@
-interface StatCardProps {
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+/**
+ * Stat Card Variants
+ * Aligned with brand kit semantic color tokens and surface elevation
+ */
+const statCardVariants = cva("rounded-large p-inset flex flex-col gap-inline", {
+  variants: {
+    variant: {
+      default: "bg-surface-1 border border-border",
+      featured:
+        "bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/50 shadow-sm shadow-primary/20",
+      success:
+        "bg-gradient-to-br from-success/30 to-success/10 border border-success/60 shadow-sm shadow-success/20",
+      error:
+        "bg-gradient-to-br from-warning/30 to-warning/10 border border-warning/60 shadow-sm shadow-warning/30",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+/**
+ * Label color variants using semantic tokens
+ */
+const labelVariants = cva("overline-text", {
+  variants: {
+    variant: {
+      default: "text-muted-foreground",
+      featured: "text-primary-on-background",
+      success: "text-success-on-background",
+      error: "text-warning-on-background",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+/**
+ * Value color variants using semantic tokens
+ * Uses headline-1 utility for fluid typography (32px → 48px)
+ */
+const valueVariants = cva(
+  "headline-1 font-bold leading-none mb-tight whitespace-nowrap",
+  {
+    variants: {
+      variant: {
+        default: "text-primary-on-background",
+        featured:
+          "bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent",
+        success: "text-success-on-background",
+        error: "text-warning-on-background",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  },
+);
+
+/**
+ * Description color variants using semantic tokens
+ */
+const descriptionVariants = cva("caption leading-relaxed", {
+  variants: {
+    variant: {
+      default: "text-muted-foreground",
+      featured: "text-primary-on-background",
+      success: "text-success-on-background",
+      error: "text-warning-on-background",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+export interface StatCardProps
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof statCardVariants> {
   label: string;
   value: string | number;
   description: string;
-  variant?: "default" | "featured" | "success" | "error";
-  className?: string;
 }
 
 export function StatCard({
@@ -11,56 +92,23 @@ export function StatCard({
   value,
   description,
   variant = "default",
-  className = "",
+  className,
+  ...props
 }: StatCardProps) {
-  const baseClasses = "rounded-lg p-standard transition-all";
-
-  const variantClasses = {
-    default:
-      "bg-surface-1 border border-border hover:bg-surface-1/80 hover:border-primary/30",
-    featured:
-      "bg-linear-to-br from-primary/20 to-accent/20 border-2 border-primary/50 shadow-sm shadow-primary/20",
-    success:
-      "bg-linear-to-br from-success/20 to-success/30 border border-success/60 shadow-sm shadow-success/20",
-    error:
-      "bg-linear-to-br from-warning/20 to-warning/30 border border-warning/60 shadow-sm shadow-warning/30",
-  };
-
-  const labelClasses = {
-    default: "text-muted-foreground",
-    featured: "text-primary/80",
-    success: "text-success/80",
-    error: "text-warning/80",
-  };
-
-  const valueClasses = {
-    default: "text-primary/80",
-    featured:
-      "bg-linear-to-br from-primary to-accent bg-clip-text text-transparent",
-    success: "text-success",
-    error: "text-warning",
-  };
-
-  const descriptionClasses = {
-    default: "text-muted-foreground",
-    featured: "text-primary/80",
-    success: "text-success/80",
-    error: "text-warning/80",
-  };
+  // Format numbers with locale-specific separators
+  const formattedValue =
+    typeof value === "number" ? value.toLocaleString() : value;
 
   return (
-    <div className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
-      <div className={`overline-text mb-tight ${labelClasses[variant]}`}>
-        {label}
-      </div>
-      <div
-        className={`text-5xl font-bold leading-none mb-tight ${valueClasses[variant]}`}
-      >
-        {value}
-      </div>
-      <p className={`caption leading-relaxed ${descriptionClasses[variant]}`}>
-        {description}
-      </p>
+    <div className={cn(statCardVariants({ variant }), className)} {...props}>
+      {/* Label with semantic color */}
+      <p className={labelVariants({ variant })}>{label}</p>
+
+      {/* Value with fluid typography and no wrapping */}
+      <p className={valueVariants({ variant })}>{formattedValue}</p>
+
+      {/* Description with semantic color */}
+      <p className={descriptionVariants({ variant })}>{description}</p>
     </div>
   );
 }

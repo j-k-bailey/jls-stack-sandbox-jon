@@ -95,9 +95,9 @@ export default function ContactForm() {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-compact">
+        <form onSubmit={handleSubmit} className="space-y-stack">
           <div>
-            <label htmlFor="name" className="block body-2 mb-tight">
+            <label htmlFor="name" className="block body-2">
               Name
             </label>
             <Input
@@ -115,7 +115,7 @@ export default function ContactForm() {
           </div>
 
           <div>
-            <label htmlFor="email" className="block body-2 mb-tight">
+            <label htmlFor="email" className="block body-2">
               Email
             </label>
             <Input
@@ -133,7 +133,7 @@ export default function ContactForm() {
           </div>
 
           <div>
-            <label htmlFor="message" className="block body-2 mb-tight">
+            <label htmlFor="message" className="block body-2">
               Message
             </label>
             <textarea
@@ -143,7 +143,7 @@ export default function ContactForm() {
               onChange={handleChange}
               rows={4}
               aria-invalid={!!errors.message}
-              className={`w-full px-compact py-compact bg-background text-foreground border rounded-lg transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] ${
+              className={`w-full p-inset-xs bg-background body-2 text-foreground border rounded-lg transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] ${
                 errors.message
                   ? "border-error aria-invalid:ring-error/20 aria-invalid:border-error"
                   : "border-input"
@@ -158,13 +158,13 @@ export default function ContactForm() {
             type="submit"
             semantic="primary"
             disabled={isSubmitting}
-            className="w-full"
+            className="w-full mt-stack"
           >
             {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
 
           {submitSuccess && (
-            <div className="p-compact bg-accent/10 border border-accent text-foreground rounded-lg">
+            <div className="p-inset bg-accent/10 border border-accent text-foreground rounded-lg">
               Message sent successfully!
             </div>
           )}

@@ -50,7 +50,7 @@ export function ComponentHighlightDescription({
   className,
 }: ComponentHighlightDescriptionProps) {
   return (
-    <p className={cn("text-muted-foreground mb-compact", className)}>
+    <p className={cn("text-muted-foreground mb-inset", className)}>
       {children}
     </p>
   );
@@ -60,7 +60,7 @@ export function ComponentHighlightShowcase({
   children,
   className,
 }: ComponentHighlightShowcaseProps) {
-  return <div className={cn("ml-standard", className)}>{children}</div>;
+  return <div className={cn("ml-inset", className)}>{children}</div>;
 }
 
 export function ComponentHighlightProps({
@@ -70,7 +70,7 @@ export function ComponentHighlightProps({
   return (
     <div
       className={cn(
-        "bg-surface-1 border border-border rounded-lg mt-compact p-compact",
+        "bg-surface-1 border border-border rounded-container mt-inline p-inset-sm",
         className,
       )}
     >
@@ -88,7 +88,7 @@ export function ComponentHighlightNotes({
   return (
     <div
       className={cn(
-        "bg-primary-background border-l-4 border-primary rounded-r-lg mt-compact p-compact",
+        "bg-primary-background border-l-4 border-primary rounded-r-lg mt-inline p-inset-sm",
         className,
       )}
     >

@@ -17,7 +17,7 @@ export function AestheticPage() {
         </div>
       </InlineAlert>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-standard">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-section">
         {/* Neobrutalism */}
         <div className="border-8 border-black bg-cyan-400 p-0 transform shadow-[12px_12px_0px_rgba(0,0,0,1)]">
           <h2

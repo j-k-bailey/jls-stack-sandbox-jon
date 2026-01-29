@@ -43,8 +43,8 @@ export function PageHeader({
 
   return (
     <div className={cn("space-y-tight", className)} {...props}>
-      <div className="flex flex-col gap-tight md:flex-row md:items-start md:justify-between">
-        <div className="space-y-tight">
+      <div className="flex flex-col gap-inline md:flex-row md:items-start md:justify-between">
+        <div>
           <HeadingTag className={pageHeaderVariants({ level })}>
             {pageTitle}
           </HeadingTag>
@@ -59,7 +59,7 @@ export function PageHeader({
         </div>
 
         {actions && (
-          <div className="flex items-center gap-standard">{actions}</div>
+          <div className="flex items-center gap-inline">{actions}</div>
         )}
       </div>
       {hr && <hr className="border-border" />}

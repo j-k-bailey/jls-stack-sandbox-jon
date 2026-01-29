@@ -60,8 +60,8 @@ const NavigationItem = React.forwardRef<HTMLAnchorElement, NavItemProps>(
         onClick={onClick}
         className={({ isActive }) =>
           cn(
-            "flex items-center gap-tight rounded-lg px-compact py-tight body-2 transition-colors",
-            nested && "pl-standard",
+            "flex items-center gap-inline rounded-interactive ml-inset-xs px-inset-xs body-2 py-inline leading-none transition-colors mb-inline",
+            nested && "ml-inset-sm",
             isActive
               ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:bg-accent/20 hover:text-foreground",
@@ -71,7 +71,7 @@ const NavigationItem = React.forwardRef<HTMLAnchorElement, NavItemProps>(
         {/* Icon with optional notification indicator */}
         {Icon && (
           <div className="relative shrink-0">
-            <Icon className="size-4" />
+            <Icon className="size-5" />
             {notification && (
               <>
                 {notification.dot ? (
@@ -81,7 +81,7 @@ const NavigationItem = React.forwardRef<HTMLAnchorElement, NavItemProps>(
                   notification.count &&
                   notification.count > 0 && (
                     // Count badge
-                    <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent text-accent-foreground text-[10px] font-bold px-0.5">
+                    <span className="absolute -top-1.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent text-accent-foreground text-[10px] font-bold px-0.5">
                       {notification.count > 9 ? "9+" : notification.count}
                     </span>
                   )
@@ -127,7 +127,7 @@ const NavigationHeading = React.forwardRef<HTMLDivElement, NavHeadingProps>(
     return (
       <div
         ref={ref}
-        className="px-tight pt-standard overline-text text-muted-foreground"
+        className="px-inset-xs mt-inset overline-text text-muted-foreground leading-none"
       >
         {label}
       </div>

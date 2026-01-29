@@ -18,14 +18,14 @@ export function DashboardPage() {
   // This would come from your data layer in a real app
   const hasTasks = false;
   const taskStats = {
-    total: 0,
-    completed: 0,
-    inProgress: 0,
-    overdue: 0,
+    total: 12,
+    completed: 25,
+    inProgress: 8,
+    overdue: 1,
   };
 
   return (
-    <div className="space-y-section container">
+    <div className="p-inset-2xl space-y-section container">
       <PageHeader
         pageTitle="Task Dashboard"
         pageDescription="Manage your tasks and track your productivity."
@@ -58,115 +58,98 @@ export function DashboardPage() {
         />
       </ResponsiveGrid>
       {/* Empty State or Task Board */}
-      {!hasTasks ? (
-        <div className="space-y-standard">
-          <InlineAlert variant="primary" icon={ClipboardList}>
-            <div className="flex-1">
-              <p className="font-bold">Welcome to Your Task Manager!</p>
-              <p className="text-sm mt-1">
-                Get started by creating your first task. Organize your work with
-                priorities, deadlines, and categories.
-              </p>
-            </div>
-          </InlineAlert>
+      {!hasTasks && (
+        <InlineAlert
+          variant="primary"
+          title="Welcome to Your Task Manager!"
+          icon={ClipboardList}
+        >
+          Get started by creating your first task. Organize your work with
+          priorities, deadlines, and categories.
+        </InlineAlert>
+      )}
 
-          <SectionCard
-            title="Your Task Board"
-            description="Organize tasks into columns and track progress visually"
-          >
-            <div className="py-spacious">
-              <div className="max-w-2xl mx-auto text-center space-y-standard">
-                {/* Empty State Illustration */}
-                <div className="flex justify-center">
-                  <div className="relative">
-                    <Package className="h-24 w-24 text-muted-foreground opacity-50" />
-                    <div className="absolute -top-2 -right-2">
-                      <Plus className="h-8 w-8 text-primary animate-pulse" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Empty State Message */}
-                <div className="space-y-compact">
-                  <h3 className="headline-4 text-foreground">No Tasks Yet</h3>
-                  <p className="text-muted-foreground">
-                    Your task board is empty. Create your first task to start
-                    organizing your work and boosting your productivity.
-                  </p>
-                </div>
-
-                {/* Kanban Preview */}
-                <div className="grid grid-cols-3 gap-compact mt-section">
-                  <div className="bg-surface-1 border border-border rounded-lg p-compact text-center">
-                    <p className="text-sm font-semibold text-muted-foreground mb-2">
-                      To Do
-                    </p>
-                    <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
-                      <p className="text-xs text-muted-foreground">
-                        Tasks will appear here
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-surface-1 border border-border rounded-lg p-compact text-center">
-                    <p className="text-sm font-semibold text-muted-foreground mb-2">
-                      In Progress
-                    </p>
-                    <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
-                      <p className="text-xs text-muted-foreground">
-                        Active tasks
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-surface-1 border border-border rounded-lg p-compact text-center">
-                    <p className="text-sm font-semibold text-muted-foreground mb-2">
-                      Done
-                    </p>
-                    <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
-                      <p className="text-xs text-muted-foreground">Completed</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <div className="pt-compact">
-                  <FeatureCard
-                    layout="vertical"
-                    emphasis="bold"
-                    icon={<Plus className="h-12 w-12" />}
-                    heading="Create Your First Task"
-                    headingLevel="h4"
-                    description="Start organizing your work with our intuitive task creation form. Add priorities, deadlines, categories, and tags."
-                    cta={{
-                      label: "Create Task",
-                      href: "/create-task",
-                      variant: "primary",
-                    }}
-                    badges={[
-                      {
-                        text: "GET STARTED",
-                        variant: "primary",
-                      },
-                    ]}
-                  />
+      <SectionCard
+        title="Your Task Board"
+        description="Organize tasks into columns and track progress visually"
+      >
+        <div className="py-inset-xl">
+          <div className="max-w-2xl mx-auto text-center space-y-stack">
+            {/* Empty State Illustration */}
+            <div className="flex justify-center">
+              <div className="relative">
+                <Package className="h-24 w-24 text-muted-foreground opacity-50" />
+                <div className="absolute -top-2 -right-2">
+                  <Plus className="h-8 w-8 text-primary animate-pulse" />
                 </div>
               </div>
             </div>
-          </SectionCard>
-        </div>
-      ) : (
-        // This section would show when tasks exist
-        <SectionCard
-          title="Your Task Board"
-          description="Drag and drop tasks between columns"
-        >
-          <div className="h-96 bg-muted-background border border-border-muted rounded-lg flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
-              <ClipboardList className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p>Kanban board would appear here</p>
+
+            {/* Empty State Message */}
+            <div className="space-y-stack">
+              <h3 className="headline-4 text-foreground">No Tasks Yet</h3>
+              <p className="text-muted-foreground">
+                Your task board is empty. Create your first task to start
+                organizing your work and boosting your productivity.
+              </p>
+            </div>
+
+            {/* Kanban Preview */}
+            <div className="grid grid-cols-3 gap-inline mt-section">
+              <div className="bg-surface-1 border border-border rounded-lg p-inset-xs text-center">
+                <p className="text-sm font-semibold text-muted-foreground mb-2">
+                  To Do
+                </p>
+                <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
+                  <p className="text-xs text-muted-foreground">
+                    Tasks will appear here
+                  </p>
+                </div>
+              </div>
+              <div className="bg-surface-1 border border-border rounded-lg p-inset-xs  text-center">
+                <p className="text-sm font-semibold text-muted-foreground mb-2">
+                  In Progress
+                </p>
+                <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
+                  <p className="text-xs text-muted-foreground">Active tasks</p>
+                </div>
+              </div>
+              <div className="bg-surface-1 border border-border rounded-lg p-inset-xs  text-center">
+                <p className="text-sm font-semibold text-muted-foreground mb-2">
+                  Done
+                </p>
+                <div className="h-24 border-2 border-dashed border-border rounded flex items-center justify-center">
+                  <p className="text-xs text-muted-foreground">Completed</p>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="pt-compact">
+              <FeatureCard
+                layout="vertical"
+                emphasis="bold"
+                icon={<Plus className="h-12 w-12" />}
+                heading="Create Your First Task"
+                headingLevel="h4"
+                description="Start organizing your work with our intuitive task creation form. Add priorities, deadlines, categories, and tags."
+                cta={{
+                  label: "Create Task",
+                  href: "/create-task",
+                  variant: "primary",
+                }}
+                badges={[
+                  {
+                    text: "GET STARTED",
+                    variant: "primary",
+                  },
+                ]}
+              />
             </div>
           </div>
-        </SectionCard>
-      )}
+        </div>
+      </SectionCard>
+
       {/* Quick Actions */}
       <SectionCard
         title="Quick Actions"
@@ -214,8 +197,8 @@ export function DashboardPage() {
           title="Getting Started Tips"
           description="Make the most of your task manager"
         >
-          <div className="grid md:grid-cols-2 gap-compact">
-            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+          <div className="grid md:grid-cols-2 gap-inline">
+            <div className="flex gap-inline items-start p-inset-xs bg-surface-1 rounded-lg border border-border">
               <div className="text-primary shrink-0">
                 <Clock className="h-5 w-5" />
               </div>
@@ -230,7 +213,7 @@ export function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+            <div className="flex gap-inline items-start p-inset-xs bg-surface-1 rounded-lg border border-border">
               <div className="text-accent shrink-0">
                 <AlertTriangle className="h-5 w-5" />
               </div>
@@ -245,7 +228,7 @@ export function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+            <div className="flex gap-inline items-start p-inset-xs bg-surface-1 rounded-lg border border-border">
               <div className="text-success shrink-0">
                 <ClipboardList className="h-5 w-5" />
               </div>
@@ -260,7 +243,7 @@ export function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex gap-compact items-start p-compact bg-surface-1 rounded-lg border border-border">
+            <div className="flex gap-inline items-start p-inset-xs bg-surface-1 rounded-lg border border-border">
               <div className="text-warning shrink-0">
                 <CheckCircle2 className="h-5 w-5" />
               </div>

@@ -100,28 +100,30 @@ export default function AuthForm() {
 
   return (
     <Card className="max-w-md mx-auto">
-      <div className="flex gap-tight mb-compact">
+      <div className="flex gap-inline mb-stack">
         <Button
           type="button"
+          semantic="accent"
           onClick={() => setMode("signin")}
-          variant={mode === "signin" ? "default" : "outline"}
+          variant={mode === "signin" ? "filled" : "ghost"}
           className="flex-1"
         >
           Sign In
         </Button>
         <Button
           type="button"
+          semantic="accent"
           onClick={() => setMode("signup")}
-          variant={mode === "signup" ? "default" : "outline"}
+          variant={mode === "signup" ? "filled" : "ghost"}
           className="flex-1"
         >
           Sign Up
         </Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-compact">
+      <form onSubmit={handleSubmit} className="space-y-stack">
         <div>
-          <label htmlFor="email" className="block body-2 mb-tight">
+          <label htmlFor="email" className="block body-2">
             Email
           </label>
           <Input
@@ -134,12 +136,12 @@ export default function AuthForm() {
             className={errors.email ? "border-error" : ""}
           />
           {errors.email && (
-            <p className="text-warning caption mt-tight">{errors.email}</p>
+            <p className="text-warning caption mt-stack">{errors.email}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="password" className="block body-2 mb-tight">
+          <label htmlFor="password" className="block body-2 mt-stack">
             Password
           </label>
           <Input
@@ -152,13 +154,16 @@ export default function AuthForm() {
             className={errors.password ? "border-error" : ""}
           />
           {errors.password && (
-            <p className="text-warning caption mt-tight">{errors.password}</p>
+            <p className="text-warning caption mt-stack">{errors.password}</p>
           )}
         </div>
 
         {isSignUp && (
           <div>
-            <label htmlFor="confirmPassword" className="block body-2 mb-tight">
+            <label
+              htmlFor="confirmPassword"
+              className="block body-2 mt-stack mb-stack"
+            >
               Confirm Password
             </label>
             <Input
@@ -171,7 +176,7 @@ export default function AuthForm() {
               className={errors.confirmPassword ? "border-error" : ""}
             />
             {errors.confirmPassword && (
-              <p className="text-warning caption mt-tight">
+              <p className="text-warning caption mt-stack">
                 {errors.confirmPassword}
               </p>
             )}
@@ -179,18 +184,18 @@ export default function AuthForm() {
         )}
 
         {!isSignUp && (
-          <div className="flex items-center justify-between">
-            <label className="flex items-center gap-tight body-2">
+          <div className="flex items-center justify-between mt-section">
+            <label className="flex items-center gap-inline body-2">
               <input
                 type="checkbox"
                 name="rememberMe"
                 checked={formData.rememberMe}
                 onChange={handleChange}
-                className="rounded"
+                className="rounded hit-target"
               />
               Remember me
             </label>
-            <Button type="button" variant="link" className="p-0 h-auto">
+            <Button type="button" semantic="accent" variant="link">
               Forgot password?
             </Button>
           </div>
@@ -200,7 +205,7 @@ export default function AuthForm() {
           type="submit"
           semantic="primary"
           disabled={isSubmitting}
-          className="w-full"
+          className="w-full mt-section"
         >
           {isSubmitting
             ? "Processing..."
@@ -210,7 +215,7 @@ export default function AuthForm() {
         </Button>
       </form>
 
-      <p className="text-center body-2 mt-compact">
+      <p className="text-center body-2 mt-stack">
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
         <Button
           type="button"

@@ -14,7 +14,7 @@ export function LayoutSandbox() {
         title="Vertical Stack Pattern"
         description="SimpleFeatureCard components in a vertical layout with consistent spacing"
       >
-        <div className="space-y-compact">
+        <div className="space-y-stack">
           <SimpleFeatureCard
             title="AI-Powered Prioritization"
             description="Automatically surface critical tasks based on deadlines, dependencies, and team capacity."
@@ -35,9 +35,9 @@ export function LayoutSandbox() {
         title="Sidebar + Content Pattern"
         description="Responsive flex layout: stacks on mobile, side-by-side on desktop"
       >
-        <div className="flex flex-col md:flex-row gap-standard">
+        <div className="flex flex-col md:flex-row gap-section">
           {/* Sidebar */}
-          <div className="md:basis-1/4 space-y-compact">
+          <div className="md:basis-1/4 space-y-stack">
             <SelectInput
               id="task-status"
               label="Status"
@@ -56,7 +56,7 @@ export function LayoutSandbox() {
           </div>
 
           {/* Main Content */}
-          <div className="md:basis-3/4 space-y-tight">
+          <div className="md:basis-3/4 space-y-stack">
             <TaskItem
               title="Complete Q4 revenue report"
               metadata="Due tomorrow • High priority"
@@ -81,32 +81,30 @@ export function LayoutSandbox() {
         title="Content + Right Sidebar Pattern"
         description="Activity sidebar hidden on mobile, visible on medium+ screens"
       >
-        <div className="flex flex-row gap-standard">
+        <div className="flex flex-row gap-section">
           {/* Main Content */}
-          <div className="flex-1 space-y-compact">
+          <div className="flex-1 space-y-stack">
             <h3 className="font-heading text-base font-semibold">
               Active Tasks
             </h3>
-            <div className="space-y-tight">
-              <div className="bg-surface-2 rounded-lg p-compact border border-border-muted">
-                <div className="font-medium">Draft marketing copy</div>
-                <div className="text-sm text-muted-foreground">In progress</div>
-              </div>
-              <div className="bg-surface-2 rounded-lg p-compact border border-border-muted">
-                <div className="font-medium">Code review for PR #247</div>
-                <div className="text-sm text-muted-foreground">
-                  Waiting on feedback
-                </div>
+            <div className="bg-surface-2 rounded-container p-inset-sm border border-border-muted">
+              <div className="font-medium">Draft marketing copy</div>
+              <div className="text-sm text-muted-foreground">In progress</div>
+            </div>
+            <div className="bg-surface-2 rounded-container p-inset-sm  border border-border-muted">
+              <div className="font-medium">Code review for PR #247</div>
+              <div className="text-sm text-muted-foreground">
+                Waiting on feedback
               </div>
             </div>
           </div>
 
           {/* Right Sidebar */}
-          <div className="hidden md:block md:basis-1/3 space-y-compact">
+          <div className="hidden md:block md:basis-1/3 space-y-stack">
             <h3 className="font-heading text-base font-semibold">
               Recent Activity
             </h3>
-            <div className="space-y-tight">
+            <div className="space-y-stack">
               <ActivityItem
                 name="Jane Doe"
                 action="Completed research synthesis"
@@ -174,6 +172,7 @@ export function LayoutSandbox() {
             label="API Calls"
             value="2.4M"
             description="Requests this month"
+            className="whitespace-nowrap"
           />
           <div className="lg:col-span-2">
             <StatCard

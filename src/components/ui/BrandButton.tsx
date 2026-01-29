@@ -9,14 +9,8 @@ import {
 
 // BUTTON - Wrapper that picks the right component
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "filled" | "outline" | "ghost" | "link";
-  semantic?:
-    | "default"
-    | "primary"
-    | "accent"
-    | "success"
-    | "warning"
-    | "neutral";
+  variant?: "filled" | "outline" | "ghost" | "link";
+  semantic?: "primary" | "accent" | "success" | "warning" | "neutral";
   size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg";
   asChild?: boolean;
 }
@@ -34,8 +28,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     // Normalize "default" to actual default values
-    const normalizedVariant = variant === "default" ? "filled" : variant;
-    const normalizedSemantic = semantic === "default" ? "neutral" : semantic;
+
+    const normalizedVariant = variant;
+    const normalizedSemantic = semantic;
 
     const buttonMap = {
       filled: FilledButton,
@@ -58,4 +53,4 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   },
 );
-Button.displayName = "Button";
+Button.displayName = "BrandButton";

@@ -1,9 +1,19 @@
 # JLS Stack Sandbox Design System
 
 **Name**: JLS Stack Sandbox  
-**Purpose**: Training playground for building stack-aligned apps quickly and correctly  
-**Vibe**: Experimental, disciplined, modern  
-**Color Story**: Electric cyan (195°) and hot fuchsia (325°) with OKLCH precision
+**Purpose**: Training playground for building stack-aligned apps quickly and correctly
+**Vibe**: Experimental, disciplined, modern, accessible  
+**Color Story**: Electric cyan (195°) and hot fuchsia (325°) with OKLCH precision, inspired by cyberpunk
+
+---
+
+## Design Principles
+
+1. **Intuitive** — Obvious choices, zero ambiguity
+2. **Accessible** — WCAG AAA where possible, AA minimum
+3. **Minimal** — Only what's needed, nothing more
+4. **Consistent** — Same patterns everywhere
+5. **Fluid** — Scales smoothly, respects user preferences
 
 ---
 
@@ -12,48 +22,55 @@
 ### Brand Colors
 
 - **Primary — Electric Cyan (195°)**
-  - Light: `oklch(45% 0.18 195)`
+  - Light: `oklch(42% 0.19 195)`
   - Dark: `oklch(75% 0.18 195)`
   - Usage: Main CTAs, key interactions, active states, primary links
+
 - **Accent — Vaporwave Fuchsia (325°)**
-  - Light: `oklch(50% 0.22 325)`
-  - Dark: `oklch(72% 0.24 325)`
+  - Light: `oklch(48% 0.23 325)`
+  - Dark: `oklch(72% 0.25 325)`
   - Usage: Badges, highlights, secondary CTAs, alternative emphasis
 
 ### Semantic Colors
 
-- **Success — Matrix Teal (160°)**:
-  - Light: `oklch(48% 0.16 160)`
-  - Dark: `oklch(72% 0.18 160)`
+- **Success — Matrix Teal (160°)**
+  - Light: `oklch(45% 0.17 160)`
+  - Dark: `oklch(72% 0.19 160)`
   - Usage: Confirmations, positive states, completed operations
+
 - **Warning — Hot Coral (10°)**
-  - Light: `oklch(50% 0.20 10)`
-  - Dark: `oklch(68% 0.22 10)`
+  - Light: `oklch(48% 0.21 10)`
+  - Dark: `oklch(68% 0.23 10)`
   - Usage: Errors, destructive actions, critical alerts
+
 - **Neutral — Steel-Fuchsia (315°)**
-  - Light: `oklch(86% 0.025 315)`
-  - Dark: `oklch(30% 0.028 315)`
+  - Light: `oklch(87% 0.018 315)`
+  - Dark: `oklch(28% 0.022 315)`
   - Usage: Generic interactive elements without semantic meaning
+
 - **Muted — Blue-Gray (240°)**
-  - Light: `oklch(88% 0.02 240)`
-  - Dark: `oklch(28% 0.025 240)`
+  - Light: `oklch(89% 0.012 240)`
+  - Dark: `oklch(26% 0.02 240)`
   - Usage: De-emphasized content, helper text, timestamps
-- **Disabled — Ghosted (200°)**
-  - Light: `oklch(90% 0.006 200)`
-  - Dark: `oklch(22% 0.006 200)`
+
+- **Disabled — Ghosted (220°)**
+  - Light: `oklch(91% 0.004 220)`
+  - Dark: `oklch(20% 0.004 220)`
   - Usage: Inactive states, disabled components
 
 ### Neutrals
 
 - **Background**: Main canvas
-  - Light: `oklch(98% 0.008 200)`
+  - Light: `oklch(97% 0.008 200)`
   - Dark: `oklch(12% 0.015 200)`
+
 - **Foreground**: Primary text
   - Light: `oklch(18% 0.015 200)`
   - Dark: `oklch(95% 0.01 200)`
+
 - **Border**: Standard dividers
   - Light: `oklch(82% 0.018 200)`
-  - Dark: `oklch(35% 0.030 200)`
+  - Dark: `oklch(35% 0.03 200)`
 
 ---
 
@@ -69,61 +86,56 @@
 - **Muted**: De-emphasized information
 - **Disabled**: Inactive/unavailable
 
-### Token Variation
+### 6-Token Pattern
 
 Each semantic color has **6 tokens** for flexible, accessible usage:
 
-#### Token Set
+| Token                        | Purpose                   | Contrast        | Usage Example                |
+| ---------------------------- | ------------------------- | --------------- | ---------------------------- |
+| `--[semantic]`               | Base color                | —               | `bg-primary`                 |
+| `--[semantic]-foreground`    | Text on solid background  | ≥7:1 (AAA)      | `text-primary-foreground`    |
+| `--[semantic]-on-background` | Text on subtle background | ≥4.5:1 (AA)     | `text-primary-on-background` |
+| `--border-[semantic]`        | Border matching context   | —               | `border-primary`             |
+| `--[semantic]-background`    | Subtle tinted background  | —               | `bg-primary-background`      |
+| `--[semantic]-hover`         | Interactive hover state   | +15-20% lighter | `hover:bg-primary-hover`     |
 
-- `--[semantic]` — Base color (the actual hue at full intensity)
-- `--[semantic]-foreground` — Text on solid base color (high contrast, for buttons)
-- `--[semantic]-on-background` — Text on subtle background (high contrast, for alerts/badges)
-- `--border-[semantic]` — Border matching context
-- `--[semantic]-background` — Subtle tinted background (10% opacity style)
-- `--[semantic]-hover` — Interactive hover state
+### Enhanced Hover States
 
-#### Usage Patterns
+**Philosophy:** Hover feedback must be obvious, not subtle.
 
-**Solid backgrounds (buttons, badges):**
+**Light Mode:**
 
-```tsx
-className = "bg-primary text-primary-foreground";
-```
+- Primary, Accent, Success, Warning: **+13-15% lightness**
+- Neutral, Muted: **+5% lightness** (more subtle)
 
-→ Bright cyan background with white text
+**Dark Mode:**
 
-**Subtle backgrounds (alerts, info cards):**
+- Primary, Accent, Success, Warning: **+15-17% lightness** (with glow)
+- Neutral, Muted: **+10% lightness**
 
-```tsx
-className = "bg-primary-background text-primary-on-background";
-```
-
-→ Light cyan background with dark cyan text
-
-**Example — Primary Cyan**:
+**Example — Primary Cyan:**
 
 ```css
 /* Light mode */
---primary: oklch(45% 0.18 195); /* Base cyan */
---primary-foreground: oklch(98% 0.01 195); /* White text on cyan button */
---primary-on-background: oklch(30% 0.2 195); /* Dark cyan on light bg */
---border-primary: oklch(38% 0.19 195); /* Darker cyan border */
---primary-background: oklch(94% 0.07 195); /* Subtle cyan tint */
---primary-hover: oklch(50% 0.19 195); /* Brighter on hover */
+--primary: oklch(42% 0.19 195);
+--primary-hover: oklch(55% 0.21 195);
 
 /* Dark mode */
---primary: oklch(75% 0.18 195); /* Bright cyan */
---primary-foreground: oklch(8% 0.02 195); /* Dark text on cyan button */
---primary-on-background: oklch(88% 0.2 195); /* Bright cyan on dark bg */
---border-primary: oklch(88% 0.2 195); /* Glowing cyan border */
---primary-background: oklch(20% 0.1 195); /* Dark cyan tint */
---primary-hover: oklch(85% 0.2 195); /* Even brighter on hover */
+--primary: oklch(75% 0.18 195);
+--primary-hover: oklch(92% 0.23 195);
 ```
 
-**Contrast Compliance:**
+**DO:**
 
-- `*-foreground` tokens: ≥ 7:1 contrast on solid `*` backgrounds (WCAG AAA)
-- `*-on-background` tokens: ≥ 4.5:1 contrast on `*-background` surfaces (WCAG AA)
+- Use `hover:bg-*-hover` for all interactive backgrounds
+- Ensure hover states are immediately obvious
+- Test hover visibility in both light and dark modes
+
+**DON'T:**
+
+- Create custom hover states with manual color adjustments
+- Use subtle hover changes (under 10% lightness difference)
+- Forget to test hover states in both themes
 
 ---
 
@@ -131,16 +143,29 @@ className = "bg-primary-background text-primary-on-background";
 
 Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 
-| Level              | Light | Dark | Usage                     |
-| ------------------ | ----- | ---- | ------------------------- |
-| **0** (background) | 98%   | 12%  | Main canvas               |
-| **1** (surface-1)  | 95%   | 15%  | Cards, primary containers |
-| **2** (surface-2)  | 92%   | 18%  | Nested panels             |
-| **3** (surface-3)  | 89%   | 21%  | Popovers, tooltips        |
-| **4** (surface-4)  | 86%   | 24%  | Modals, dialogs           |
+| Level              | Light | Dark | Chroma        | Usage                     |
+| ------------------ | ----- | ---- | ------------- | ------------------------- |
+| **0** (background) | 97%   | 12%  | 0.008 / 0.015 | Main canvas               |
+| **1** (surface-1)  | 94%   | 16%  | 0.015 / 0.025 | Cards, primary containers |
+| **2** (surface-2)  | 91%   | 20%  | 0.018 / 0.035 | Nested panels             |
+| **3** (surface-3)  | 88%   | 24%  | 0.021 / 0.045 | Popovers, tooltips        |
+| **4** (surface-4)  | 85%   | 28%  | 0.024 / 0.055 | Modals, dialogs           |
 
 **Dark Mode**: Chroma increases with elevation (0.025 → 0.055) for "backlit" effect  
-**Light Mode**: Chroma increases subtly (0.015 → 0.030)
+**Light Mode**: Chroma increases subtly (0.015 → 0.024)
+
+**DO:**
+
+- Use surface elevation for visual hierarchy
+- Default to surface-1 for cards
+- Use higher surfaces for overlays (modals, popovers)
+- Prefer surface elevation over shadows
+
+**DON'T:**
+
+- Skip surface levels (e.g., background → surface-3)
+- Use surfaces inconsistently for similar components
+- Rely only on shadows for hierarchy
 
 ---
 
@@ -150,12 +175,17 @@ Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 
 **Dual Font Strategy:**
 
-- **Roboto Mono** (headings, technical text): Monospaced for data density, technical precision, cyberpunk aesthetic
-- **Inter** (body, UI): Optimized for extended reading, excellent legibility at all sizes
+- **Josefin Sans** (headings): Geometric sans-serif, modern aesthetic
+- **Inter** (body, UI): Optimized for readability, excellent at all sizes
+
+**Fluid Typography:**
+All type sizes use `clamp()` to scale smoothly between mobile and desktop—no breakpoints needed.
 
 **Critical Principle: Semantic Structure ≠ Visual Style**
 
-HTML headings (`<h1>`–`<h6>`) define **document structure and accessibility**. Typography utilities (`headline-1` through `headline-6`, `body-1`, `subtitle-1`, etc.) define **visual emphasis**. The two systems are coordinated by context, not forced to match.
+- HTML headings (`<h1>`–`<h6>`) define **document structure and accessibility**
+- Typography utilities (`headline-1`–`headline-6`, `body-1`, etc.) define **visual emphasis**
+- The two systems are coordinated by context, not forced to match
 
 **Golden Rules:**
 
@@ -165,249 +195,412 @@ HTML headings (`<h1>`–`<h6>`) define **document structure and accessibility**.
 4. Typography tokens define visual emphasis
 5. Use utilities to override default heading styles when needed
 
-**Scale & Hierarchy:**
+### Fluid Typography Scale
 
-- **Perfect Fourth (1.333)**: Primary heading scale for strong hierarchy
-- **16px base**: Industry standard for optimal readability (1rem)
-- **Negative tracking**: Large sizes get tighter letter-spacing for optical balance (-0.02em to -0.005em)
-- **Generous line-height**: Body text at 1.6 (160%) for WCAG AA compliance and improved comprehension
-- **Weight progression**: Light (300) on largest headings → Semi-bold (600) on smallest for visual consistency
+| Utility         | Min (Mobile) | Max (Desktop) | Weight | Usage                      |
+| --------------- | ------------ | ------------- | ------ | -------------------------- |
+| `headline-1`    | 32px (2rem)  | 48px (3rem)   | 300    | Hero text, page titles     |
+| `headline-2`    | 24px         | 36px          | 300    | Major sections             |
+| `headline-3`    | 20px         | 28px          | 400    | Subsections                |
+| `headline-4`    | 18px         | 22px          | 400    | Component titles           |
+| `headline-5`    | 16px         | 18px          | 500    | Small headers              |
+| `headline-6`    | 14px         | 16px          | 500    | Compact headers            |
+| `subtitle-1`    | 14px         | 16px          | 500    | Emphasized metadata        |
+| `subtitle-2`    | 13px         | 14px          | 500    | Component subtitles        |
+| `body-1`        | 14px         | 16px          | 400    | Primary content            |
+| `body-2`        | 13px         | 14px          | 400    | Secondary content          |
+| `button-text`   | 13px         | 14px          | 600    | Buttons, CTAs (uppercase)  |
+| `caption`       | 12px         | 13px          | 400    | Help text, footnotes       |
+| `overline-text` | 12px         | 13px          | 500    | Section labels (uppercase) |
 
-**Accessibility First:**
+**DO:**
 
-- All contrast ratios meet WCAG AA minimum (4.5:1 for body text)
-- Line-height never below 1.5 for body text (WCAG recommendation)
-- Text remains readable when user overrides font-size
-- Focus states highly visible with outline-offset
+- Use semantic HTML headings for document structure
+- Use typography utilities for visual styling
+- Override heading styles with utilities when needed
+- Use `whitespace-nowrap` for values that shouldn't wrap (stats, numbers)
+- Let fluid typography scale naturally—no manual breakpoints
 
----
+**DON'T:**
 
-### HTML Heading Elements (Semantic Structure)
-
-Base styles applied automatically to HTML elements. **Use these for document structure only.**
-
-| Element   | Font Family | Size     | Weight | Line Height | Letter Spacing | Purpose                   |
-| --------- | ----------- | -------- | ------ | ----------- | -------------- | ------------------------- |
-| `<h1>`    | Roboto Mono | 3rem     | 300    | 1.1         | -0.02em        | Page title, hero          |
-| `<h2>`    | Roboto Mono | 2.25rem  | 300    | 1.15        | -0.015em       | Major sections            |
-| `<h3>`    | Roboto Mono | 1.75rem  | 400    | 1.2         | -0.01em        | Subsections               |
-| `<h4>`    | Roboto Mono | 1.375rem | 400    | 1.25        | -0.005em       | Component titles          |
-| `<h5>`    | Roboto Mono | 1.125rem | 500    | 1.3         | 0              | Small headers             |
-| `<h6>`    | Roboto Mono | 1rem     | 600    | 1.35        | 0.005em        | Compact headers           |
-| `<p>`     | Inter       | 1rem     | 400    | 1.6         | normal         | Body text (WCAG AA: 160%) |
-| `<small>` | Inter       | 0.875rem | 400    | 1.5         | 0.01em         | Fine print (min readable) |
-
-**Example - Proper Semantic Usage:**
-
-```tsx
-// Correct: H1 is the page title even if you want it smaller visually
-<h1 className="headline-3">Dashboard Overview</h1>
-
-// Correct: Visual hierarchy with utilities, semantic structure intact
-<div>
-  <h2 className="headline-4">Recent Tasks</h2>
-  <h3 className="subtitle-1">Completed this week</h3>
-</div>
-
-// Wrong: Choosing H3 because you want the visual size
-<h3>Page Title</h3> {/* Breaks document outline */}
-```
+- Choose `<h3>` because you want that visual size
+- Add manual responsive classes to typography
+- Create custom font sizes outside the system
+- Use fixed pixel values for type
 
 ---
 
-### Typography Utility Classes (Visual Emphasis)
+## Spacing System
 
-Use these classes to override default heading styles or apply heading-style typography to non-heading elements. **Use these for visual design, independent of semantic meaning.**
+**Philosophy:** Name tokens after WHAT they separate, not HOW BIG they are.
 
-#### Headline Utilities (Roboto Mono)
+### The Ten-Token System
 
-| Class        | Size     | Weight | Line Height | Letter Spacing | Usage                        |
-| ------------ | -------- | ------ | ----------- | -------------- | ---------------------------- |
-| `headline-1` | 3rem     | 300    | 1.1         | -0.02em        | Hero text, largest emphasis  |
-| `headline-2` | 2.25rem  | 300    | 1.15        | -0.015em       | Major visual sections        |
-| `headline-3` | 1.75rem  | 400    | 1.2         | -0.01em        | Subsection emphasis          |
-| `headline-4` | 1.375rem | 400    | 1.25        | -0.005em       | Card/component visual titles |
-| `headline-5` | 1.125rem | 500    | 1.3         | 0              | Small emphasized text        |
-| `headline-6` | 1rem     | 600    | 1.35        | 0.005em        | Compact emphasized text      |
+**Flow Spacing** (gaps between elements):
 
-#### Subtitle Utilities (Roboto Mono)
+| Token     | Size (Mobile → Desktop) | Purpose               | When to Use                               |
+| --------- | ----------------------- | --------------------- | ----------------------------------------- |
+| `inline`  | 4px → 6px               | Related inline items  | Buttons in group, icon + text, tags       |
+| `stack`   | 8px → 12px              | Vertical content flow | Label → input, heading → body, paragraphs |
+| `section` | 24px → 40px             | Content blocks        | Between cards, major sections             |
+| `layout`  | 32px → 48px             | Page structure        | Header, main, footer                      |
 
-Technical/data-focused content with medium weight and generous tracking.
+**Inset Spacing** (padding inside containers):
 
-| Class        | Size     | Weight | Line Height | Letter Spacing | Usage                         |
-| ------------ | -------- | ------ | ----------- | -------------- | ----------------------------- |
-| `subtitle-1` | 1rem     | 500    | 1.5         | 0.01em         | Emphasized metadata, labels   |
-| `subtitle-2` | 0.875rem | 500    | 1.5         | 0.015em        | Component subtitles, captions |
+| Token       | Size (Mobile → Desktop) | Purpose                       | When to Use                       |
+| ----------- | ----------------------- | ----------------------------- | --------------------------------- |
+| `inset-xs`  | 6px → 8px               | Minimal container padding     | Compact badges, tight table cells |
+| `inset-sm`  | 8px → 12px              | Small container padding       | Buttons, small cards, tags        |
+| `inset`     | 16px → 24px             | Standard container padding    | Cards, dialogs, panels (default)  |
+| `inset-lg`  | 24px → 32px             | Generous container padding    | Hero sections, feature cards      |
+| `inset-xl`  | 32px → 48px             | Maximum container padding     | Large immersive containers        |
+| `inset-2xl` | 48px → 64px             | Exceptional container padding | Full-page containers, landing     |
 
-#### Body Utilities (Inter)
+### Decision Tree
 
-Optimized for readability with generous line-height.
+```
+Q: What am I spacing?
 
-| Class    | Size     | Weight | Line Height | Letter Spacing | Usage                       |
-| -------- | -------- | ------ | ----------- | -------------- | --------------------------- |
-| `body-1` | 1rem     | 400    | 1.6         | normal         | Primary content (WCAG AA)   |
-| `body-2` | 0.875rem | 400    | 1.5         | 0.01em         | Secondary content, metadata |
+FLOW (gaps between elements):
+├─ Inline elements (buttons in group, icon+text)?
+│  └─ Use: gap-inline
+│
+├─ Vertical content flow (label→input, paragraphs)?
+│  └─ Use: space-y-stack / gap-stack
+│
+├─ Between content blocks (cards in grid)?
+│  └─ Use: gap-section
+│
+└─ Page structure (header, main, footer)?
+   └─ Use: gap-layout / space-y-layout
 
-#### UI Text Utilities
-
-Specialized styles for interface elements.
-
-| Class           | Size     | Weight | Line Height | Letter Spacing | Transform | Usage                |
-| --------------- | -------- | ------ | ----------- | -------------- | --------- | -------------------- |
-| `button-text`   | 0.875rem | 600    | 1           | 0.05em         | UPPERCASE | Buttons, CTAs        |
-| `caption`       | 0.75rem  | 400    | 1.5         | 0.02em         | —         | Help text, footnotes |
-| `overline-text` | 0.75rem  | 600    | 1.5         | 0.15em         | UPPERCASE | Section labels, tags |
-
-#### Special Utilities
-
-| Class          | Effect                         | Usage                         |
-| -------------- | ------------------------------ | ----------------------------- |
-| `monospace`    | Roboto Mono + tabular numbers  | Code, data, technical content |
-| `tabular-nums` | Fixed-width number alignment   | Tables, financial data        |
-| `balanced`     | Better multi-line distribution | Headings, short paragraphs    |
-
----
-
-### Usage Examples
-
-**Semantic HTML vs Visual Styling:**
-
-```tsx
-// Page with proper semantic structure but custom visual hierarchy
-<main>
-  {/* Semantic H1 but styled as headline-3 for visual balance */}
-  <h1 className="headline-3">Project Dashboard</h1>
-
-  {/* Semantic H2 but styled smaller for visual design */}
-  <h2 className="subtitle-1 text-muted-foreground">Last updated 2 hours ago</h2>
-
-  <section>
-    {/* Semantic H3 but styled as headline-5 */}
-    <h3 className="headline-5">Active Tasks</h3>
-
-    {/* Not a heading, just emphasized text */}
-    <div className="headline-6">23 tasks remaining</div>
-  </section>
-</main>
+INSET (padding inside containers):
+├─ Compact badge, tight table cell?
+│  └─ Use: p-inset-sm
+│
+├─ Button, small card, tag?
+│  └─ Use: p-inset
+│
+├─ Standard card, dialog, panel?
+│  └─ Use: p-inset-lg (DEFAULT)
+│
+├─ Hero section, feature card?
+│  └─ Use: p-inset-xl
+│
+├─ Large immersive container?
+│  └─ Use: p-inset-2xl
+│
+└─ Full-page container, landing page?
+   └─ Use: p-inset-3xl
 ```
 
-**Non-heading elements with heading styles:**
+### Accessibility: Hit Targets
 
-```tsx
-// Stats card - no semantic heading needed, just visual emphasis
-<div className="card">
-  <div className="headline-2">$24.5K</div>
-  <p className="caption">Total revenue</p>
-</div>
+**Philosophy:** All interactive elements must meet WCAG minimum touch/click target size.
 
-// Button with proper text styling
-<button className="button-text bg-primary text-primary-foreground">
-  Create Task
-</button>
-```
+| Token        | Value | Purpose                  |
+| ------------ | ----- | ------------------------ |
+| `hit-target` | 24px  | Minimum interactive area |
 
-**Technical content with monospace:**
+**Usage:**
 
-```tsx
-// Data table with aligned numbers
-<td className="monospace tabular-nums">$1,234.56</td>
+The `hit-target` utility ensures all clickable/tappable elements are at least 24×24px, meeting WCAG 2.5.8 Level AA standards for target size. This is particularly important for:
 
-// Code snippet
-<pre className="monospace text-sm">npm install react</pre>
-```
+- Icon-only buttons
+- Close buttons (×)
+- Toggle switches
+- Checkbox/radio controls
+- Small interactive badges
+- Mobile touch interfaces
 
----
+**DO:**
 
-## Spacing
+- Use `gap-inline` for button groups
+- Use `space-y-stack` for form fields
+- Use `p-inset` for button padding
+- Use `p-inset-lg` for card padding (default)
+- Use `gap-section` for grid of cards
+- Use `py-layout` for page-level spacing
+- Use `hit-target` for all interactive elements to ensure minimum of 24 x 24px
 
-| Token        | Value | Usage              |
-| ------------ | ----- | ------------------ |
-| **tight**    | 6px   | Micro-interactions |
-| **compact**  | 12px  | Dense displays     |
-| **standard** | 24px  | Default padding    |
-| **section**  | 32px  | Large sections     |
+**DON'T:**
+
+- Use `stack` for padding (it's for flow, not inset)
+- Use `inset` for gaps between cards (use `section`)
+- Use flow tokens (`inline`, `stack`) as inset padding
+- Use inset tokens (`inset-*`) as gaps/margins
+- Mix spacing tokens randomly
+- Create custom spacing values outside the system
 
 ---
 
 ## Border Radius
 
-| Token          | Value | Usage              |
-| -------------- | ----- | ------------------ |
-| **radius-sm**  | 4px   | Small elements     |
-| **radius-md**  | 6px   | Medium elements    |
-| **radius-lg**  | 8px   | Standard (default) |
-| **radius-xl**  | 12px  | Large containers   |
-| **radius-2xl** | 16px  | Extra large        |
-| **radius-3xl** | 20px  | Feature cards      |
-| **radius-4xl** | 24px  | Hero sections      |
+**Philosophy:** Semantic naming based on usage context, not arbitrary sizes.
+
+### The Six-Token System
+
+| Token         | Size   | Usage                              | Examples                         |
+| ------------- | ------ | ---------------------------------- | -------------------------------- |
+| `interactive` | 4px    | Small interactive elements         | Buttons, inputs, small badges    |
+| `nested`      | 6px    | Elements inside rounded containers | Buttons inside cards             |
+| `container`   | 8px    | Standard containers                | Cards, panels, dialogs (default) |
+| `large`       | 12px   | Large feature areas                | Hero cards, feature sections     |
+| `icon`        | 2px    | Icon backgrounds                   | Icon buttons (when feasible)     |
+| `full`        | 9999px | Pill shapes                        | Pills, badges, tags              |
+
+### Decision Tree
+
+```
+Q: What am I rounding?
+
+├─ Button, input, small badge?
+│  └─ Use: rounded-interactive (4px)
+│
+├─ Element nested inside another rounded container?
+│  └─ Use: rounded-nested (6px)
+│
+├─ Standard card, panel, dialog?
+│  └─ Use: rounded-container (8px) ← DEFAULT
+│
+├─ Large hero or feature area?
+│  └─ Use: rounded-large (12px)
+│
+├─ Icon with background?
+│  └─ Use: rounded-icon (2px)
+│
+└─ Pill or badge shape?
+   └─ Use: rounded-full
+```
+
+**DO:**
+
+- Use `rounded-interactive` for all buttons and inputs
+- Use `rounded-nested` for elements inside cards
+- Use `rounded-container` as default for cards
+- Use smaller radius inside larger (8px card → 6px button)
+- Use consistent radius for same element types
+
+**DON'T:**
+
+- Use radius when element touches parent edge
+- Use radius when element touches viewport edge
+- Mix different radius sizes for similar elements
+- Use arbitrary radius values (e.g., `rounded-[10px]`)
 
 ---
 
-## Shadcn/UI Mapping
+## Border Width
 
-| Shadcn Token  | Maps To    | Purpose           |
-| ------------- | ---------- | ----------------- |
-| `card`        | surface-1  | Card containers   |
-| `popover`     | background | Floating elements |
-| `secondary`   | fuchsia    | Secondary buttons |
-| `destructive` | warning    | Dangerous actions |
-| `input`       | border     | Input borders     |
-| `ring`        | primary    | Focus indicators  |
+**Philosophy:** Two widths only—standard and emphasis.
+
+| Token      | Size | Tailwind Utility | Usage                                       |
+| ---------- | ---- | ---------------- | ------------------------------------------- |
+| `default`  | 1px  | `border`         | Standard borders, dividers, inputs          |
+| `emphasis` | 2px  | `border-2`       | Featured cards, active states, primary CTAs |
+
+**Pragmatic Note:** While we define semantic tokens (`--border-width-default`, `--border-width-emphasis`), we use Tailwind's standard utilities (`border`, `border-2`) to avoid class naming conflicts. This is more maintainable than custom utilities.
+
+**DO:**
+
+- Use `border` (1px) for standard borders
+- Use `border-2` (2px) for featured or active states
+- Use borders to define boundaries
+- Prefer surface elevation over borders for hierarchy
+- Use `border-color-{semantic}` utilities for colors
+
+**DON'T:**
+
+- Create borders thicker than 2px
+- Use borders for purely decorative purposes
+- Mix 1px and 2px borders on same component
+- Try to create custom border-width utilities (causes conflicts)
 
 ---
 
-## Component Token Usage Examples
+## Shadow System
 
-### Buttons
+**Philosophy:** Minimize shadow use. Prefer surface elevation for hierarchy. Reserve shadows for floating elements and high-priority overlays.
 
-```tsx
-// Primary button - solid cyan
-<button className="bg-primary text-primary-foreground hover:bg-primary-hover">
+### The Five-Level System
 
-// Outlined primary button
-<button className="border-2 border-primary text-primary-on-background bg-transparent">
+| Token             | Offset | Blur    | Usage                                        |
+| ----------------- | ------ | ------- | -------------------------------------------- |
+| `none`            | —      | —       | **Default** (use surface colors)             |
+| `low`             | 0 1px  | 2px     | Subtle card lift (optional)                  |
+| `medium`          | 0 4px  | 6px     | Dropdowns, sticky elements, popovers         |
+| `high`            | 0 20px | 25px    | Modals, dialogs, high-priority overlays      |
+| `glow-{semantic}` | 0 0    | 20-40px | Hero CTAs, primary buttons (semantic colors) |
 
-// Ghost primary button
-<button className="text-primary-on-background hover:bg-primary-background">
+### Semantic Glow Shadows
+
+Special shadows that use brand colors for emphasis:
+
+- `shadow-glow-primary` — Electric cyan glow
+- `shadow-glow-accent` — Vaporwave fuchsia glow
+- `shadow-glow-success` — Matrix teal glow
+- `shadow-glow-warning` — Hot coral glow
+
+**DO:**
+
+- Default to NO shadow (use `bg-surface-1`, `bg-surface-2`, etc.)
+- Use `shadow-low` for subtle card lift (if needed)
+- Use `shadow-medium` for dropdowns and sticky elements
+- Use `shadow-high` for modals and critical overlays
+- Use semantic glows sparingly for hero moments
+- Prefer surface elevation over shadows for hierarchy
+
+**DON'T:**
+
+- Add shadows to every card (creates visual noise)
+- Use shadows inside panels (use surface elevation)
+- Combine multiple shadow levels on same element
+- Use shadows as primary hierarchy method
+
+---
+
+## Focus States
+
+**Philosophy:** Keyboard navigation must be highly visible. Focus indicators are non-negotiable for accessibility.
+
+### Focus Ring Specification
+
+- **Width:** 3px (thick for maximum visibility)
+- **Color:** Bright cyan (`oklch(75% 0.19 195)` light / `oklch(88% 0.22 195)` dark)
+- **Offset:** 2px (clear separation from element)
+- **Visibility:** Keyboard-only (not on mouse click)
+- **Contrast:** WCAG AAA compliant in both themes
+
+**DO:**
+
+- Use automatic focus rings on all interactive elements
+- Ensure 3px width for visibility
+- Maintain 2px offset from elements
+- Test keyboard navigation in both themes
+- Respect element's border radius
+
+**DON'T:**
+
+- Remove focus indicators (ever)
+- Use low-contrast focus colors
+- Reduce ring width below 3px
+- Show focus ring on mouse click
+
+**Automatic Application:**
+
+Focus rings are automatically applied to:
+
+- `a:focus-visible`
+- `button:focus-visible`
+- `input:focus-visible`
+- `textarea:focus-visible`
+- `select:focus-visible`
+- `[tabindex]:focus-visible`
+
+---
+
+## Grid System
+
+**Philosophy:** Fluid grid that scales with spacing system. Grid gap aligns with `spacing-section` for visual rhythm.
+
+### The Four-Grid System
+
+| Grid        | Columns | Max Width | Usage                                  |
+| ----------- | ------- | --------- | -------------------------------------- |
+| `basic`     | 12      | 1440px    | Main content (default)                 |
+| `extended`  | 14      | 1600px    | Stretched containers, immersive images |
+| `wide`      | 16      | 1920px    | With persistent sidebar/navigation     |
+| `fullbleed` | 1       | 100vw     | Hero backgrounds (immersive moments)   |
+
+**Grid Gap:** Aligned with `spacing-section` (24px → 40px fluid)
+
+### Responsive Behavior
+
+- **Desktop (≥640px):** Uses full column count
+- **Mobile (<640px):** All grids collapse to **6 columns**
+
+### Decision Tree
+
+```
+Q: What kind of layout?
+
+├─ Main content area?
+│  └─ Use: grid-basic (12 col)
+│
+├─ Immersive image moment?
+│  └─ Use: grid-extended (14 col)
+│
+├─ App with persistent sidebar?
+│  └─ Use: grid-wide (16 col)
+│
+└─ Hero background only?
+   └─ Use: grid-fullbleed
 ```
 
-### Alerts
+**DO:**
 
-```tsx
-// Success alert - subtle green background
-<div className="bg-success-background text-success-on-background border border-success">
+- Use `grid-basic` for main content (default)
+- Align left-edge of text to same vertical line
+- Use `grid-extended` for stretched containers
+- Use `grid-wide` for apps with sidebar
+- Use `grid-fullbleed` only for backgrounds
+- Let gap scale with `spacing-section`
 
-// Warning alert - solid coral (critical)
-<div className="bg-warning text-warning-foreground">
-```
+**DON'T:**
 
-### Badges
-
-```tsx
-// Accent badge - solid fuchsia
-<span className="bg-accent text-accent-foreground">
-
-// Neutral badge - subtle
-<span className="bg-neutral-background text-neutral-on-background">
-```
+- Scale elements beyond 1920px max width
+- Use different grids on same page level
+- Break grid alignment for decoration
+- Use custom gap values (use `gap-section`)
 
 ---
 
 ## Quick Reference
 
-**Brand Hues**: Cyan 195° • Fuchsia 325°  
-**Semantic Hues**: Teal 160° • Coral 10° • Steel 315° • Blue-Gray 240°  
-**Neutral Hue**: Cool Blue 200°  
-**Surface Hue Shift**: 200° → 192° (progressive cyan tint)
+### Color Hues
 
-**Token Pattern**: Each semantic has 6 variants
+- **Brand:** Cyan 195° • Fuchsia 325°
+- **Semantic:** Teal 160° • Coral 10° • Steel 315° • Blue-Gray 240°
+- **Neutral:** Cool Blue 200°
+- **Surface Shift:** 200° → 192° (progressive cyan tint)
 
-- Base color, foreground (for solid), on-background (for subtle), border, background, hover
+### Token Patterns
 
-**Contrast Ratios**:
+- **Colors:** 6 tokens per semantic (base, foreground, on-background, border, background, hover)
+- **Flow Spacing:** 4 tokens (inline, stack, section, layout)
+- **Inset Spacing:** 6 tokens (inset-sm, inset, inset-lg, inset-xl, inset-2xl, inset-3xl)
+- **Radius:** 6 tokens (interactive, nested, container, large, icon, full)
+- **Shadows:** 5 levels (none, low, medium, high, glow-\*)
+- **Grid:** 4 variants (basic, extended, wide, fullbleed)
 
-- Foreground tokens: ≥ 7:1 on solid backgrounds (WCAG AAA)
-- On-background tokens: ≥ 4.5:1 on tinted backgrounds (WCAG AA)
+### Contrast Requirements
 
-**Dark Mode Glow**: Semantic borders at 80-88% lightness  
-**Chart Colors**: Stay in cold spectrum (blues, purples, teals, coral accent)
+- **Foreground tokens:** ≥7:1 on solid backgrounds (WCAG AAA)
+- **On-background tokens:** ≥4.5:1 on tinted backgrounds (WCAG AA)
+- **Focus rings:** ≥7:1 contrast in both themes (WCAG AAA)
+
+### Dark Mode
+
+- **Semantic borders:** 80-88% lightness (glow effect)
+- **Surface elevation:** Increasing chroma (0.025 → 0.055)
+- **Hover states:** +15-17% lightness with enhanced glow
+
+### Typography
+
+- **Fluid scaling:** All sizes use `clamp()` (no breakpoints)
+- **Scale range:** 32px → 48px (headline-1) down to 12px → 13px (caption)
+- **Line heights:** 1.1 (large headings) to 1.6 (body text)
+
+---
+
+## Accessibility Checklist
+
+- [ ] All text meets WCAG AA contrast (4.5:1 minimum)
+- [ ] Focus indicators visible on all interactive elements
+- [ ] Focus ring width ≥3px with high contrast
+- [ ] Typography respects user font-size preferences
+- [ ] Touch targets ≥44x44px
+- [ ] Keyboard navigation works everywhere
+- [ ] No content loss with 200% zoom
+- [ ] Screen readers announce semantic structure correctly
+- [ ] Color is not the only indicator of state

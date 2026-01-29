@@ -8,7 +8,7 @@ const UpdateCard = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "bg-surface-1 border-l-4 border-primary p-standard rounded",
+      "bg-surface-1 border-l-4 border-primary p-inset rounded",
       className,
     )}
     {...props}
@@ -22,7 +22,7 @@ const UpdateCardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center gap-2 mb-tight", className)}
+    className={cn("flex items-center gap-inline mb-stack", className)}
     {...props}
   />
 ));
@@ -56,7 +56,7 @@ const UpdateCardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <h3 ref={ref} className={cn("headline-6 mb-tight", className)} {...props} />
+  <h3 ref={ref} className={cn("headline-6 mb-stack", className)} {...props} />
 ));
 UpdateCardTitle.displayName = "UpdateCardTitle";
 
@@ -66,7 +66,7 @@ const UpdateCardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ul
     ref={ref}
-    className={cn("space-y-1 body-2 list-disc ml-standard", className)}
+    className={cn("space-y-stack body-2 list-disc ml-inset", className)}
     {...props}
   />
 ));

@@ -5,60 +5,53 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-full border border-transparent px-tight py-0.5 overline-text w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  "inline-flex items-center justify-center rounded-full border px-inset-xs text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-inline [&>svg]:pointer-events-none",
   {
     variants: {
       variant: {
-        // Solid variants - full color backgrounds
-        default:
-          "bg-primary text-primary-foreground [a&]:hover:bg-primary-hover",
-        secondary:
-          "bg-accent text-accent-foreground [a&]:hover:bg-accent-hover",
-        accent: "bg-accent text-accent-foreground [a&]:hover:bg-accent-hover",
-        success:
-          "bg-success text-success-foreground [a&]:hover:bg-success-hover",
-        warning:
-          "bg-warning text-warning-foreground [a&]:hover:bg-warning-hover",
-        neutral:
-          "bg-neutral text-neutral-foreground [a&]:hover:bg-neutral-hover",
-        muted: "bg-muted text-muted-foreground [a&]:hover:bg-muted-hover",
+        // === SOLID VARIANTS - Full color backgrounds ===
+        default: "bg-primary text-primary-foreground border-transparent",
+        accent: "bg-accent text-accent-foreground border-transparent",
+        success: "bg-success text-success-foreground border-transparent",
+        warning: "bg-warning text-warning-foreground border-transparent",
+        neutral: "bg-neutral text-neutral-foreground border-transparent",
+        muted: "bg-muted text-muted-foreground border-transparent",
 
-        // Subtle variants - tinted backgrounds
+        // === SUBTLE VARIANTS - Tinted backgrounds ===
         "primary-subtle":
-          "bg-primary-background text-primary-on-background border-primary/20 [a&]:hover:bg-primary-background/80",
+          "bg-primary-background text-primary-on-background border-primary/20",
         "accent-subtle":
-          "bg-accent-background text-accent-on-background border-accent/20 [a&]:hover:bg-accent-background/80",
+          "bg-accent-background text-accent-on-background border-accent/20",
         "success-subtle":
-          "bg-success-background text-success-on-background border-success/20 [a&]:hover:bg-success-background/80",
+          "bg-success-background text-success-on-background border-success/20",
         "warning-subtle":
-          "bg-warning-background text-warning-on-background border-warning/20 [a&]:hover:bg-warning-background/80",
+          "bg-warning-background text-warning-on-background border-warning/20",
         "neutral-subtle":
-          "bg-neutral-background text-neutral-on-background border-neutral/20 [a&]:hover:bg-neutral-background/80",
+          "bg-neutral-background text-neutral-on-background border-neutral/20",
         "muted-subtle":
-          "bg-muted-background text-muted-on-background border-muted/20 [a&]:hover:bg-muted-background/80",
+          "bg-muted-background text-muted-on-background border-muted/20",
 
-        // Outline variants - transparent with semantic borders
+        // === OUTLINE VARIANTS - Transparent with semantic borders ===
         "primary-outline":
-          "border-2 border-primary text-primary-on-background bg-transparent [a&]:hover:bg-primary-background",
+          "border border-primary text-primary-on-background bg-transparent",
         "accent-outline":
-          "border-2 border-accent text-accent-on-background bg-transparent [a&]:hover:bg-accent-background",
+          "border border-accent text-accent-on-background bg-transparent",
         "success-outline":
-          "border-2 border-success text-success-on-background bg-transparent [a&]:hover:bg-success-background",
+          "border border-success text-success-on-background bg-transparent",
         "warning-outline":
-          "border-2 border-warning text-warning-on-background bg-transparent [a&]:hover:bg-warning-background",
+          "border border-warning text-warning-on-background bg-transparent",
         "neutral-outline":
-          "border-2 border-neutral text-neutral-on-background bg-transparent [a&]:hover:bg-neutral-background",
+          "border border-neutral text-neutral-on-background bg-transparent",
 
         // Generic outline (non-semantic)
-        outline:
-          "border border-border text-foreground [a&]:hover:bg-neutral-background",
+        outline: "border border-border text-foreground bg-transparent",
 
-        // Ghost variant - minimal styling
-        ghost:
-          "border-transparent [a&]:hover:bg-neutral-background [a&]:hover:text-neutral-on-background",
+        // === MINIMAL VARIANTS ===
+        // Ghost - minimal styling
+        ghost: "border-border bg-transparent text-foreground",
 
-        // Link variant
-        link: "text-primary-on-background underline-offset-4 [a&]:hover:underline",
+        // Link - underlined text
+        link: "border-transparent bg-transparent text-primary-on-background underline-offset-4",
       },
     },
     defaultVariants: {
@@ -67,13 +60,17 @@ const badgeVariants = cva(
   },
 );
 
+export interface BadgeProps
+  extends React.ComponentProps<"span">, VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
+}
+
 function Badge({
   className,
   variant = "default",
   asChild = false,
   ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+}: BadgeProps) {
   const Comp = asChild ? Slot : "span";
 
   return (
