@@ -18,7 +18,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         "disabled:bg-disabled-background disabled:text-disabled-foreground disabled:border-disabled",
         "aria-invalid:border-warning aria-invalid:ring-warning aria-invalid:text-warning-on-background",
         "file:inline-flex file:border-0 file:bg-transparent file:text-primary-on-background file:button-text",
-        "file:hover:text-primary-hover file:transition-colors",
+        "file:hover:text-primary-hover file:transition-colors focus-visible:transition-none",
         className,
       )}
       {...props}

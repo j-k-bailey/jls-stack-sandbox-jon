@@ -146,10 +146,10 @@ Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 | Level              | Light | Dark | Chroma        | Usage                     |
 | ------------------ | ----- | ---- | ------------- | ------------------------- |
 | **0** (background) | 97%   | 12%  | 0.008 / 0.015 | Main canvas               |
-| **1** (surface-1)  | 94%   | 16%  | 0.015 / 0.025 | Cards, primary containers |
-| **2** (surface-2)  | 91%   | 20%  | 0.018 / 0.035 | Nested panels             |
-| **3** (surface-3)  | 88%   | 24%  | 0.021 / 0.045 | Popovers, tooltips        |
-| **4** (surface-4)  | 85%   | 28%  | 0.024 / 0.055 | Modals, dialogs           |
+| **1** (surface-1)  | 95%   | 16%  | 0.015 / 0.025 | Cards, primary containers |
+| **2** (surface-2)  | 93%   | 20%  | 0.018 / 0.035 | Nested panels             |
+| **3** (surface-3)  | 91%   | 24%  | 0.021 / 0.045 | Popovers, tooltips        |
+| **4** (surface-4)  | 89%   | 28%  | 0.024 / 0.055 | Modals, dialogs           |
 
 **Dark Mode**: Chroma increases with elevation (0.025 → 0.055) for "backlit" effect  
 **Light Mode**: Chroma increases subtly (0.015 → 0.024)
@@ -166,6 +166,37 @@ Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 - Skip surface levels (e.g., background → surface-3)
 - Use surfaces inconsistently for similar components
 - Rely only on shadows for hierarchy
+
+---
+
+## Z-Index System
+
+**Philosophy:** Z-index values align with surface elevation levels. Higher surfaces get higher z-index values to maintain consistent layering.
+
+### The Six-Level System
+
+| Level | Z-Index | Surface    | Usage                                |
+| ----- | ------- | ---------- | ------------------------------------ |
+| `0`   | `0`     | background | Default page content, main canvas    |
+| `1`   | `10`    | surface-1  | Cards, primary containers            |
+| `2`   | `20`    | surface-2  | Nested panels, elevated cards        |
+| `3`   | `30`    | surface-3  | Dropdowns, popovers, tooltips        |
+| `4`   | `40`    | surface-4  | Modals, dialogs, command palettes    |
+| `5`   | `50`    | —          | Toast notifications, critical alerts |
+
+**DO:**
+
+- Match z-index to surface level (surface-3 → z-surface-3)
+- Use next higher level for elements nested inside (popover uses surface-3, input inside uses surface-4 background)
+- Keep z-index jumps consistent (increments of 10)
+- Reserve z-toast (50) for temporary, critical overlays only
+
+**DON'T:**
+
+- Use arbitrary z-index values (e.g., `z-[999]`)
+- Skip z-index levels (e.g., base → surface-3)
+- Use z-index without corresponding surface elevation
+- Create z-index values above 50 (toast is the ceiling)
 
 ---
 
@@ -530,7 +561,7 @@ Q: What kind of layout?
 ├─ Immersive image moment?
 │  └─ Use: grid-extended (14 col)
 │
-├─ App with persistent sidebar?
+├─ Interactive part of app with persistent sidebar?
 │  └─ Use: grid-wide (16 col)
 │
 └─ Hero background only?

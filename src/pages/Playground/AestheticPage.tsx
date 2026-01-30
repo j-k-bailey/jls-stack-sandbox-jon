@@ -1,20 +1,15 @@
 import { PageHeader } from "@/components/common/PageHeader";
-import { InlineAlert } from "@/components/ui/InlineAlert";
+import { InlineAlert } from "@/components/common/InlineAlert";
 
 export function AestheticPage() {
   return (
     <div className="space-y-section container">
       <PageHeader pageTitle="Aesthetic Playground" level="h2" />
 
-      <InlineAlert variant="primary">
-        <div className="flex-1">
-          <p className="font-bold">Creative Experimentation Zone</p>
-          <p className="text-sm mt-1">
-            This page showcases various aesthetic styles using pure CSS and
-            Tailwind utilities. These are explorations in visual design, not
-            production components.
-          </p>
-        </div>
+      <InlineAlert variant="primary" title="Creative Experimentation Zone">
+        This page showcases various aesthetic styles using pure CSS and Tailwind
+        utilities. These are explorations in visual design, not production
+        components.
       </InlineAlert>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-section">

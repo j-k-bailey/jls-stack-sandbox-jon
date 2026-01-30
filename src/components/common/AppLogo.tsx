@@ -1,6 +1,6 @@
 export default function AppLogo() {
   return (
-    <div className="flex items-center gap-inline ">
+    <div className="flex items-center gap-inline">
       {/* Decorative mark so aria-hidden */}
       <span
         aria-hidden="true"

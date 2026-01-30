@@ -2,8 +2,8 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { SectionCard } from "@/components/common/SectionCard";
 import { StatCard } from "@/components/layoutSandbox/StatCard";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
-import { FeatureCard } from "@/components/ui/FeatureCard";
-import { InlineAlert } from "@/components/ui/InlineAlert";
+import { FeatureCard } from "@/components/common/FeatureCard";
+import { InlineAlert } from "@/components/common/InlineAlert";
 import {
   ClipboardList,
   Plus,

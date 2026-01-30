@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/BrandButton";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
-import { FeatureCard } from "@/components/ui/FeatureCard";
+import { FeatureCard } from "@/components/common/FeatureCard";
 import { FaPalette, FaShapes, FaFont, FaRulerCombined } from "react-icons/fa6";
 
 export function BrandKitPage() {
@@ -581,44 +581,44 @@ export function BrandKitPage() {
             <div className="space-y-stack">
               {[
                 {
-                  name: "inset-sm",
-                  token: "p-inset-sm",
+                  name: "inset-xs",
+                  token: "p-inset-xs",
                   size: "6px → 8px",
                   desc: "Minimal padding",
                   example: "Compact badges, tight table cells",
                 },
                 {
-                  name: "inset",
-                  token: "p-inset",
+                  name: "inset-sm",
+                  token: "p-inset-sm",
                   size: "8px → 12px",
                   desc: "Small containers",
                   example: "Buttons, small cards, tags",
                 },
                 {
-                  name: "inset-lg",
-                  token: "p-inset-lg",
+                  name: "inset",
+                  token: "p-inset",
                   size: "16px → 24px",
                   desc: "Standard containers",
                   example: "Cards, dialogs, panels (default)",
                   default: true,
                 },
                 {
-                  name: "inset-xl",
-                  token: "p-inset-xl",
+                  name: "inset-lg",
+                  token: "p-inset-lg",
                   size: "24px → 32px",
                   desc: "Generous padding",
                   example: "Hero sections, feature cards",
                 },
                 {
-                  name: "inset-2xl",
-                  token: "p-inset-2xl",
+                  name: "inset-xl",
+                  token: "p-inset-xl",
                   size: "32px → 48px",
                   desc: "Large containers",
                   example: "Large immersive containers",
                 },
                 {
-                  name: "inset-3xl",
-                  token: "p-inset-3xl",
+                  name: "inset-2xl",
+                  token: "p-inset-2xl",
                   size: "48px → 64px",
                   desc: "Maximum padding",
                   example: "Full-page containers, landing pages",

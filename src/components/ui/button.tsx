@@ -5,7 +5,6 @@ import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  // Base styles - brand kit compliant
   [
     // Layout & Typography
     "inline-flex items-center justify-center shrink-0",
@@ -13,17 +12,13 @@ const buttonVariants = cva(
     "whitespace-nowrap",
 
     // Spacing - uses semantic tokens
-    "gap-inline", // 4-6px for icon+text (inline related items)
+    "gap-inline",
 
     // Border Radius - interactive elements use 4px
     "rounded-interactive",
 
     // Transitions
-    "transition-all",
-
-    // Focus States - High contrast keyboard navigation (automatic from index.css)
-    // 3px cyan ring with 2px offset applied via :focus-visible
-    "outline-none",
+    "transition-color",
 
     // Interaction States
     "hover:cursor-pointer",
@@ -59,7 +54,6 @@ const buttonVariants = cva(
           "bg-transparent text-primary",
           "border border-border-primary",
           "hover:bg-primary-background hover:text-primary-on-background",
-          "shadow-low",
         ],
 
         // Input style - For form contexts
@@ -67,8 +61,6 @@ const buttonVariants = cva(
           "bg-background text-foreground",
           "border border-input",
           "hover:border-border-primary",
-          "shadow-low",
-          "hover:shadow-medium",
         ],
 
         // Secondary CTA - Vaporwave Fuchsia

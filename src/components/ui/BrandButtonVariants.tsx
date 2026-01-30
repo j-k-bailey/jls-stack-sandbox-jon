@@ -43,9 +43,9 @@ const baseClasses = [
  * - icon: Symmetric padding for square buttons
  */
 const sizeVariants = {
-  sm: "p-inset-xs text-xs font-medium", // Compact: 6-8px
-  default: "px-inset-sm py-inset-xs text-sm font-semibold", // Standard: 8-12px
-  lg: "px-inset py-inset-xs text-base font-bold", // Prominent: 16-24px
+  sm: "p-inset-xs text-xs min-h-8 font-medium", // Compact: 6-8px
+  default: "px-inset-sm py-inset-xs text-sm min-h-10 font-semibold", // Standard: 8-12px
+  lg: "px-inset py-inset-xs text-base min-h-12 font-bold", // Prominent: 16-24px
 
   "icon-sm": "aspect-square min-h-8 [&_svg]:size-3", // 12px icon
   icon: "aspect-square min-h-10 p-inset-xs [&_svg]:size-5", // 20px icon (default)

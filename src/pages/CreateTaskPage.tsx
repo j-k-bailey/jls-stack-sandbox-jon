@@ -32,7 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { useState } from "react";
 import { fakerApi } from "@/lib/fakerApi";
-import { InlineAlert } from "@/components/ui/InlineAlert";
+import { InlineAlert } from "@/components/common/InlineAlert";
 import {
   Field,
   FieldLabel,
@@ -43,7 +43,7 @@ import {
   FieldSeparator,
   FieldSet,
 } from "@/components/ui/field";
-import { FeatureCard } from "@/components/ui/FeatureCard";
+import { FeatureCard } from "@/components/common/FeatureCard";
 import { format } from "date-fns";
 import { PageHeader } from "@/components/common/PageHeader";
 

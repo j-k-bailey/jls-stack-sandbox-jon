@@ -4,7 +4,7 @@ import { FaX } from "react-icons/fa6";
 import {
   NavigationGroup,
   type NavConfig,
-} from "@/components/ui/NavigationItem";
+} from "@/components/layout/NavigationItem";
 
 interface SidebarProps {
   navigationConfig: NavConfig[];
@@ -36,7 +36,13 @@ export function Sidebar({
   return (
     <div className="fixed inset-0 z-50 flex md:hidden">
       {/* Decorative backdrop */}
-      <div className="flex-1 bg-overlay/40" aria-hidden="true" />
+      {/* <div className="flex-1 bg-overlay/40 cursor-default" aria-hidden="true" /> */}
+      <button
+        onClick={onClose}
+        className="flex-1 bg-overlay cursor-default"
+        aria-label="Close navigation"
+        tabIndex={-1}
+      />
 
       {/* Panel */}
       <div
@@ -46,7 +52,7 @@ export function Sidebar({
         aria-labelledby="mobile-nav-title"
         className="w-64 min-h-screen border-l border-border bg-surface-2 flex flex-col"
       >
-        <div className="flex items-center justify-between p-inset ">
+        <div className="flex h-16 items-center justify-between p-inset border-b border-border">
           <span id="mobile-nav-title" className="overline-text">
             Navigation
           </span>
@@ -54,7 +60,7 @@ export function Sidebar({
           <Button
             variant="filled"
             size="sm"
-            semantic="primary"
+            semantic="neutral"
             aria-label="Close navigation menu"
             onClick={onClose}
           >

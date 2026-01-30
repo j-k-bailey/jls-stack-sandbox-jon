@@ -8,8 +8,10 @@ import {
   CircleHelp,
   Settings,
   Mail,
+  TrainTrack,
+  Paintbrush,
 } from "lucide-react";
-import type { NavConfig } from "@/components/ui/NavigationItem";
+import type { NavConfig } from "@/components/layout/NavigationItem";
 
 export const NAVIGATION_CONFIG: NavConfig[] = [
   {
@@ -55,6 +57,18 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
     label: "Quality Log",
     to: "/quality-check",
     icon: ClipboardCheck,
+  },
+  {
+    type: "item",
+    label: "Change Log",
+    to: "/change-log",
+    icon: TrainTrack,
+  },
+  {
+    type: "item",
+    label: "Contrast Check",
+    to: "/contrast-check",
+    icon: Paintbrush,
   },
   {
     type: "heading",

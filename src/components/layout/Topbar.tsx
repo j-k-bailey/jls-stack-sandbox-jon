@@ -10,8 +10,8 @@ interface TopbarProps {
 
 export function Topbar({ onMenuClick, isMenuOpen = false }: TopbarProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-border bg-surface-1 backdrop-blur">
-      <div className="flex h-full items-center justify-between p-inset lg:px-standard">
+    <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-border bg-surface-1">
+      <div className="flex items-center justify-between h-full p-inset lg:px-standard">
         {/* Left: Logo */}
         <AppLogo />
 

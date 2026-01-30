@@ -29,7 +29,7 @@ import {
 import AppLogo from "@/components/common/AppLogo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
-import { InlineAlert } from "@/components/ui/InlineAlert";
+import { InlineAlert } from "@/components/common/InlineAlert";
 import {
   Card,
   CardHeader,
@@ -76,7 +76,7 @@ import {
   FaCalendar,
 } from "react-icons/fa6";
 import { Atom } from "lucide-react";
-import { FeatureCard } from "@/components/ui/FeatureCard";
+import { FeatureCard } from "@/components/common/FeatureCard";
 import React from "react";
 
 export function ComponentsPage() {
@@ -682,11 +682,12 @@ export function ComponentsPage() {
               </InlineAlert>
 
               {/* Custom Icon Alert */}
-              <InlineAlert variant="accent" icon={Atom}>
-                <p className="font-bold">Custom Icon Example</p>
-                <p className="text-sm mt-1">
-                  You can override the default icon with any Lucide icon.
-                </p>
+              <InlineAlert
+                variant="accent"
+                title="Custom Icon Example"
+                icon={Atom}
+              >
+                You can override the default icon with any Lucide icon.
               </InlineAlert>
             </div>
           </SectionCard>

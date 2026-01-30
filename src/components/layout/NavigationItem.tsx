@@ -60,7 +60,7 @@ const NavigationItem = React.forwardRef<HTMLAnchorElement, NavItemProps>(
         onClick={onClick}
         className={({ isActive }) =>
           cn(
-            "flex items-center gap-inline rounded-interactive ml-inset-xs px-inset-xs body-2 py-inline leading-none transition-colors mb-inline",
+            "hit-target flex items-center gap-inline rounded-interactive ml-inset-xs px-inset-xs body-2 py-inline leading-none transition-colors mb-inline",
             nested && "ml-inset-sm",
             isActive
               ? "bg-primary text-primary-foreground"

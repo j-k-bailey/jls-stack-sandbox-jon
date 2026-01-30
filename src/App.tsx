@@ -13,6 +13,8 @@ import { BrandKitPage } from "@/pages/Playground/BrandKitPage";
 import { QualityCheckPage } from "@/pages/QualityCheck";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { CreateTaskPage } from "@/pages/CreateTaskPage";
+import { ChangeLogPage } from "@/pages/ChangeLog";
+import ContrastCheckPage from "@/pages/ContrastCheckPage";
 
 function App() {
   return (
@@ -39,6 +41,11 @@ function App() {
 
         {/* Quality Check */}
         <Route path="quality-check" element={<QualityCheckPage />} />
+        {/* Contrast Check */}
+        <Route path="contrast-check" element={<ContrastCheckPage />} />
+
+        {/* Change Log*/}
+        <Route path="change-log" element={<ChangeLogPage />} />
 
         {/* Settings */}
         <Route path="settings" element={<SettingsPage />} />

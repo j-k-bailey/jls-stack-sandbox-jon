@@ -1,99 +1,13 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import {
-  UpdateCard,
-  UpdateCardContent,
-  UpdateCardDate,
-  UpdateCardHeader,
-  UpdateCardItem,
-  UpdateCardTitle,
-  UpdateCardVersion,
-} from "@/components/common/UpdateCard";
-
-const toDoItems = [
-  "Change pages to not need styling for proper spacing/padding (outlet at app layout should provide)",
-  "z-index usage should probably be in brand-kit to define levels and their usage",
-  "The Field and component pattern could probably be separated into visual-only components that take props; wrapped/bridge components that set the visuals up as Fields; and then used to create a 'quick form' library for an app that needs devs to easily make unique zod + RHF forms.",
-];
-
-const updates = [
-  {
-    version: "v0.0.6",
-    date: "January 28, 2026",
-    title: "Lesson 2.7 - WCAG",
-    items: [
-      "Updated FieldError to always include icon prior to error for visual accessibility",
-      "Updated type system and shifted from hardcoding to using relative values",
-      "Tweaked colors for more contrast.",
-      "Refined some spacing issues.",
-    ],
-  },
-  {
-    version: "v0.0.5",
-    date: "January 27, 2026",
-    title: "Lesson 2.6 - Forms",
-    items: [
-      "Imported Dialog, Form, Popover from shadcn",
-      "Updated ButtonVariants, Command, Dialog, Form, Input, Label, and Popover from shadcn to better align with brand kit",
-      "Decided to refactor to leave shadcn architecture AS predictable as possible so no issues with types, variants, etc. not being available to other components that depend on them.",
-      "Added form and updated dashboard for kanban-like dash mockup",
-      "Added fakerAPI to lib for simple fail/success testing with async/await state",
-    ],
-  },
-  {
-    version: "v0.0.4",
-    date: "January 26, 2026",
-    title: "Lesson 2.5 - Reusable Components & Patterns - Part 2",
-    items: [
-      "Experimented with different ways to work with really complicated variants with different styling based on props. E.g., primary filled vs. outline button. Settled on wrapper pattern as best blend of DX for restyling and using in other components without friction.",
-      "Old FeatureCard became SimpleFeatureCard",
-      "shadcn using lowercase for file names low-key drove me crazy. So changed it for files which have been customized already.",
-      "Added ResponsiveGrid, InlineAlert, and FeatureCard (the new one).",
-      "Added *-on-background to semantic tokens/brand kit for more versatility in color tokens",
-      "Updated pages to use new components: Dashboard, LayoutSandbox, Components, Aesthetic, Brand Kit",
-      "Fixed broken feature cards.",
-    ],
-  },
-  {
-    version: "v0.0.3",
-    date: "January 23, 2026",
-    title: "Lesson 2.5 - Reusable Components & Patterns",
-    items: [
-      "Prototyped grid-based dashboard for dashboard page",
-      "Moved form- and layout-Sandbox directories to exist in @/components/ rather than @/components/ui",
-      "Moved NavigationItem, Sidebar, and Topbar from @/components/layouts to @/components/ui",
-      "Refactored SimpleHeader into PageHeader",
-      "Made SectionCard and StatsRow components",
-    ],
-  },
-  {
-    version: "v0.0.2",
-    date: "January 23, 2026",
-    title: "App Wrapper and Maintenance",
-    items: [
-      "Created update card component",
-      "Misunderstood how utilities needed to be implemented, so removed unneeded spacing utilities that prevented viewport-responsive spacing",
-      "Updated text utilities to better approach that wouldn't cause conflict with Tailwind CSS text utilities",
-      "Updated to keep shell static (including overlay addition and setting z-index properly)",
-      "Updated nav to have nav groups: Main, development, and System",
-      "Added whitespace to let the nav breathe better",
-      "Added nav item components so it's easier to restyle without manually editing hardcoding",
-      "Tweaked bg and surfaces and updated brand kit",
-    ],
-  },
-  {
-    version: "v0.0.1",
-    date: "January 22, 2026",
-    title: "Initial Design System",
-    items: [
-      "OKLCH color system with cyan/fuchsia brand colors",
-      "4-level surface elevation system",
-      "Complete semantic palette (7 semantics × 5 tokens each)",
-      "Typography scale and spacing system",
-      "Shadcn/UI compatibility tokens",
-      "Updated most components to use new tokens for ease of editing in the future",
-    ],
-  },
-];
+  ChecklistCard,
+  ChecklistCardHeader,
+  ChecklistCardTitle,
+  ChecklistCardDescription,
+  ChecklistCardContent,
+  ChecklistCardItem,
+} from "@/components/common/ChecklistCard";
+import { Link } from "@/components/common/Link";
 
 export function QualityCheckPage() {
   return (
@@ -101,45 +15,83 @@ export function QualityCheckPage() {
       <PageHeader
         pageTitle="Quality Check & Changelog"
         pageDescription="Polish validation, accessibility self-audit, and design system updates."
-        hr
       />
 
-      {/* ===============================
-          CHANGELOG
-          =============================== */}
-      <section className="space-y-stack">
-        <h2 className="mb-stack">To Do/Thoughts for Later</h2>
+      <div className="space-y-section">
         <div className="space-y-stack">
-          <div className="bg-surface-1 border-l-4 border-border-primary px-inset-xl py-inset rounded">
-            <ul className="space-y-1 body-2 list-disc ml-standard">
-              {toDoItems.map((toDoItem, index) => (
-                <li key={index}>{toDoItem}</li>
-              ))}
-            </ul>
-          </div>
+          <p>
+            The overall direction of the brand kit has been realizing where
+            development speed, efficiency, and consistency could be improved
+            with a refined token system where the token names are intuitive
+            about what gets used where.
+          </p>
+          <p>
+            On top of that, checks have been made to update to meet WCAG AA as
+            things gets edited. Also have moved from hard-coded sizes to rem so
+            everything can rescale responsively.
+          </p>
         </div>
+        {/* Basic Checklist */}
+        <ChecklistCard>
+          <ChecklistCardHeader>
+            <ChecklistCardTitle>UI Polish Rules</ChecklistCardTitle>
+          </ChecklistCardHeader>
+          <ChecklistCardContent>
+            <ChecklistCardItem checked>
+              Update classNames on pages as they get updated. Mostly watch for
+              size-based tokens, then color misuse, then styling that doesn't
+              follow brand kit system.
+            </ChecklistCardItem>
+            <ChecklistCardItem checked>
+              Update components that look off when updating a page (if the
+              component will likely be reused elsewhere or possibly repurposed
+              for future uses).
+            </ChecklistCardItem>
+            <ChecklistCardItem checked>
+              Keep an eye on browser console and axe devTools when
+              updating/creating any page to watch for issues as they arise.
+            </ChecklistCardItem>
+            <ChecklistCardItem checked>
+              Watch out for anything that looks "off" and check Elements &gt;
+              Computed if needed to get things consistent across primitives and
+              composed components
+            </ChecklistCardItem>
+            <ChecklistCardItem checked>
+              Refer to brand kit doc render if unsure on "right call" for
+              styling
+            </ChecklistCardItem>
+          </ChecklistCardContent>
+        </ChecklistCard>
 
-        <h2 className="mt-section mb-stack">Changelog</h2>
+        {/* Component Migration */}
+        <ChecklistCard>
+          <ChecklistCardHeader>
+            <ChecklistCardTitle>Accessibility Checks</ChecklistCardTitle>
+            <ChecklistCardDescription>
+              The tests being used to make sure accessibility is baked in as a
+              core, required feature and not as an afterthought
+            </ChecklistCardDescription>
+          </ChecklistCardHeader>
 
-        <div className="space-y-stack">
-          {updates.map((update, index) => (
-            <UpdateCard key={index}>
-              <UpdateCardHeader>
-                <UpdateCardVersion>{update.version}</UpdateCardVersion>
-                <UpdateCardDate>{update.date}</UpdateCardDate>
-              </UpdateCardHeader>
-
-              <UpdateCardTitle>{update.title}</UpdateCardTitle>
-
-              <UpdateCardContent>
-                {update.items.map((item, itemIndex) => (
-                  <UpdateCardItem key={itemIndex}>{item}</UpdateCardItem>
-                ))}
-              </UpdateCardContent>
-            </UpdateCard>
-          ))}
-        </div>
-      </section>
+          <ChecklistCardContent>
+            <ChecklistCardItem checked>
+              WebAIM Contrast Checker for initial background/foreground semantic
+              pairs
+            </ChecklistCardItem>
+            <ChecklistCardItem checked>
+              <Link to="/contrast-check">Contrast Check</Link> too if tweaking
+              values in index.css
+            </ChecklistCardItem>
+            <ChecklistCardItem checked>Add spacing utilities</ChecklistCardItem>
+            <ChecklistCardItem checked>
+              <strong>axe DevTools Full Page Scan</strong> completed with Best
+              Practices on in mobile and desktop sizes (Aesthetic cards in
+              playground have numerous contrast failures, and disable state
+              cards on Contrast check have contrast failure)
+            </ChecklistCardItem>
+          </ChecklistCardContent>
+        </ChecklistCard>
+      </div>
     </div>
   );
 }

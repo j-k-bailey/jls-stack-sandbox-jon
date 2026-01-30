@@ -15,7 +15,7 @@ import {
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { useState } from "react";
 import { fakerApi } from "@/lib/fakerApi";
-import { InlineAlert } from "@/components/ui/InlineAlert";
+import { InlineAlert } from "@/components/common/InlineAlert";
 import {
   Field,
   FieldLabel,
