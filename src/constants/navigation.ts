@@ -7,6 +7,7 @@ import {
   ClipboardCheck,
   CircleHelp,
   Settings,
+  Lightbulb,
   Mail,
   TrainTrack,
   Paintbrush,
@@ -23,6 +24,12 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
     label: "Dashboard",
     to: "/",
     icon: Home,
+  },
+  {
+    type: "item",
+    label: "Product Ideas",
+    to: "/product-ideas",
+    icon: Lightbulb,
   },
   {
     type: "item",

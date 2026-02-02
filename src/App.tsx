@@ -16,6 +16,7 @@ import { CreateTaskPage } from "@/pages/CreateTaskPage";
 import { ChangeLogPage } from "@/pages/ChangeLog";
 import ContrastCheckPage from "@/pages/ContrastCheckPage";
 import SeedProductIdeasPage from "@/pages/dev/SeedProductIdeasPage";
+import ProductIdeasPage from "@/pages/ProductIdeasPage";
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
       <Route path="/" element={<AppLayout />}>
         {/* Index ("/") → Dashboard */}
         <Route index element={<DashboardPage />} />
+
+        {/* Product ideas page */}
+        <Route path="product-ideas" element={<ProductIdeasPage />} />
 
         {/* "/layout-sandbox" → layout sandbox page */}
         <Route path="layout-sandbox" element={<LayoutSandboxPage />} />

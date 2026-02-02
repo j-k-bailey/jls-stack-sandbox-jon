@@ -1,4 +1,4 @@
-import { ProductIdeaPriority } from "./../../types/productIdeas";
+import { type ProductIdeaPriority } from "@/types/productIdeas";
 import { db } from "@/lib/firebase";
 
 import {
@@ -96,6 +96,20 @@ export async function getProductIdea(
 // Get all product ideas
 export async function getAllProductIdeas(): Promise<ProductIdea[]> {
   const q = query(productIdeasCol(), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as ProductIdea[];
+}
+
+// Get all product ideas of a set priority
+export async function getAllProductIdeasByPriority(
+  priority: ProductIdeaPriority,
+): Promise<ProductIdea[]> {
+  const q = query(productIdeasCol(), where("priority", "==", priority));
+
   const snapshot = await getDocs(q);
 
   return snapshot.docs.map((doc) => ({
