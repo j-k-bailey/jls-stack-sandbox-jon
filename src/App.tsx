@@ -51,7 +51,8 @@ function App() {
         {/* Settings */}
         <Route path="settings" element={<SettingsPage />} />
 
-        {/* TODO: left for documenting, but eventually remove, because sets up temporary dev route for seeding product ideas. <Route path="seed-ideas" element={<SeedProductIdeasPage />} /> */}
+        {/* TODO: left for documenting, but eventually remove, because sets up temporary dev route for seeding product ideas. */}
+        <Route path="seed-ideas" element={<SeedProductIdeasPage />} />
 
         {/* "/help" -> Help page */}
         <Route path="help" element={<HelpPage />} />
