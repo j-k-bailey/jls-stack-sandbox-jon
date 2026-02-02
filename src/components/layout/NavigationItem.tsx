@@ -139,7 +139,7 @@ NavigationHeading.displayName = "NavigationHeading";
 const NavigationGroup = React.forwardRef<HTMLDivElement, NavigationGroupProps>(
   ({ items, onItemClick }, ref) => {
     return (
-      <div ref={ref} className="flex flex-col">
+      <div ref={ref} className="flex flex-col pr-inset-sm">
         {items.map((item, index) => {
           switch (item.type) {
             case "heading":

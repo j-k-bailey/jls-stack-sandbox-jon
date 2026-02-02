@@ -74,8 +74,11 @@ const TAGS = [
 
 const taskNameSchema = z
   .string()
-  .min(1, "Task name is required")
-  .max(100, "Task name must be 100 characters or less");
+  .min(1, "Task name is required. Must have 1-100 characters.")
+  .max(
+    100,
+    "Task name must be 100 characters or less (at least 1 character required).",
+  );
 
 const visibilitySchema = z.enum(["team", "personal"], {
   error: "Please select task visibility",
@@ -300,7 +303,7 @@ export const CreateTaskPage = () => {
                       <div className="flex items-center justify-between gap-2">
                         <FieldError errors={[errors.taskName]} />
                         <span className="caption text-muted-foreground shrink-0">
-                          {field.value.length}/100
+                          {field.value.length}/100 max characters
                         </span>
                       </div>
                     </Field>

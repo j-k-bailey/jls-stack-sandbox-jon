@@ -89,6 +89,12 @@ export function QualityCheckPage() {
               playground have numerous contrast failures, and disable state
               cards on Contrast check have contrast failure)
             </ChecklistCardItem>
+            <ChecklistCardItem checked>
+              <strong>axe DevTools Full Page Scan</strong> completed with Best
+              Practices on in mobile and desktop sizes (Aesthetic cards in
+              playground have numerous contrast failures, and disable state
+              cards on Contrast check have contrast failure)
+            </ChecklistCardItem>
           </ChecklistCardContent>
         </ChecklistCard>
       </div>
