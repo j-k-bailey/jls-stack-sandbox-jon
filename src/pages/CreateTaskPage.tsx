@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { useState } from "react";
-import { fakerApi } from "@/lib/fakerApi";
+// import { fakerApi } from "@/lib/fakerApi";
 import { InlineAlert } from "@/components/common/InlineAlert";
 import {
   Field,
@@ -46,6 +46,11 @@ import {
 import { FeatureCard } from "@/components/common/FeatureCard";
 import { format } from "date-fns";
 import { PageHeader } from "@/components/common/PageHeader";
+
+import { getAuth } from "firebase/auth";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { SimpleSignIn } from "@/components/common/SimpleSignIn";
 
 // Constants
 const CATEGORIES = [
@@ -139,8 +144,29 @@ export const CreateTaskPage = () => {
 
   const onSubmit: SubmitHandler<CreateTaskFormFields> = async (data) => {
     try {
-      await fakerApi({ data });
-      setSubmittedTask(data);
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        throw new Error("You must be signed in to create work.");
+      }
+
+      const workDoc = {
+        ownerId: user.uid,
+        taskName: data.taskName,
+        visibility: data.visibility,
+        priority: data.priority,
+        stage: "inbox",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        ...(data.description && { description: data.description }),
+        ...(data.deadlineDate && { deadlineDate: data.deadlineDate }),
+        ...(data.category && { category: data.category }),
+        ...(data.tags && data.tags.length > 0 && { tags: data.tags }),
+      };
+
+      await addDoc(collection(db, "work"), workDoc);
+
       handleReset();
     } catch (error) {
       setError("root", {
@@ -270,6 +296,11 @@ export const CreateTaskPage = () => {
       )}
 
       <PageHeader pageTitle="Manage Your Tasks" />
+      <Card>
+        <CardContent>
+          <SimpleSignIn />
+        </CardContent>
+      </Card>
 
       {/* Form Card */}
       <Card>

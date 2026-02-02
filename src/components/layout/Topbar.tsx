@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/BrandButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { FaBars } from "react-icons/fa6";
 import AppLogo from "@/components/common/AppLogo";
+import { UserProfileButton } from "../common/UserProfileButton";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -27,19 +28,7 @@ export function Topbar({ onMenuClick, isMenuOpen = false }: TopbarProps) {
             Feedback
           </Button>
 
-          <button
-            type="button"
-            aria-label="User menu"
-            className="hit-target relative flex h-8 w-8 items-center justify-center rounded-full bg-muted border border-border-muted caption font-bold text-muted-foreground"
-          >
-            Y
-            <span
-              aria-hidden="true"
-              className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent text-accent-foreground text-xs font-bold px-1"
-            >
-              3
-            </span>
-          </button>
+          <UserProfileButton />
         </div>
 
         {/* Mobile menu button */}

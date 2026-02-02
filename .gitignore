@@ -25,3 +25,4 @@ dist-ssr
 
 # Visualization docs for component editing
 docs/formComponentsVisualization.tsx
+.env
