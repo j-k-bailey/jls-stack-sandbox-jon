@@ -4,6 +4,7 @@ interface ProductIdea {
   status: "draft" | "active" | "paused" | "shipped";
   tags: string[];
   ownerId: string;
+  priority?: "later" | "next" | "now";
 }
 
 export const PRODUCT_IDEAS: ProductIdea[] = [

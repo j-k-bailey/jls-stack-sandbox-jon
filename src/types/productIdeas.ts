@@ -1,9 +1,14 @@
-import { Timestamp } from "firebase/firestore";
+import { DocumentSnapshot, Timestamp } from "firebase/firestore";
 
-export type ProductIdeaStatus = "draft" | "active" | "paused" | "shipped";
+export type ProductIdeaStatus =
+  | "draft"
+  | "active"
+  | "paused"
+  | "shipped"
+  | "unassigned";
 
 // Added Priority with "now", "next", "later" as a way to allow owners to loosely prioritize product ideas
-export type ProductIdeaPriority = "now" | "next" | "later";
+export type ProductIdeaPriority = "now" | "next" | "later" | "unassigned";
 
 export interface ProductIdea {
   id: string;
@@ -22,4 +27,29 @@ export interface ProductIdeaNote {
   body: string;
   authorId: string;
   createdAt: Timestamp;
+}
+
+export interface ProductIdeaMetadata {
+  tags: string[];
+  tagCounts: Record<string, number>;
+  statusCounts: Record<ProductIdeaStatus, number>;
+  priorityCounts: {
+    unassigned: number;
+    later: number;
+    next: number;
+    now: number;
+  };
+  totalIdeas: number;
+  lastUpdated: Timestamp;
+}
+
+export interface ProductIdeaFilters {
+  status?: ProductIdeaStatus;
+  tags?: string;
+  priority?: ProductIdeaPriority | "unassigned";
+}
+
+export interface ProductIdeaPaginationOptions {
+  pageSize: number;
+  lastDoc?: DocumentSnapshot;
 }

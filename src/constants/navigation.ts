@@ -28,7 +28,7 @@ export const NAVIGATION_CONFIG: NavConfig[] = [
   {
     type: "item",
     label: "Product Ideas",
-    to: "/product-ideas",
+    to: "/ideas",
     icon: Lightbulb,
   },
   {

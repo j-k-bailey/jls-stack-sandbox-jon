@@ -26,7 +26,7 @@ function App() {
         <Route index element={<DashboardPage />} />
 
         {/* Product ideas page */}
-        <Route path="product-ideas" element={<ProductIdeasPage />} />
+        <Route path="ideas" element={<ProductIdeasPage />} />
 
         {/* "/layout-sandbox" → layout sandbox page */}
         <Route path="layout-sandbox" element={<LayoutSandboxPage />} />
