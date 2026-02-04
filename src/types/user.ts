@@ -7,6 +7,7 @@ export interface UserPermissionOverrides {
   canCreate?: boolean;
   canEditOwn?: boolean;
   canEditAny?: boolean;
+  canDeleteOwn?: boolean;
   canDeleteAny?: boolean;
 }
 

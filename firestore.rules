@@ -2,6 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ==========================================
+    // HELPER FUNCTIONS
+    // ==========================================
+    
     function isSignedIn() {
         return request.auth != null;
     }
@@ -45,6 +49,7 @@ service cloud.firestore {
             || (permission == 'canCreate' && role in ['contributor', 'moderator', 'admin'])
             || (permission == 'canEditOwn' && role in ['contributor', 'moderator', 'admin'])
             || (permission == 'canEditAny' && role in ['moderator', 'admin'])
+            || (permission == 'canDeleteOwn' && role in ['viewer', 'contributor', 'moderator', 'admin'])
             || (permission == 'canDeleteAny' && role in ['moderator', 'admin']);
     }
     
@@ -56,8 +61,29 @@ service cloud.firestore {
         // If override exists, use it; otherwise use role-based permission
         return override != null ? override : roleHasPermission(role, permission);
     }
+
+
+    // ==========================================
+    // DEVELOPMENT RULES - REMOVE BEFORE PRODUCTION
+    // These rules allow unauthenticated access for testing.
+    // Comment out this section when using production rules.
+    // ==========================================
     
-    // Product Ideas rules
+    // match /productIdeas/{ideaId} {
+    //   // TODO: Replace with production rules before launch
+    //   allow read, write: if true;
+      
+    //   match /notes/{noteId} {
+    //     allow read, write: if true;
+    //   }
+    // }
+
+
+    // ==========================================
+    // PRODUCTION RULES - Product Ideas
+    // Uncomment this section for production use.
+    // ==========================================
+    
     match /productIdeas/{ideaId} {
         // Anyone with canView permission can read
         allow read: if isSignedIn() && hasPermission('canView');
@@ -131,8 +157,12 @@ service cloud.firestore {
                           || hasPermission('canEditAny')
                       );
         
-        // Only moderators/admins can delete any idea
-        allow delete: if isSignedIn() && hasPermission('canDeleteAny');
+        // Users can delete their own ideas OR moderators/admins can delete any
+        allow delete: if isSignedIn() 
+                      && (
+                          (hasPermission('canDeleteOwn') && request.auth.uid == existingData().ownerId)
+                          || hasPermission('canDeleteAny')
+                      );
         
         // Notes subcollection rules
         match /notes/{noteId} {
@@ -147,7 +177,7 @@ service cloud.firestore {
             // Users can delete their own notes OR moderators/admins can delete any
             allow delete: if isSignedIn() 
                           && (
-                              (hasPermission('canEditOwn') && request.auth.uid == existingData().authorId)
+                              (hasPermission('canDeleteOwn') && request.auth.uid == existingData().authorId)
                               || hasPermission('canDeleteAny')
                           );
             
@@ -155,8 +185,13 @@ service cloud.firestore {
             allow update: if false;
         }
     }
+
+
+    // ==========================================
+    // USER PROFILE RULES
+    // These should always be active in both dev and production.
+    // ==========================================
     
-    // User Profile rules
     match /users/{userId} {
         function getUserRoleLocal() {
             return get(/databases/(default)/documents/users/$(request.auth.uid)).data.role;
