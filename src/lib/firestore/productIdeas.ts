@@ -22,6 +22,7 @@ import type {
   ProductIdeaNote,
   ProductIdeaStatus,
   ProductIdeaPriority,
+  CreateProductIdeaInput,
 } from "@/types/productIdeas";
 
 export interface ProductIdeaFilters {
@@ -97,10 +98,20 @@ export function buildProductIdeaNotesQuery(ideaId: string): Query {
 // ============================================================================
 
 function mapDocToProductIdea(doc: DocumentSnapshot): ProductIdea {
+  const data = doc.data();
+  if (!data) throw new Error("Document data is undefined");
+
   return {
     id: doc.id,
-    ...doc.data(),
-  } as ProductIdea;
+    title: data.title,
+    summary: data.summary,
+    status: data.status,
+    ...(data.tags && { tags: data.tags }),
+    ...(data.priority && { priority: data.priority }),
+    ownerId: data.ownerId,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+  };
 }
 
 function mapDocToProductIdeaNote(doc: DocumentSnapshot): ProductIdeaNote {
@@ -219,24 +230,19 @@ export async function getProductIdeaNotes(
 // WRITE OPERATIONS
 // ============================================================================
 
-export async function createProductIdea(input: {
-  title: string;
-  summary: string;
-  status?: ProductIdeaStatus;
-  tags?: string[];
-  priority?: ProductIdeaPriority;
-  ownerId: string;
-}) {
-  const docRef = await addDoc(productIdeasCol(), {
+export async function createProductIdea(input: CreateProductIdeaInput) {
+  const docData = {
     title: input.title,
     summary: input.summary,
     status: input.status ?? "draft",
-    tags: input.tags ?? [],
     ownerId: input.ownerId,
-    priority: input.priority ?? "later",
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  });
+    ...(input.tags && { tags: input.tags }),
+    ...(input.priority && { priority: input.priority }),
+  };
+
+  const docRef = await addDoc(productIdeasCol(), docData);
   return docRef.id;
 }
 

@@ -322,14 +322,19 @@ function ProductIdeasPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">{idea.title}</h3>
-                  <Badge variant="accent">{idea.status}</Badge>
+                  <div className="flex gap-2">
+                    <Badge variant="accent">{idea.status}</Badge>
+                    {idea.priority && (
+                      <Badge variant="outline">{idea.priority}</Badge>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
 
               <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground">{idea.summary}</p>
 
-                {idea.tags.length > 0 && (
+                {idea.tags && idea.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {idea.tags.map((tag) => (
                       <Badge

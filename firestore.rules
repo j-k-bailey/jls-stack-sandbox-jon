@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+        return request.auth != null;
+    }
+
+    function existingData() {
+        return resource.data
+    }
+
+    function incomingData() {
+        return request.resource.data
+    }
+
+    
+    // Product Ideas rules
+    match /productIdeas/{ideaId} {
+        // Any signed-in user can read ideas
+        allow read: if isSignedIn();
+        
+        function isValidStatus(status) {
+            return status in ['draft', 'active', 'paused', 'shipped'];
+        }
+        
+        function isValidPriority(priority) {
+            return priority in ['now', 'next', 'later'];
+        }
+        
+        function isValidTags(tags) {
+            return tags is list 
+                && tags.size() <= 20  // reasonable limit
+        }
+        
+        function isValidCreate() {
+            let data = incomingData();
+            
+            return // Required fields exist
+                data.keys().hasAll(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt'])
+                // Required fields have correct types
+                && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+                && data.summary is string && data.summary.size() > 0 && data.summary.size() <= 1000
+                && data.ownerId is string && data.ownerId == request.auth.uid  // Must match authenticated user
+                && isValidStatus(data.status)
+                && data.createdAt == request.time
+                && data.updatedAt == request.time
+                // Optional fields: tags (if present, must be valid)
+                && (!data.keys().hasAny(['tags']) || isValidTags(data.tags))
+                // Optional fields: priority (if present, must be valid)
+                && (!data.keys().hasAny(['priority']) || isValidPriority(data.priority))
+                // No unexpected fields
+                && data.keys().hasOnly(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt', 'tags', 'priority']);
+        }
+        
+        function isValidUpdate() {
+            let data = incomingData();
+            let oldData = existingData();
+            
+            return // Must be the owner (verify against auth, not just old data)
+                data.ownerId == request.auth.uid
+                && data.ownerId == oldData.ownerId  // Also prevent changing ownership
+                // Can't change createdAt
+                && data.createdAt == oldData.createdAt
+                // Must update the updatedAt timestamp
+                && data.updatedAt == request.time
+                && data.updatedAt > oldData.updatedAt
+                // Required fields still exist and have correct types
+                && data.keys().hasAll(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt'])
+                && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+                && data.summary is string && data.summary.size() > 0 && data.summary.size() <= 1000
+                && isValidStatus(data.status)
+                // Optional fields: tags (if present, must be valid)
+                && (!data.keys().hasAny(['tags']) || isValidTags(data.tags))
+                // Optional fields: priority (if present, must be valid)
+                && (!data.keys().hasAny(['priority']) || isValidPriority(data.priority))
+                // No unexpected fields
+                && data.keys().hasOnly(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt', 'tags', 'priority']);
+        }
+        
+        // Users can only create ideas they own and with valid data
+        allow create: if isSignedIn() && isValidCreate();
+        
+        // Users can only update their own ideas with valid data
+        allow update: if isSignedIn() && isValidUpdate();
+        
+        // Users can only delete their own ideas
+        allow delete: if isSignedIn() 
+                        && request.auth.uid == existingData().ownerId;
+        }
+      
+      // Notes subcollection rules
+      match /notes/{noteId} {
+        // Any signed-in user can read notes
+        allow read: if isSignedIn();
+        
+        // Users can only create notes they author
+        allow create: if isSignedIn() 
+                      && request.auth.uid == incomingData().authorId;
+        
+        // Users can only delete their own notes
+        allow delete: if isSignedIn() 
+                      && request.auth.uid == existingData().authorId;
+        
+        // For now, don't allow note updates
+        allow update: if false;
+      }
+    }    
+  }
