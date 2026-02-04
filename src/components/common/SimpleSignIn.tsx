@@ -1,20 +1,17 @@
-import { useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
-
-import { signIn, signOutUser } from "@/lib/simpleAuth";
+// @/components/common/SimpleSignIn.tsx
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/BrandButton";
 
 export function SimpleSignIn() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading, signIn, signOut } = useAuth();
 
-  useEffect(() => {
-    const auth = getAuth();
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-
-    return () => unsub();
-  }, []);
+  if (loading) {
+    return (
+      <Button type="button" variant="filled" semantic="primary" disabled>
+        Loading...
+      </Button>
+    );
+  }
 
   if (!user) {
     return (
@@ -30,12 +27,7 @@ export function SimpleSignIn() {
   }
 
   return (
-    <Button
-      type="button"
-      variant="filled"
-      semantic="accent"
-      onClick={signOutUser}
-    >
+    <Button type="button" variant="filled" semantic="accent" onClick={signOut}>
       Log out
     </Button>
   );

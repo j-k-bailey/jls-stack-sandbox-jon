@@ -1,8 +1,11 @@
+// @/components/layout/Topbar.tsx
 import { Button } from "@/components/ui/BrandButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { Badge } from "@/components/ui/badge";
 import { FaBars } from "react-icons/fa6";
 import AppLogo from "@/components/common/AppLogo";
 import { UserProfileButton } from "../common/UserProfileButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -10,6 +13,8 @@ interface TopbarProps {
 }
 
 export function Topbar({ onMenuClick, isMenuOpen = false }: TopbarProps) {
+  const { userProfile, loading } = useAuth();
+
   return (
     <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-border bg-surface-1">
       <div className="flex items-center justify-between h-full p-inset lg:px-standard">
@@ -21,6 +26,13 @@ export function Topbar({ onMenuClick, isMenuOpen = false }: TopbarProps) {
           <span className="caption text-muted-foreground border-r border-border pr-inline mr-inline">
             Environment: <span className="font-medium text-primary">Dev</span>
           </span>
+
+          {/* User Role Badge */}
+          {!loading && userProfile && (
+            <Badge variant="outline" className="capitalize">
+              {userProfile.role}
+            </Badge>
+          )}
 
           <ThemeToggle />
 

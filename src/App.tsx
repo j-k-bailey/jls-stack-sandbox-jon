@@ -14,9 +14,11 @@ import { QualityCheckPage } from "@/pages/QualityCheck";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { CreateTaskPage } from "@/pages/CreateTaskPage";
 import { ChangeLogPage } from "@/pages/ChangeLog";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import ContrastCheckPage from "@/pages/ContrastCheckPage";
 import SeedProductIdeasPage from "@/pages/dev/SeedProductIdeasPage";
 import ProductIdeasPage from "@/pages/ProductIdeasPage";
+import { LoginPage } from "@/pages/LoginPage";
 
 function App() {
   return (
@@ -25,8 +27,18 @@ function App() {
         {/* Index ("/") → Dashboard */}
         <Route index element={<DashboardPage />} />
 
+        {/* Public route - Login page */}
+        <Route path="/login" element={<LoginPage />} />
+
         {/* Product ideas page */}
-        <Route path="ideas" element={<ProductIdeasPage />} />
+        <Route
+          path="ideas"
+          element={
+            <ProtectedRoute requiredRole="viewer">
+              <ProductIdeasPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* "/layout-sandbox" → layout sandbox page */}
         <Route path="layout-sandbox" element={<LayoutSandboxPage />} />
