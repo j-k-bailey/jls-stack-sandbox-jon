@@ -4,8 +4,8 @@ import {
   buildProductIdeasQuery,
   executeProductIdeasQueryPaginated,
 } from "@/lib/firestore/productIdeas";
-import { checkPermission } from "@/lib/firestore/users";
 import { useAuth } from "@/contexts/AuthContext";
+import { getRolePermissions } from "@/types/user";
 import type {
   ProductIdea,
   ProductIdeaStatus,
@@ -48,7 +48,7 @@ function getCacheKey(filters: ProductIdeaFilters, pageSize: number): string {
 }
 
 function ProductIdeasPage() {
-  const { user, userProfile, loading: authLoading } = useAuth();
+  const { user, customClaims, loading: authLoading } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const paginationCacheRef = useRef<Map<string, Map<number, DocumentSnapshot>>>(
     new Map(),
@@ -80,7 +80,7 @@ function ProductIdeasPage() {
   const filters: ProductIdeaFilters = useMemo(
     () => ({
       ...(statusFilter && { status: statusFilter }),
-      ...(tagFilter && { tag: tagFilter }),
+      ...(tagFilter && { tags: tagFilter }),
     }),
     [statusFilter, tagFilter],
   );
@@ -90,19 +90,36 @@ function ProductIdeasPage() {
     [filters, pageSize],
   );
 
-  // Check permissions
-  const canView = userProfile && checkPermission(userProfile, "canView");
+  // Get permissions from role
+  const permissions = useMemo(() => {
+    if (!customClaims?.role) return null;
+    return getRolePermissions(customClaims.role);
+  }, [customClaims]);
+
+  // Permission checks
+  const canView = permissions?.canRead ?? false;
+
   const canEdit = useCallback(
     (ownerId: string) => {
-      if (!userProfile || !user) return false;
+      if (!permissions || !user) return false;
       return (
-        checkPermission(userProfile, "canEditAny") ||
-        (checkPermission(userProfile, "canEditOwn") && ownerId === user.uid)
+        permissions.canEditAny ||
+        (permissions.canEditOwn && ownerId === user.uid)
       );
     },
-    [userProfile, user],
+    [permissions, user],
   );
-  const canDelete = userProfile && checkPermission(userProfile, "canDeleteAny");
+
+  const canDelete = useCallback(
+    (ownerId: string) => {
+      if (!permissions || !user) return false;
+      return (
+        permissions.canDeleteAny ||
+        (permissions.canDeleteOwn && ownerId === user.uid)
+      );
+    },
+    [permissions, user],
+  );
 
   const isLoading =
     authLoading || viewMode === "loading" || (viewMode === "live" && loading);
@@ -406,35 +423,37 @@ function ProductIdeasPage() {
                 )}
 
                 {/* Action Buttons - Conditionally rendered based on permissions */}
-                <div className="flex gap-2 pt-2">
-                  {canEdit(idea.ownerId) && (
-                    <Button
-                      variant="outline"
-                      semantic="primary"
-                      size="sm"
-                      onClick={() => {
-                        /* TODO: Navigate to edit page */
-                        console.log("Edit idea:", idea.id);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  )}
+                {(canEdit(idea.ownerId) || canDelete(idea.ownerId)) && (
+                  <div className="flex gap-2 pt-2">
+                    {canEdit(idea.ownerId) && (
+                      <Button
+                        variant="outline"
+                        semantic="primary"
+                        size="sm"
+                        onClick={() => {
+                          /* TODO: Navigate to edit page */
+                          console.log("Edit idea:", idea.id);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    )}
 
-                  {canDelete && (
-                    <Button
-                      variant="outline"
-                      semantic="warning"
-                      size="sm"
-                      onClick={() => {
-                        /* TODO: Handle delete */
-                        console.log("Delete idea:", idea.id);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                </div>
+                    {canDelete(idea.ownerId) && (
+                      <Button
+                        variant="outline"
+                        semantic="warning"
+                        size="sm"
+                        onClick={() => {
+                          /* TODO: Handle delete */
+                          console.log("Delete idea:", idea.id);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

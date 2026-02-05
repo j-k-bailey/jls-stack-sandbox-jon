@@ -1,4 +1,3 @@
-// @/contexts/AuthContext.tsx
 import {
   createContext,
   useContext,
@@ -11,15 +10,19 @@ import { signIn, signOutUser } from "@/lib/simpleAuth";
 import {
   getUserProfile,
   createOrUpdateUserProfile,
+  getUserCustomClaims,
+  refreshUserToken,
 } from "@/lib/firestore/users";
-import type { UserProfile } from "@/types/user";
+import type { UserProfile, UserCustomClaims } from "@/types/user";
 
 interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;
+  customClaims: UserCustomClaims | null;
   loading: boolean;
   signIn: typeof signIn;
   signOut: typeof signOutUser;
+  refreshToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -27,55 +30,62 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [customClaims, setCustomClaims] = useState<UserCustomClaims | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
 
-    console.log("AuthProvider: Setting up auth listener");
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("AuthProvider: Auth state changed", {
-        user: user?.email,
-        uid: user?.uid,
-      });
       setUser(user);
 
       if (user) {
         try {
-          console.log(
-            "AuthProvider: Creating/updating profile for uid:",
-            user.uid,
-          );
+          // Create/update profile if needed
           await createOrUpdateUserProfile(user);
 
-          console.log("AuthProvider: Fetching profile for uid:", user.uid);
-          const profile = await getUserProfile(user.uid);
-          console.log("AuthProvider: Got profile", profile);
+          // Fetch profile and claims
+          const [profile, claims] = await Promise.all([
+            getUserProfile(user.uid),
+            getUserCustomClaims(user),
+          ]);
+
           setUserProfile(profile);
+          setCustomClaims(claims);
         } catch (error) {
-          console.error("AuthProvider: Error loading profile", error);
-          console.error("Full error:", JSON.stringify(error, null, 2));
-          // Set loading to false even on error
+          console.error("Error loading user data:", error);
           setUserProfile(null);
+          setCustomClaims(null);
         }
       } else {
         setUserProfile(null);
+        setCustomClaims(null);
       }
 
-      console.log("AuthProvider: Setting loading to false");
       setLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
+  const handleRefreshToken = async () => {
+    if (user) {
+      await refreshUserToken(user);
+      const claims = await getUserCustomClaims(user);
+      setCustomClaims(claims);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     userProfile,
+    customClaims,
     loading,
     signIn,
     signOut: signOutUser,
+    refreshToken: handleRefreshToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

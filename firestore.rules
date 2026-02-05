@@ -1,241 +1,105 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // ==========================================
-    // HELPER FUNCTIONS
-    // ==========================================
     
-    function isSignedIn() {
-        return request.auth != null;
-    }
-
-    function existingData() {
-        return resource.data
-    }
-
-    function incomingData() {
-        return request.resource.data
-    }
-
-    // Global role checking functions
-    function getUserProfile() {
-        return get(/databases/(default)/documents/users/$(request.auth.uid));
-    }
-    
-    function userExists() {
-        return exists(/databases/(default)/documents/users/$(request.auth.uid));
-    }
-    
+    // Helper function to get user role from custom claims
     function getUserRole() {
-        return userExists() ? getUserProfile().data.role : 'viewer';
+      return request.auth.token.role;
     }
     
-    // Check if user has permission override for a specific permission
-    function hasOverride(permission) {
-        return userExists() 
-               && getUserProfile().data.keys().hasAny(['permissions'])
-               && getUserProfile().data.permissions != null
-               && getUserProfile().data.permissions.keys().hasAny([permission]);
+    function isAdmin() {
+      return getUserRole() == 'admin';
     }
     
-    function getPermissionOverride(permission) {
-        return hasOverride(permission) ? getUserProfile().data.permissions[permission] : null;
+    function isModerator() {
+      return getUserRole() == 'moderator';
     }
     
-    // Check if role grants a permission (role-based defaults)
-    function roleHasPermission(role, permission) {
-        return (permission == 'canView' && role in ['viewer', 'contributor', 'moderator', 'admin'])
-            || (permission == 'canCreate' && role in ['contributor', 'moderator', 'admin'])
-            || (permission == 'canEditOwn' && role in ['contributor', 'moderator', 'admin'])
-            || (permission == 'canEditAny' && role in ['moderator', 'admin'])
-            || (permission == 'canDeleteOwn' && role in ['viewer', 'contributor', 'moderator', 'admin'])
-            || (permission == 'canDeleteAny' && role in ['moderator', 'admin']);
+    function isContributor() {
+      return getUserRole() == 'contributor';
     }
     
-    // Check if user has a specific permission (with override support)
-    function hasPermission(permission) {
-        let override = getPermissionOverride(permission);
-        let role = getUserRole();
-        
-        // If override exists, use it; otherwise use role-based permission
-        return override != null ? override : roleHasPermission(role, permission);
+    function canCreate() {
+      return isAdmin() || isModerator() || isContributor();
+    }
+    
+    function canEditAny() {
+      return isAdmin() || isModerator();
+    }
+    
+    function canDeleteAny() {
+      return isAdmin();
+    }
+    
+    function isProductIdeaOwner(ownerId) {
+      return request.auth.uid == ownerId;
     }
 
-
-    // ==========================================
-    // DEVELOPMENT RULES - REMOVE BEFORE PRODUCTION
-    // These rules allow unauthenticated access for testing.
-    // Comment out this section when using production rules.
-    // ==========================================
-    
-    // match /productIdeas/{ideaId} {
-    //   // TODO: Replace with production rules before launch
-    //   allow read, write: if true;
-      
-    //   match /notes/{noteId} {
-    //     allow read, write: if true;
-    //   }
-    // }
-
-
-    // ==========================================
-    // PRODUCTION RULES - Product Ideas
-    // Uncomment this section for production use.
-    // ==========================================
-    
-    match /productIdeas/{ideaId} {
-        // Anyone with canView permission can read
-        allow read: if isSignedIn() && hasPermission('canView');
-        
-        function isValidStatus(status) {
-            return status in ['draft', 'active', 'paused', 'shipped'];
-        }
-        
-        function isValidPriority(priority) {
-            return priority in ['now', 'next', 'later'];
-        }
-        
-        function isValidTags(tags) {
-            return tags is list 
-                && tags.size() <= 20;
-        }
-        
-        function isValidCreate() {
-            let data = incomingData();
-            
-            return // Required fields exist
-                data.keys().hasAll(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt'])
-                // Required fields have correct types
-                && data.title is string && data.title.size() > 0 && data.title.size() <= 200
-                && data.summary is string && data.summary.size() > 0 && data.summary.size() <= 1000
-                && data.ownerId is string && data.ownerId == request.auth.uid
-                && isValidStatus(data.status)
-                && data.createdAt == request.time
-                && data.updatedAt == request.time
-                // Optional fields: tags (if present, must be valid)
-                && (!data.keys().hasAny(['tags']) || isValidTags(data.tags))
-                // Optional fields: priority (if present, must be valid)
-                && (!data.keys().hasAny(['priority']) || isValidPriority(data.priority))
-                // No unexpected fields
-                && data.keys().hasOnly(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt', 'tags', 'priority']);
-        }
-        
-        function isValidUpdate() {
-            let data = incomingData();
-            let oldData = existingData();
-            
-            return // Can't change owner or createdAt
-                data.ownerId == oldData.ownerId
-                && data.createdAt == oldData.createdAt
-                // Must update the updatedAt timestamp
-                && data.updatedAt == request.time
-                && data.updatedAt > oldData.updatedAt
-                // Required fields still exist and have correct types
-                && data.keys().hasAll(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt'])
-                && data.title is string && data.title.size() > 0 && data.title.size() <= 200
-                && data.summary is string && data.summary.size() > 0 && data.summary.size() <= 1000
-                && isValidStatus(data.status)
-                // Optional fields: tags (if present, must be valid)
-                && (!data.keys().hasAny(['tags']) || isValidTags(data.tags))
-                // Optional fields: priority (if present, must be valid)
-                && (!data.keys().hasAny(['priority']) || isValidPriority(data.priority))
-                // No unexpected fields
-                && data.keys().hasOnly(['title', 'summary', 'status', 'ownerId', 'createdAt', 'updatedAt', 'tags', 'priority']);
-        }
-        
-        // Contributors can create ideas (must be their own)
-        allow create: if isSignedIn() 
-                      && hasPermission('canCreate') 
-                      && isValidCreate();
-        
-        // Users can update their own ideas OR moderators/admins can update any
-        allow update: if isSignedIn() 
-                      && isValidUpdate()
-                      && (
-                          (hasPermission('canEditOwn') && request.auth.uid == existingData().ownerId)
-                          || hasPermission('canEditAny')
-                      );
-        
-        // Users can delete their own ideas OR moderators/admins can delete any
-        allow delete: if isSignedIn() 
-                      && (
-                          (hasPermission('canDeleteOwn') && request.auth.uid == existingData().ownerId)
-                          || hasPermission('canDeleteAny')
-                      );
-        
-        // Notes subcollection rules
-        match /notes/{noteId} {
-            // Anyone who can view ideas can view notes
-            allow read: if isSignedIn() && hasPermission('canView');
-            
-            // Contributors can create notes (must be their own)
-            allow create: if isSignedIn() 
-                          && hasPermission('canCreate')
-                          && request.auth.uid == incomingData().authorId;
-            
-            // Users can delete their own notes OR moderators/admins can delete any
-            allow delete: if isSignedIn() 
-                          && (
-                              (hasPermission('canDeleteOwn') && request.auth.uid == existingData().authorId)
-                              || hasPermission('canDeleteAny')
-                          );
-            
-            // For now, don't allow note updates
-            allow update: if false;
-        }
+    function isProductIdeaNoteAuthor(authorId) {
+      return request.auth.uid == authorId;
     }
 
+    function isSignedOn(){
+        return request.auth != null
+    }
 
-    // ==========================================
-    // USER PROFILE RULES
-    // These should always be active in both dev and production.
-    // ==========================================
+    function authIdMatchesUserId(userId) {
+        return request.auth.uid == userId
+    }
     
+    // ========================================================================
+    // USER PROFILES
+    // ========================================================================
     match /users/{userId} {
-        function getUserRoleLocal() {
-            return get(/databases/(default)/documents/users/$(request.auth.uid)).data.role;
-        }
+      // Anyone authenticated can read any profile
+      allow read: if isSignedOn();
+      
+      // Users can create their own profile (once) with viewer role
+      allow create: if isSignedOn()
+        && authIdMatchesUserId(userId)
+        && request.resource.data.role == 'viewer';
+      
+      // Only admins can update user documents (including role changes)
+      allow update: if isAdmin();
+      
+      // Nobody can delete user profiles
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // PRODUCT IDEAS
+    // ========================================================================
+    match /productIdeas/{ideaId} {
+      // Anyone authenticated can read
+      allow read: if isSignedOn();
+      
+      // Contributors+ can create
+      allow create: if canCreate()
+        && request.resource.data.ownerId == request.auth.uid;
+      
+      // Admins/mods can edit anything, contributors can edit their own
+      allow update: if canEditAny() || isProductIdeaOwner(resource.data.ownerId);
+      
+      // Admins can delete anything, mods/contributors can delete their own
+      allow delete: if canDeleteAny() || isProductIdeaOwner(resource.data.ownerId);
+      
+      // ======================================================================
+      // PRODUCT IDEA NOTES (subcollection)
+      // ======================================================================
+      match /notes/{noteId} {
+        // Anyone authenticated can read notes
+        allow read: if isSignedOn();
         
-        function isAdmin() {
-            return exists(/databases/(default)/documents/users/$(request.auth.uid))
-                && getUserRoleLocal() == 'admin';
-        }
+        // Contributors+ can create notes
+        allow create: if canCreate()
+          && request.resource.data.authorId == request.auth.uid;
         
-        function isValidSelfCreate() {
-            let data = request.resource.data;
-            return request.auth.uid == userId
-                && data.role == 'viewer'
-                && data.keys().hasAll(['firstName', 'lastNameInitial', 'role', 'createdAt', 'updatedAt'])
-                && data.firstName is string
-                && data.lastNameInitial is string
-                && data.createdAt is timestamp
-                && data.updatedAt is timestamp
-                && !data.keys().hasAny(['permissions']);
-        }
+        // Admins can delete any note, authors can delete their own
+        allow delete: if canDeleteAny() || isProductIdeaNoteAuthor(resource.data.ownerId);
         
-        function isValidAdminUpdate() {
-            let data = request.resource.data;
-            return data.keys().hasAll(['firstName', 'lastNameInitial', 'role', 'createdAt', 'updatedAt'])
-                && data.createdAt == resource.data.createdAt
-                && data.role in ['viewer', 'contributor', 'moderator', 'admin'];
-        }
-        
-        // Users can read their own profile
-        allow read: if request.auth != null 
-                    && request.auth.uid == userId;
-        
-        // Admins can read any profile
-        allow read: if request.auth != null && isAdmin();
-        
-        // Users can create their own profile (viewer only), admins can create any
-        allow create: if request.auth != null 
-                        && (isValidSelfCreate() || isAdmin());
-        
-        // Only admins can update profiles (including roles and permissions)
-        allow update: if request.auth != null && isAdmin() && isValidAdminUpdate();
-        
-        allow delete: if false;
+        // Notes can be edited by author or mods/admins
+        allow update: if canEditAny() || isProductIdeaNoteAuthor(resource.data.ownerId)
+      }
     }
   }
 }

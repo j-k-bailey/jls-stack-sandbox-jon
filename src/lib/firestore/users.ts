@@ -7,19 +7,25 @@ import {
   collection,
 } from "firebase/firestore";
 import type { User } from "firebase/auth";
-import type {
-  UserProfile,
-  UserPrimaryRoles,
-  UserPermissionOverrides,
-} from "@/types/user";
+import type { UserProfile, UserRole, UserCustomClaims } from "@/types/user";
 import { db } from "@/lib/firebase";
 
-// Collection reference
+// ============================================================================
+// COLLECTION REFERENCES
+// ============================================================================
+
 export function usersCol() {
   return collection(db, "users");
 }
 
-// Helper to parse name from Google account
+export function userDoc(userId: string) {
+  return doc(db, "users", userId);
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
 function parseDisplayName(displayName: string | null): {
   firstName: string;
   lastNameInitial: string;
@@ -37,70 +43,55 @@ function parseDisplayName(displayName: string | null): {
   return { firstName, lastNameInitial };
 }
 
-// Create or update user profile on sign-in
+// ============================================================================
+// USER PROFILE OPERATIONS
+// ============================================================================
+
+/**
+ * Create or update user profile on sign-in
+ * Cloud Function will automatically sync custom claims
+ */
 export async function createOrUpdateUserProfile(user: User): Promise<void> {
-  console.log("createOrUpdateUserProfile: Starting for", user.uid);
+  const userRef = userDoc(user.uid);
+  const userSnap = await getDoc(userRef);
+  const { firstName, lastNameInitial } = parseDisplayName(user.displayName);
 
-  const userRef = doc(db, "users", user.uid);
-
-  try {
-    console.log("createOrUpdateUserProfile: Checking if profile exists");
-    const userSnap = await getDoc(userRef);
-    console.log("Yes, we got the userSnap.");
-    console.log(
-      "createOrUpdateUserProfile: Profile exists?",
-      userSnap.exists(),
-    );
-
-    const { firstName, lastNameInitial } = parseDisplayName(user.displayName);
-    console.log("createOrUpdateUserProfile: Parsed name", {
+  if (!userSnap.exists()) {
+    // New user - create profile with viewer role by default
+    const newProfile: UserProfile = {
       firstName,
       lastNameInitial,
-    });
+      role: "viewer",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
 
-    if (!userSnap.exists()) {
-      console.log("createOrUpdateUserProfile: Creating new profile");
-      const newProfile = {
+    await setDoc(userRef, newProfile);
+
+    // Force token refresh to get claims from Cloud Function
+    await user.getIdToken(true);
+  } else {
+    // Existing user - update name if changed
+    const existing = userSnap.data();
+
+    if (
+      existing.firstName !== firstName ||
+      existing.lastNameInitial !== lastNameInitial
+    ) {
+      await updateDoc(userRef, {
         firstName,
         lastNameInitial,
-        role: "viewer" as UserPrimaryRoles,
-        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-      };
-      console.log("createOrUpdateUserProfile: New profile data", newProfile);
-
-      await setDoc(userRef, newProfile);
-      console.log("createOrUpdateUserProfile: Profile created successfully");
-    } else {
-      console.log(
-        "createOrUpdateUserProfile: Profile exists, checking for updates",
-      );
-      const existing = userSnap.data();
-      if (
-        existing.firstName !== firstName ||
-        existing.lastNameInitial !== lastNameInitial
-      ) {
-        console.log("createOrUpdateUserProfile: Updating name");
-        await updateDoc(userRef, {
-          firstName,
-          lastNameInitial,
-          updatedAt: serverTimestamp(),
-        });
-        console.log("createOrUpdateUserProfile: Name updated");
-      } else {
-        console.log("createOrUpdateUserProfile: No updates needed");
-      }
+      });
     }
-  } catch (error) {
-    console.error("createOrUpdateUserProfile: Error", error);
-    throw error;
   }
 }
 
-// Get user profile
+/**
+ * Get user profile from Firestore
+ */
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
-  const userRef = doc(db, "users", uid);
-  const userSnap = await getDoc(userRef);
+  const userSnap = await getDoc(userDoc(uid));
 
   if (!userSnap.exists()) return null;
 
@@ -109,68 +100,51 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     firstName: data.firstName,
     lastNameInitial: data.lastNameInitial,
     role: data.role,
-    permissions: data.permissions,
     createdAt: data.createdAt,
     updatedAt: data.updatedAt,
   };
 }
 
-// Admin function to update user role
+/**
+ * Get user's custom claims from their Firebase Auth token
+ * These are FREE to access (no Firestore reads)
+ */
+export async function getUserCustomClaims(
+  user: User,
+): Promise<UserCustomClaims | null> {
+  const idTokenResult = await user.getIdTokenResult();
+  const claims = idTokenResult.claims;
+
+  if (!claims.role) return null;
+
+  return {
+    role: claims.role as UserRole,
+  };
+}
+
+/**
+ * Force refresh user's ID token to get updated custom claims
+ * Call this after an admin updates a user's role
+ */
+export async function refreshUserToken(user: User): Promise<void> {
+  await user.getIdToken(true);
+}
+
+// ============================================================================
+// ADMIN OPERATIONS
+// ============================================================================
+
+/**
+ * Admin function to update user role
+ * Cloud Function will automatically sync custom claims
+ */
 export async function updateUserRole(
   uid: string,
-  role: UserPrimaryRoles,
+  role: UserRole,
 ): Promise<void> {
-  const userRef = doc(db, "users", uid);
-  await updateDoc(userRef, {
+  await updateDoc(userDoc(uid), {
     role,
     updatedAt: serverTimestamp(),
   });
-}
-
-// Admin function to set permission overrides
-export async function updateUserPermissions(
-  uid: string,
-  permissions: UserPermissionOverrides,
-): Promise<void> {
-  const userRef = doc(db, "users", uid);
-  await updateDoc(userRef, {
-    permissions,
-    updatedAt: serverTimestamp(),
-  });
-}
-
-// Check if user has a specific permission
-export function checkPermission(
-  userProfile: UserProfile,
-  permission: keyof UserPermissionOverrides,
-): boolean {
-  // Check override first
-  if (userProfile.permissions?.[permission] !== undefined) {
-    return userProfile.permissions[permission]!;
-  }
-
-  // Fall back to role-based permissions
-  const rolePermissions: Record<
-    UserPrimaryRoles,
-    Set<keyof UserPermissionOverrides>
-  > = {
-    viewer: new Set(["canView"]),
-    contributor: new Set(["canView", "canCreate", "canEditOwn"]),
-    moderator: new Set([
-      "canView",
-      "canCreate",
-      "canEditOwn",
-      "canEditAny",
-      "canDeleteAny",
-    ]),
-    admin: new Set([
-      "canView",
-      "canCreate",
-      "canEditOwn",
-      "canEditAny",
-      "canDeleteAny",
-    ]),
-  };
-
-  return rolePermissions[userProfile.role].has(permission);
+  // Custom claims will be synced by Cloud Function
 }

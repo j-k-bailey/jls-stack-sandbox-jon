@@ -33,24 +33,11 @@ export interface ProductIdeaNote {
   createdAt: Timestamp;
 }
 
-export interface ProductIdeaMetadata {
-  tags: string[];
-  tagCounts: Record<string, number>;
-  statusCounts: Record<ProductIdeaStatus, number>;
-  priorityCounts: {
-    unassigned: number;
-    later: number;
-    next: number;
-    now: number;
-  };
-  totalIdeas: number;
-  lastUpdated: Timestamp;
-}
-
 export interface ProductIdeaFilters {
   status?: ProductIdeaStatus;
   tags?: string;
   priority?: ProductIdeaPriority;
+  ownerId?: string;
 }
 
 export interface ProductIdeaPaginationOptions {
