@@ -27,9 +27,9 @@ service cloud.firestore {
       return isAdmin() || isModerator();
     }
     
-    function canDeleteAny() {
-      return isAdmin();
-    }
+    // function canDeleteAny() {
+    //   return isAdmin();
+    // }
     
     function isProductIdeaOwner(ownerId) {
       return request.auth.uid == ownerId;
@@ -39,28 +39,40 @@ service cloud.firestore {
       return request.auth.uid == authorId;
     }
 
-    function isSignedOn(){
-        return request.auth != null
+    function isSignedOn() {
+      return request.auth != null;
     }
 
     function authIdMatchesUserId(userId) {
-        return request.auth.uid == userId
+      return request.auth.uid == userId;
     }
     
     // ========================================================================
     // USER PROFILES
     // ========================================================================
     match /users/{userId} {
+      function isValidUserProfile() {
+        let data = request.resource.data;
+        return data.firstName is string
+          && data.firstName.size() > 0
+          && data.firstName.size() <= 50
+          && data.lastNameInitial is string
+          && data.lastNameInitial.size() <= 1
+          && data.role in ['viewer', 'contributor', 'moderator', 'admin'];
+      }
+      
       // Anyone authenticated can read any profile
       allow read: if isSignedOn();
       
       // Users can create their own profile (once) with viewer role
       allow create: if isSignedOn()
         && authIdMatchesUserId(userId)
-        && request.resource.data.role == 'viewer';
+        && request.resource.data.role == 'viewer'
+        && isValidUserProfile();
       
       // Only admins can update user documents (including role changes)
-      allow update: if isAdmin();
+      allow update: if isAdmin()
+        && isValidUserProfile();
       
       // Nobody can delete user profiles
       allow delete: if false;
@@ -70,35 +82,67 @@ service cloud.firestore {
     // PRODUCT IDEAS
     // ========================================================================
     match /productIdeas/{ideaId} {
+      function isValidProductIdea() {
+        let data = request.resource.data;
+        let hasValidTags = !('tags' in data) 
+          || (data.tags is list && data.tags.size() <= 10);
+        let hasValidPriority = !('priority' in data) 
+          || data.priority in ['now', 'next', 'later'];
+        
+        return data.title is string
+          && data.title.size() > 0
+          && data.title.size() <= 100
+          && data.summary is string
+          && data.summary.size() > 0
+          && data.summary.size() <= 1000
+          && data.status in ['draft', 'active', 'paused', 'shipped']
+          && data.ownerId is string
+          && hasValidTags
+          && hasValidPriority;
+      }
+      
       // Anyone authenticated can read
       allow read: if isSignedOn();
       
-      // Contributors+ can create
+      // Contributors+ can create (must own it)
       allow create: if canCreate()
-        && request.resource.data.ownerId == request.auth.uid;
+        && request.resource.data.ownerId == request.auth.uid
+        && isValidProductIdea();
       
       // Admins/mods can edit anything, contributors can edit their own
-      allow update: if canEditAny() || isProductIdeaOwner(resource.data.ownerId);
+      // ownerId cannot be changed
+      allow update: if (canEditAny() || isProductIdeaOwner(resource.data.ownerId))
+        && request.resource.data.ownerId == resource.data.ownerId
+        && isValidProductIdea();
       
       // Admins can delete anything, mods/contributors can delete their own
-      allow delete: if canDeleteAny() || isProductIdeaOwner(resource.data.ownerId);
+      allow delete: if isProductIdeaOwner(resource.data.ownerId);
       
       // ======================================================================
       // PRODUCT IDEA NOTES (subcollection)
       // ======================================================================
       match /notes/{noteId} {
+        function isValidNote() {
+          let data = request.resource.data;
+          return data.body is string
+            && data.body.size() > 0
+            && data.body.size() <= 2000
+            && data.authorId is string;
+        }
+        
         // Anyone authenticated can read notes
         allow read: if isSignedOn();
         
-        // Contributors+ can create notes
+        // Contributors+ can create notes (must be author)
         allow create: if canCreate()
-          && request.resource.data.authorId == request.auth.uid;
+          && request.resource.data.authorId == request.auth.uid
+          && isValidNote();
         
-        // Admins can delete any note, authors can delete their own
-        allow delete: if canDeleteAny() || isProductIdeaNoteAuthor(resource.data.ownerId);
+        // Only authors can delete their own notes
+        allow delete: if isProductIdeaNoteAuthor(resource.data.authorId);
         
-        // Notes can be edited by author or mods/admins
-        allow update: if canEditAny() || isProductIdeaNoteAuthor(resource.data.ownerId)
+        // Notes are immutable (cannot be updated)
+        allow update: if false;
       }
     }
   }

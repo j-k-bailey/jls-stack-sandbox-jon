@@ -154,12 +154,14 @@ export async function createProductIdea(
 
 export async function updateProductIdea(
   ideaId: string,
+  ownerId: string,
   updates: Partial<
     Pick<ProductIdea, "title" | "summary" | "status" | "tags" | "priority">
   >,
 ) {
   await updateDoc(productIdeaDoc(ideaId), {
     ...updates,
+    ownerId,
     updatedAt: serverTimestamp(),
   });
 }
