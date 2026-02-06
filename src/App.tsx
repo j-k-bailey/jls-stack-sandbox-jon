@@ -17,7 +17,7 @@ import { ChangeLogPage } from "@/pages/ChangeLog";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import ContrastCheckPage from "@/pages/ContrastCheckPage";
 import SeedProductIdeasPage from "@/pages/dev/SeedProductIdeasPage";
-import ProductIdeasPage from "@/pages/ProductIdeasPage";
+import { ProductIdeasPage } from "@/pages/ProductIdeasPage";
 import { LoginPage } from "@/pages/LoginPage";
 
 function App() {

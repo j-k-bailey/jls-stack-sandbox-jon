@@ -1,7 +1,7 @@
 // @/components/auth/ProtectedRoute.tsx
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import type { UserPrimaryRoles } from "@/types/user";
+import type { UserPrimaryRoles } from "@/lib/types/user";
 import { Button } from "@/components/ui/BrandButton";
 
 interface ProtectedRouteProps {

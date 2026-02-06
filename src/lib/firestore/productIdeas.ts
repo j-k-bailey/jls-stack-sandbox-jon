@@ -22,7 +22,7 @@ import type {
   ProductIdeaNote,
   CreateProductIdeaInput,
   ProductIdeaFilters,
-} from "@/types/productIdeas";
+} from "@/lib/types/productIdeas";
 
 // ============================================================================
 // COLLECTION REFERENCES

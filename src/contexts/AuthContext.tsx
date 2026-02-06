@@ -13,7 +13,7 @@ import {
   getUserCustomClaims,
   refreshUserToken,
 } from "@/lib/firestore/users";
-import type { UserProfile, UserCustomClaims } from "@/types/user";
+import type { UserProfile, UserCustomClaims } from "@/lib/types/user";
 
 interface AuthContextType {
   user: User | null;

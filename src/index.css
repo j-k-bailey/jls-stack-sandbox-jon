@@ -513,7 +513,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overflow-wrap: break-word;
-    hyphens: auto;
+    hyphens: none;
     font-optical-sizing: auto;
     font-feature-settings:
       "cv02" 1,

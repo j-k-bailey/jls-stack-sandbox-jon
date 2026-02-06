@@ -1,7 +1,7 @@
 import type {
   ProductIdeaStatus,
   ProductIdeaPriority,
-} from "@/types/productIdeas";
+} from "@/lib/types/productIdeas";
 
 interface ProductIdeaSeed {
   title: string;

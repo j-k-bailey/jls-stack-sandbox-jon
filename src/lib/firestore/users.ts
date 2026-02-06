@@ -7,7 +7,7 @@ import {
   collection,
 } from "firebase/firestore";
 import type { User } from "firebase/auth";
-import type { UserProfile, UserRole, UserCustomClaims } from "@/types/user";
+import type { UserProfile, UserRole, UserCustomClaims } from "@/lib/types/user";
 import { db } from "@/lib/firebase";
 
 // ============================================================================

@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 // 1. Define variants BEFORE the interface
-const responsiveGridVariants = cva("grid", {
+const responsiveGridVariants = cva("grid  w-full auto-rows-auto [&>*]:w-full", {
   variants: {
     maxColumns: {
       two: "grid-cols-1 md:grid-cols-2",
