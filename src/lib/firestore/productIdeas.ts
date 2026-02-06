@@ -104,8 +104,65 @@ export async function executeProductIdeasQueryPaginated(
 }
 
 // ============================================================================
-// CONVENIENCE FETCHERS
+// READ OPERATIONS - PRODUCT IDEAS
 // ============================================================================
+
+export async function getProductIdea(
+  ideaId: string,
+): Promise<ProductIdea | null> {
+  const snap = await getDoc(productIdeaDoc(ideaId));
+  return snap.exists() ? mapDocToIdea(snap) : null;
+}
+
+export async function getAllProductIdeas(): Promise<ProductIdea[]> {
+  const q = query(productIdeasCol(), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(mapDocToIdea);
+}
+
+export async function getProductIdeasByStatus(
+  status: ProductIdea["status"],
+): Promise<ProductIdea[]> {
+  const q = query(
+    productIdeasCol(),
+    where("status", "==", status),
+    orderBy("createdAt", "desc"),
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(mapDocToIdea);
+}
+
+export async function getProductIdeasByOwner(
+  ownerId: string,
+): Promise<ProductIdea[]> {
+  const q = query(
+    productIdeasCol(),
+    where("ownerId", "==", ownerId),
+    orderBy("createdAt", "desc"),
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(mapDocToIdea);
+}
+
+export async function getProductIdeasByTag(
+  tag: string,
+): Promise<ProductIdea[]> {
+  const q = query(
+    productIdeasCol(),
+    where("tags", "array-contains", tag),
+    orderBy("createdAt", "desc"),
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(mapDocToIdea);
+}
+
+export async function getFilteredProductIdeas(
+  filters: ProductIdeaFilters,
+): Promise<ProductIdea[]> {
+  const q = buildProductIdeasQuery(filters);
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(mapDocToIdea);
+}
 
 export async function getProductIdeasPaginated(
   pageSize: number,
@@ -116,22 +173,8 @@ export async function getProductIdeasPaginated(
   return executeProductIdeasQueryPaginated(q, pageSize);
 }
 
-export async function getProductIdea(
-  ideaId: string,
-): Promise<ProductIdea | null> {
-  const snap = await getDoc(productIdeaDoc(ideaId));
-  return snap.exists() ? mapDocToIdea(snap) : null;
-}
-
-export async function getProductIdeaNotes(
-  ideaId: string,
-): Promise<ProductIdeaNote[]> {
-  const snapshot = await getDocs(productIdeaNotesCol(ideaId));
-  return snapshot.docs.map(mapDocToNote);
-}
-
 // ============================================================================
-// WRITE OPERATIONS
+// WRITE OPERATIONS - PRODUCT IDEAS
 // ============================================================================
 
 export async function createProductIdea(
@@ -171,7 +214,19 @@ export async function deleteProductIdea(ideaId: string) {
 }
 
 // ============================================================================
-// NOTES OPERATIONS
+// READ OPERATIONS - NOTES
+// ============================================================================
+
+export async function getProductIdeaNotes(
+  ideaId: string,
+): Promise<ProductIdeaNote[]> {
+  const q = query(productIdeaNotesCol(ideaId), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(mapDocToNote);
+}
+
+// ============================================================================
+// WRITE OPERATIONS - NOTES
 // ============================================================================
 
 export async function createProductIdeaNote(
