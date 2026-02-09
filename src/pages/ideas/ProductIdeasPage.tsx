@@ -1,14 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { Plus, Filter, Lightbulb } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { badgeVariants } from "@/components/ui/badge";
-import { type VariantProps } from "class-variance-authority";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/productIdea/EmptyState";
+import {
+  IdeaStatusBadge,
+  IdeaPriorityBadge,
+} from "@/components/productIdea/IdeaBadges";
 import {
   Select,
   SelectContent,
@@ -28,14 +30,10 @@ import type {
 } from "@/lib/types/productIdeas";
 import { IDEA_STATUSES, IDEA_PRIORITIES } from "@/lib/zodSchemas/productIdea";
 import { format } from "date-fns";
-import { CreateIdeaDialog } from "@/components/productIdea/CreateIdeaDialog";
-import { IdeaDetailSheet } from "@/components/productIdea/IdeaDetailSheet";
 import {
   canReadProductIdeas,
   canCreateProductIdea,
 } from "@/lib/permissions/productIdeas";
-
-type BadgeVariant = VariantProps<typeof badgeVariants>["variant"];
 
 // Loading skeleton component
 function LoadingCard() {
@@ -73,8 +71,6 @@ export const ProductIdeasPage = () => {
   const [ideas, setIdeas] = useState<ProductIdea[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [selectedIdea, setSelectedIdea] = useState<ProductIdea | null>(null);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   // Filters from URL
   const statusFilter = searchParams.get("status") || undefined;
@@ -114,7 +110,6 @@ export const ProductIdeasPage = () => {
     }
   }, [user, statusFilter, priorityFilter, myIdeasFilter, isFirstLoad]);
 
-  // ADD THIS useEffect
   useEffect(() => {
     if (!user || !canReadIdeas) {
       setLoading(false);
@@ -160,9 +155,11 @@ export const ProductIdeasPage = () => {
         pageDescription="Track and manage product ideas from concept to launch"
         actions={
           canCreateIdeas ? (
-            <Button onClick={() => setCreateDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Idea
+            <Button asChild>
+              <Link to="/ideas/new">
+                <Plus className="h-4 w-4 mr-2" />
+                New Idea
+              </Link>
             </Button>
           ) : undefined
         }
@@ -240,7 +237,7 @@ export const ProductIdeasPage = () => {
         </CardContent>
       </Card>
 
-      {/* Ideas Grid - FIXED maxColumns to "two" */}
+      {/* Ideas Grid */}
       <ResponsiveGrid maxColumns="two">
         {loading ? (
           <>
@@ -273,7 +270,7 @@ export const ProductIdeasPage = () => {
                   : canCreateIdeas
                     ? {
                         label: "Create Idea",
-                        onClick: () => setCreateDialogOpen(true),
+                        onClick: () => null,
                         variant: "primary",
                       }
                     : undefined
@@ -282,39 +279,20 @@ export const ProductIdeasPage = () => {
           </div>
         ) : (
           ideas.map((idea) => (
-            <IdeaCard
-              key={idea.id}
-              idea={idea}
-              onClick={() => setSelectedIdea(idea)}
-              isOwner={idea.ownerId === user?.uid}
-            />
+            <Link key={idea.ideaId} to={`/ideas/${idea.ideaId}`}>
+              <IdeaCard idea={idea} isOwner={idea.ownerId === user?.uid} />
+            </Link>
           ))
         )}
       </ResponsiveGrid>
 
       {canCreateIdeas && (
-        <Button onClick={() => setCreateDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Idea
+        <Button asChild>
+          <Link to="/ideas/new">
+            <Plus className="h-4 w-4 mr-2" />
+            New Idea
+          </Link>
         </Button>
-      )}
-
-      {/* Dialogs */}
-      {canCreateIdeas && (
-        <CreateIdeaDialog
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}
-          onSuccess={loadIdeas}
-        />
-      )}
-
-      {selectedIdea && (
-        <IdeaDetailSheet
-          idea={selectedIdea}
-          open={!!selectedIdea}
-          onOpenChange={(open: boolean) => !open && setSelectedIdea(null)}
-          onUpdate={loadIdeas}
-        />
       )}
     </div>
   );
@@ -323,43 +301,16 @@ export const ProductIdeasPage = () => {
 // Idea Card Component
 interface IdeaCardProps {
   idea: ProductIdea;
-  onClick: () => void;
   isOwner: boolean;
 }
 
-function IdeaCard({ idea, onClick, isOwner }: IdeaCardProps) {
-  const getStatusVariant = (status: string) => {
-    const variants: Record<string, BadgeVariant> = {
-      draft: "neutral",
-      active: "default",
-      paused: "warning",
-      shipped: "success",
-    };
-    return variants[status] || "neutral-subtle";
-  };
-
-  const getPriorityVariant = (priority?: string) => {
-    const variants: Record<string, BadgeVariant> = {
-      now: "default",
-      next: "accent",
-      later: "neutral",
-    };
-    return variants[priority || ""] || "muted-subtle";
-  };
-
+function IdeaCard({ idea, isOwner }: IdeaCardProps) {
   return (
-    <Card
-      className="cursor-pointer hover:border-primary transition-colors h-full flex flex-col"
-      onClick={onClick}
-    >
+    <Card className="cursor-pointer hover:border-primary transition-colors h-full flex flex-col">
       <CardContent className="flex flex-col flex-1 gap-y-stack">
         <div className="flex flex-row gap-inline pb-stack">
-          <Badge variant={getStatusVariant(idea.status)}>{idea.status}</Badge>
-          {idea.priority && (
-            <Badge variant={getPriorityVariant(idea.priority)}>
-              {idea.priority}
-            </Badge>
-          )}
+          <IdeaStatusBadge status={idea.status} />
+          {idea.priority && <IdeaPriorityBadge priority={idea.priority} />}
           {isOwner && (
             <Badge variant="accent-outline" className="shrink-0 ml-auto mr-0">
               Owner

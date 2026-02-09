@@ -26,6 +26,8 @@ import type {
   CreateProductIdeaNoteInput,
   ProductIdeaFilters,
   ArchiveFilter,
+  UpdateProductIdeaInput,
+  UpdateProductIdeaNoteInput,
 } from "@/lib/types/productIdeas";
 
 // ============================================================================
@@ -50,7 +52,7 @@ const mapDocToIdea = (snapshot: DocumentSnapshot): ProductIdea => {
   // Normalize data defensively for type safety
   // Protects against schema migrations, manual edits, corrupted data
   return {
-    id: snapshot.id,
+    ideaId: snapshot.id,
     title: data.title ?? "",
     summary: data.summary ?? "",
     status: (data.status ?? "draft") as ProductIdea["status"],
@@ -70,12 +72,14 @@ const mapDocToNote = (snapshot: DocumentSnapshot): ProductIdeaNote => {
   if (!data) throw new Error("Note document not found");
 
   return {
-    id: snapshot.id,
+    noteId: snapshot.id,
     body: data.body ?? "",
     authorId: data.authorId ?? "",
     authorDisplayName: data.authorDisplayName ?? "Unknown User",
     authorPhotoURL: data.authorPhotoURL ?? null,
     createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    archivedAt: data.archivedAt ?? null,
   } as ProductIdeaNote;
 };
 
@@ -258,16 +262,18 @@ export async function createProductIdea(
   input: CreateProductIdeaInput,
   userId: string,
 ) {
-  // Only write fields that have values (sparse write pattern)
   const docData = {
     title: input.title,
     summary: input.summary,
     status: input.status ?? "draft",
     ownerId: userId,
+
     ...(input.tags && { tags: input.tags }),
     ...(input.priority && { priority: input.priority }),
+
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
+    archivedAt: null,
   };
 
   return await addDoc(productIdeasCol(), docData);
@@ -275,18 +281,16 @@ export async function createProductIdea(
 
 export async function updateProductIdea(
   ideaId: string,
-  updates: Partial<
-    Pick<ProductIdea, "title" | "summary" | "status" | "tags" | "priority">
-  >,
+  updates: UpdateProductIdeaInput,
 ) {
-  // Only include fields that are actually being updated
   const updateData = {
+    ...(updates.title !== undefined && { title: updates.title }),
+    ...(updates.summary !== undefined && { summary: updates.summary }),
+    ...(updates.status !== undefined && { status: updates.status }),
+    ...(updates.tags !== undefined && { tags: updates.tags }),
+    ...(updates.priority !== undefined && { priority: updates.priority }),
+
     updatedAt: serverTimestamp(),
-    ...(updates.title && { title: updates.title }),
-    ...(updates.summary && { title: updates.summary }),
-    ...(updates.status && { status: updates.status }),
-    ...(updates.tags && { tags: updates.tags }),
-    ...(updates.priority && { title: updates.priority }),
   };
 
   await updateDoc(productIdeaDoc(ideaId), updateData);
@@ -307,7 +311,7 @@ export async function unarchiveProductIdea(ideaId: string) {
 }
 
 export async function deleteProductIdea(ideaId: string) {
-  // Hard delete - use sparingly, prefer archiveProductIdea()
+  // Hard delete - prefer archiveProductIdea()
   // Consider: Should we also delete subcollection notes?
   await deleteDoc(productIdeaDoc(ideaId));
 }
@@ -318,8 +322,17 @@ export async function deleteProductIdea(ideaId: string) {
 
 export async function getProductIdeaNotes(
   ideaId: string,
+  includeArchived = false,
 ): Promise<ProductIdeaNote[]> {
-  const q = query(productIdeaNotesCol(ideaId), orderBy("createdAt", "desc"));
+  const constraints: QueryConstraint[] = [];
+
+  if (!includeArchived) {
+    constraints.push(where("archivedAt", "==", null));
+  }
+
+  constraints.push(orderBy("createdAt", "desc"));
+
+  const q = query(productIdeaNotesCol(ideaId), ...constraints);
   const snapshot = await getDocs(q);
   return snapshot.docs.map(mapDocToNote);
 }
@@ -331,16 +344,47 @@ export async function getProductIdeaNotes(
 export async function createProductIdeaNote(
   ideaId: string,
   input: CreateProductIdeaNoteInput,
+  uid: string,
 ) {
   const docData = {
     body: input.body,
-    authorId: input.authorId,
+    authorId: uid,
     authorDisplayName: input.authorDisplayName,
     ...(input.authorPhotoURL && { authorPhotoURL: input.authorPhotoURL }),
+
     createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    archivedAt: null,
   };
 
-  return await addDoc(productIdeaNotesCol(ideaId), docData);
+  return addDoc(productIdeaNotesCol(ideaId), docData);
+}
+
+export async function updateProductIdeaNote(
+  ideaId: string,
+  noteId: string,
+  updates: UpdateProductIdeaNoteInput,
+) {
+  const updateData = {
+    ...(updates.body !== undefined && { body: updates.body }),
+    updatedAt: serverTimestamp(),
+  };
+
+  await updateDoc(productIdeaNoteDoc(ideaId, noteId), updateData);
+}
+
+export async function archiveProductIdeaNote(ideaId: string, noteId: string) {
+  await updateDoc(productIdeaNoteDoc(ideaId, noteId), {
+    archivedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function unarchiveProductIdeaNote(ideaId: string, noteId: string) {
+  await updateDoc(productIdeaNoteDoc(ideaId, noteId), {
+    archivedAt: null,
+    updatedAt: serverTimestamp(),
+  });
 }
 
 export async function deleteProductIdeaNote(ideaId: string, noteId: string) {

@@ -2,7 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper function to get user role from custom claims
+    // ========================================================================
+    // HELPER FUNCTIONS
+    // ========================================================================
+    
     function getUserRole() {
       return request.auth.token.role;
     }
@@ -26,10 +29,6 @@ service cloud.firestore {
     function canEditAny() {
       return isAdmin() || isModerator();
     }
-    
-    // function canDeleteAny() {
-    //   return isAdmin();
-    // }
     
     function isProductIdeaOwner(ownerId) {
       return request.auth.uid == ownerId;
@@ -101,7 +100,15 @@ service cloud.firestore {
           && hasValidPriority;
       }
       
-      // Anyone authenticated can read
+      function isValidArchiveUpdate() {
+        let data = request.resource.data;
+        let prev = resource.data;
+        
+        // Only archivedAt and updatedAt can change in archive/unarchive ops
+        return data.diff(prev).affectedKeys().hasOnly(['archivedAt', 'updatedAt']);
+      }
+      
+      // Anyone authenticated can read (including archived)
       allow read: if isSignedOn();
       
       // Contributors+ can create (must own it)
@@ -111,12 +118,14 @@ service cloud.firestore {
       
       // Admins/mods can edit anything, contributors can edit their own
       // ownerId cannot be changed
+      // createdAt cannot be changed
       allow update: if (canEditAny() || isProductIdeaOwner(resource.data.ownerId))
         && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.createdAt == resource.data.createdAt
         && isValidProductIdea();
       
-      // Admins can delete anything, mods/contributors can delete their own
-      allow delete: if isProductIdeaOwner(resource.data.ownerId);
+      // Only admins can hard delete (archiving is preferred)
+      allow delete: if isAdmin();
       
       // ======================================================================
       // PRODUCT IDEA NOTES (subcollection)
@@ -127,10 +136,12 @@ service cloud.firestore {
           return data.body is string
             && data.body.size() > 0
             && data.body.size() <= 2000
-            && data.authorId is string;
+            && data.authorId is string
+            && data.authorDisplayName is string
+            && data.authorDisplayName.size() > 0;
         }
         
-        // Anyone authenticated can read notes
+        // Anyone authenticated can read notes (including archived)
         allow read: if isSignedOn();
         
         // Contributors+ can create notes (must be author)
@@ -138,11 +149,16 @@ service cloud.firestore {
           && request.resource.data.authorId == request.auth.uid
           && isValidNote();
         
-        // Only authors can delete their own notes
-        allow delete: if isProductIdeaNoteAuthor(resource.data.authorId);
+        // Admins/mods can edit any note, authors can edit their own
+        // authorId cannot be changed
+        // createdAt cannot be changed
+        allow update: if (canEditAny() || isProductIdeaNoteAuthor(resource.data.authorId))
+          && request.resource.data.authorId == resource.data.authorId
+          && request.resource.data.createdAt == resource.data.createdAt
+          && isValidNote();
         
-        // Notes are immutable (cannot be updated)
-        allow update: if false;
+        // Only admins can hard delete (archiving is preferred)
+        allow delete: if isAdmin();
       }
     }
   }

@@ -1,3 +1,4 @@
+// @/lib/permissions/productIdeaNotes.ts
 import type { UserRole } from "@/lib/types/user";
 
 /**
@@ -39,14 +40,14 @@ export function canCreateProductIdeaNote(
 }
 
 /**
- * Notes are immutable
+ * Authors can edit their own notes, moderators+ can edit any note
  */
-export function canUpdateProductIdeaNote() {
-  return false;
+export function canEditProductIdeaNote(isAuthor: boolean, role?: UserRole) {
+  return isAuthor || isModerator(role) || isAdmin(role);
 }
 
 /**
- * Only authors can delete their notes
+ * Only authors can delete/archive their notes
  */
 export function canDeleteProductIdeaNote(isAuthor: boolean) {
   return isAuthor;

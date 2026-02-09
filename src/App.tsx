@@ -12,13 +12,15 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 import { BrandKitPage } from "@/pages/Playground/BrandKitPage";
 import { QualityCheckPage } from "@/pages/QualityCheck";
 import { SettingsPage } from "@/pages/SettingsPage";
-import { CreateTaskPage } from "@/pages/CreateTaskPage";
+// import { CreateTaskPage } from "@/pages/CreateTaskPage";
 import { ChangeLogPage } from "@/pages/ChangeLog";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import ContrastCheckPage from "@/pages/ContrastCheckPage";
 import SeedProductIdeasPage from "@/pages/dev/SeedProductIdeasPage";
-import { ProductIdeasPage } from "@/pages/ProductIdeasPage";
+import { ProductIdeasPage } from "@/pages/ideas/ProductIdeasPage";
 import { LoginPage } from "@/pages/LoginPage";
+import { CreateIdeaPage } from "@/pages/ideas/CreateIdeaPage";
+import { IdeaDetailPage } from "@/pages/ideas/IdeaDetailPage";
 
 function App() {
   return (
@@ -31,14 +33,18 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
 
         {/* Product ideas page */}
-        <Route
-          path="ideas"
-          element={
-            <ProtectedRoute requiredRole="viewer">
-              <ProductIdeasPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/ideas" element={<ProtectedRoute requiredRole="viewer" />}>
+          <Route index element={<ProductIdeasPage />} />
+          <Route
+            path="new"
+            element={
+              <ProtectedRoute requiredRole="contributor">
+                <CreateIdeaPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path=":ideaId" element={<IdeaDetailPage />} />
+        </Route>
 
         {/* "/layout-sandbox" → layout sandbox page */}
         <Route path="layout-sandbox" element={<LayoutSandboxPage />} />
@@ -46,7 +52,7 @@ function App() {
         <Route path="components" element={<ComponentsPage />} />
 
         {/* Quality Check */}
-        <Route path="create-task" element={<CreateTaskPage />} />
+        {/* <Route path="create-task" element={<CreateTaskPage />} /> */}
 
         {/* Playground with layout wrapper */}
         <Route path="playground" element={<PlaygroundLayout />}>

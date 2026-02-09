@@ -24,7 +24,7 @@ interface PageHeaderProps
     VariantProps<typeof pageHeaderVariants> {
   pageTitle: string;
   pageSubtitle?: string;
-  pageDescription?: string;
+  pageDescription?: string | React.ReactNode;
   actions?: React.ReactNode;
   hr?: boolean;
 }

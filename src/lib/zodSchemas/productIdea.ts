@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { PRODUCT_IDEA_TAG_VALUES } from "@/lib/types/productIdeas";
 
 // Constants
 export const IDEA_STATUSES = [
@@ -34,9 +33,10 @@ export const createProductIdeaSchema = z.object({
   }),
   tags: z
     .array(
-      z.enum(PRODUCT_IDEA_TAG_VALUES as [string, ...string[]], {
-        message: "Please select a valid tag",
-      }),
+      z
+        .string()
+        .min(1, "Tag cannot be empty")
+        .max(30, "Tag must be 30 characters or less"),
     )
     .max(10, "Maximum 10 tags allowed")
     .optional(),
@@ -61,9 +61,10 @@ export const updateProductIdeaSchema = z.object({
   status: z.enum(["draft", "active", "paused", "shipped"]).optional(),
   tags: z
     .array(
-      z.enum(PRODUCT_IDEA_TAG_VALUES as [string, ...string[]], {
-        message: "Please select a valid tag",
-      }),
+      z
+        .string()
+        .min(1, "Tag cannot be empty")
+        .max(30, "Tag must be 30 characters or less"),
     )
     .max(10, "Maximum 10 tags allowed")
     .optional(),
@@ -81,6 +82,13 @@ export const createNoteSchema = z.object({
     .max(2000, "Note must be 2000 characters or less"),
 });
 
+export const updateNoteSchema = z.object({
+  body: z
+    .string()
+    .min(1, "Note cannot be empty")
+    .max(2000, "Note must be 2000 characters or less"),
+});
+
 export const ideaFiltersSchema = z.object({
   status: z.enum(["draft", "active", "paused", "shipped"]).optional(),
   priority: z.enum(["now", "next", "later"]).optional(),
@@ -92,4 +100,5 @@ export const ideaFiltersSchema = z.object({
 export type CreateProductIdeaInput = z.infer<typeof createProductIdeaSchema>;
 export type UpdateProductIdeaInput = z.infer<typeof updateProductIdeaSchema>;
 export type CreateNoteInput = z.infer<typeof createNoteSchema>;
+export type UpdateNoteInput = z.infer<typeof updateNoteSchema>;
 export type IdeaFilters = z.infer<typeof ideaFiltersSchema>;

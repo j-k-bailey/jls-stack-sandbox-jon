@@ -1,3 +1,4 @@
+// @/lib/constants/productIdeas.ts
 import type {
   ProductIdeaStatus,
   ProductIdeaPriority,
@@ -10,7 +11,7 @@ interface ProductIdeaSeed {
   tags?: string[];
   priority?: ProductIdeaPriority;
   // These will be added automatically by seed function:
-  // ownerName, teamId, teamName, orgId
+  // ownerId, createdAt, updatedAt, archivedAt
 }
 
 export const PRODUCT_IDEAS: ProductIdeaSeed[] = [
@@ -33,7 +34,6 @@ export const PRODUCT_IDEAS: ProductIdeaSeed[] = [
     summary:
       "A guided design-system builder that turns ad-hoc styles into a coherent, accessible token system. Foundry helps teams define primitives, map semantic tokens, and preview real components with built-in WCAG validation.",
     status: "draft",
-
     tags: ["design-systems", "accessibility", "frontend", "tailwind", "tokens"],
     priority: "next",
   },
@@ -42,7 +42,6 @@ export const PRODUCT_IDEAS: ProductIdeaSeed[] = [
     summary:
       "A structured writing workspace that guides authors from idea to publication-ready content. Ghostwrite combines step-by-step workflows, intelligent research, and project-level memory to produce high-quality writing at scale.",
     status: "active",
-
     tags: ["writing", "content", "seo", "llm", "knowledge-base"],
     priority: "now",
   },
@@ -51,7 +50,6 @@ export const PRODUCT_IDEAS: ProductIdeaSeed[] = [
     summary:
       "A living knowledge system that turns SOPs into a navigable, interconnected wiki. Lorebook makes institutional knowledge legible, searchable, and easier to learn through structured modules and progress tracking.",
     status: "draft",
-
     tags: [
       "knowledge-management",
       "sops",
@@ -66,7 +64,6 @@ export const PRODUCT_IDEAS: ProductIdeaSeed[] = [
     summary:
       "A centralized system for defining and maintaining long-term strategic direction across brand, product, and marketing. Vector documents guardrails, guidelines, and goalposts so teams can move with clarity, consistency, and shared momentum over time.",
     status: "draft",
-
     tags: [
       "strategy",
       "brand",
@@ -79,8 +76,10 @@ export const PRODUCT_IDEAS: ProductIdeaSeed[] = [
   },
 ];
 
-export interface ProductIdeaNoteSeed {
+interface ProductIdeaNoteSeed {
   body: string;
+  // These will be added automatically by seed function:
+  // authorId, authorDisplayName, authorPhotoURL, createdAt, updatedAt, archivedAt
 }
 
 export const PRODUCT_IDEA_NOTES: Record<string, ProductIdeaNoteSeed[]> = {
@@ -131,7 +130,7 @@ export const PRODUCT_IDEA_NOTES: Record<string, ProductIdeaNoteSeed[]> = {
 
   "lorebook-sop-wiki-training-hub": [
     {
-      body: "Lorebook is a structured knowledge and training hub designed to capture institutional knowledge that doesn’t fit neatly into tasks or docs.",
+      body: "Lorebook is a structured knowledge and training hub designed to capture institutional knowledge that doesn't fit neatly into tasks or docs.",
     },
     {
       body: "It is intended to replace ad-hoc Google Drive folders and outdated SOP documents with a more intentional, navigable system.",
@@ -159,3 +158,11 @@ export const PRODUCT_IDEA_NOTES: Record<string, ProductIdeaNoteSeed[]> = {
     },
   ],
 };
+
+// Helper to convert idea title to slug for note lookup
+export function getIdeaSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}

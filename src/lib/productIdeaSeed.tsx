@@ -1,16 +1,27 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  serverTimestamp,
-} from "firebase/firestore";
+// @/lib/productIdeaSeed.ts
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { PRODUCT_IDEAS, PRODUCT_IDEA_NOTES } from "@/constants/productIdeas";
+import {
+  PRODUCT_IDEAS,
+  PRODUCT_IDEA_NOTES,
+  getIdeaSlug,
+} from "@/constants/productIdeas";
 
-export async function seedProductIdeas(currentUserId: string) {
+export async function seedProductIdeas(
+  currentUserId: string,
+  authorDisplayName: string = "Seed User",
+  authorPhotoURL: string | null = null,
+): Promise<{
+  ideasCreated: number;
+  notesCreated: number;
+}> {
   const colRef = collection(db, "productIdeas");
-  const seededIdeas = new Map<string, string>(); // slugTitle -> docId
+  const seededIdeas = new Map<string, string>(); // slug -> ideaId
 
+  let ideasCreated = 0;
+  let notesCreated = 0;
+
+  // Seed Product Ideas
   for (const idea of PRODUCT_IDEAS) {
     const docData = {
       title: idea.title,
@@ -18,39 +29,41 @@ export async function seedProductIdeas(currentUserId: string) {
       status: idea.status,
       tags: idea.tags || [],
       priority: idea.priority,
-      ownerId: currentUserId, // Use current user
+      ownerId: currentUserId,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
+      archivedAt: null,
     };
 
     const docRef = await addDoc(colRef, docData);
-
-    // Create slug for mapping to notes
-    const slug = idea.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-
+    const slug = getIdeaSlug(idea.title);
     seededIdeas.set(slug, docRef.id);
+    ideasCreated++;
   }
 
-  // Seed notes for each idea
+  // Seed Notes for Each Idea
   for (const [slug, notes] of Object.entries(PRODUCT_IDEA_NOTES)) {
     const ideaId = seededIdeas.get(slug);
-    if (!ideaId) continue;
+    if (!ideaId) {
+      console.warn(`No idea found for slug: ${slug}`);
+      continue;
+    }
 
     const notesColRef = collection(db, "productIdeas", ideaId, "notes");
-
-    // Check if notes already exist
-    const existing = await getDocs(notesColRef);
-    if (!existing.empty) continue;
 
     for (const note of notes) {
       await addDoc(notesColRef, {
         body: note.body,
-        authorId: currentUserId, // Use current user for notes too
+        authorId: currentUserId,
+        authorDisplayName,
+        authorPhotoURL,
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        archivedAt: null,
       });
+      notesCreated++;
     }
   }
+
+  return { ideasCreated, notesCreated };
 }

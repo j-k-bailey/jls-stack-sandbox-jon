@@ -10,6 +10,15 @@ export interface UserProfile {
   updatedAt: Timestamp;
 }
 
+export type CreateUserProfileInput = Omit<
+  UserProfile,
+  "createdAt" | "updatedAt"
+>;
+
+export type UpdateUserProfileInput = Partial<
+  Omit<UserProfile, "createdAt" | "updatedAt">
+>;
+
 export interface UserCustomClaims {
   role: UserRole;
 }

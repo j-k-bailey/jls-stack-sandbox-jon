@@ -14,6 +14,7 @@ import {
   collection,
   addDoc,
   getDocs,
+  serverTimestamp,
 } from "firebase/firestore";
 import { readFileSync } from "fs";
 
@@ -30,8 +31,9 @@ function createTestIdea(ownerId: string, overrides = {}) {
     ownerId,
     tags: ["test"],
     priority: "next",
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    archivedAt: null,
     ...overrides,
   };
 }
@@ -40,7 +42,11 @@ function createTestNote(authorId: string, overrides = {}) {
   return {
     body: "Test note content",
     authorId,
-    createdAt: new Date(),
+    authorDisplayName: "Test User",
+    authorPhotoURL: null,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    archivedAt: null,
     ...overrides,
   };
 }
@@ -50,8 +56,8 @@ function createTestUser(userId: string, role: string) {
     firstName: "Test",
     lastNameInitial: "U",
     role,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   };
 }
 
@@ -545,6 +551,7 @@ describe("Product Ideas Collection", () => {
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Updated Title",
             summary: "Updated summary",
+            status: "active",
             ownerId: "contrib-1",
           }),
         );
@@ -558,6 +565,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Hacked Title",
+            summary: "Updated summary",
+            status: "active",
             ownerId: "contrib-1",
           }),
         );
@@ -572,6 +581,7 @@ describe("Product Ideas Collection", () => {
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Moderator Updated",
             summary: "Updated by moderator",
+            status: "active",
             ownerId: "contrib-1",
           }),
         );
@@ -586,6 +596,7 @@ describe("Product Ideas Collection", () => {
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Admin Updated",
             summary: "Updated by admin",
+            status: "active",
             ownerId: "contrib-1",
           }),
         );
@@ -599,6 +610,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Viewer trying to update",
+            summary: "Updated summary",
+            status: "active",
             ownerId: "contrib-1",
           }),
         );
@@ -610,6 +623,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Hacked",
+            summary: "Updated summary",
+            status: "active",
             ownerId: "contrib-1",
           }),
         );
@@ -627,6 +642,32 @@ describe("Product Ideas Collection", () => {
           }),
         );
       });
+
+      test("contributors can archive their own ideas", async () => {
+        const db = testEnv
+          .authenticatedContext("contrib-1", { role: "contributor" })
+          .firestore();
+
+        await assertSucceeds(
+          updateDoc(doc(db, "productIdeas", "idea-1"), {
+            archivedAt: serverTimestamp(),
+            ownerId: "contrib-1",
+          }),
+        );
+      });
+
+      test("moderators can archive any idea", async () => {
+        const db = testEnv
+          .authenticatedContext("mod-1", { role: "moderator" })
+          .firestore();
+
+        await assertSucceeds(
+          updateDoc(doc(db, "productIdeas", "idea-1"), {
+            archivedAt: serverTimestamp(),
+            ownerId: "contrib-1",
+          }),
+        );
+      });
     });
 
     describe("delete operations", () => {
@@ -639,12 +680,12 @@ describe("Product Ideas Collection", () => {
         });
       });
 
-      test("contributors can delete their own ideas", async () => {
+      test("contributors cannot delete their own ideas", async () => {
         const db = testEnv
           .authenticatedContext("contrib-1", { role: "contributor" })
           .firestore();
 
-        await assertSucceeds(deleteDoc(doc(db, "productIdeas", "idea-1")));
+        await assertFails(deleteDoc(doc(db, "productIdeas", "idea-1")));
       });
 
       test("contributors cannot delete others' ideas", async () => {
@@ -655,22 +696,7 @@ describe("Product Ideas Collection", () => {
         await assertFails(deleteDoc(doc(db, "productIdeas", "idea-1")));
       });
 
-      test("moderators can delete their own ideas", async () => {
-        await setupTestData(async (db) => {
-          await setDoc(
-            doc(db, "productIdeas", "idea-2"),
-            createTestIdea("mod-1"),
-          );
-        });
-
-        const db = testEnv
-          .authenticatedContext("mod-1", { role: "moderator" })
-          .firestore();
-
-        await assertSucceeds(deleteDoc(doc(db, "productIdeas", "idea-2")));
-      });
-
-      test("moderators cannot delete others' ideas", async () => {
+      test("moderators cannot delete any ideas", async () => {
         const db = testEnv
           .authenticatedContext("mod-1", { role: "moderator" })
           .firestore();
@@ -678,27 +704,12 @@ describe("Product Ideas Collection", () => {
         await assertFails(deleteDoc(doc(db, "productIdeas", "idea-1")));
       });
 
-      test("admins can delete their own ideas", async () => {
-        await setupTestData(async (db) => {
-          await setDoc(
-            doc(db, "productIdeas", "idea-3"),
-            createTestIdea("admin-1"),
-          );
-        });
-
+      test("admins can delete any idea", async () => {
         const db = testEnv
           .authenticatedContext("admin-1", { role: "admin" })
           .firestore();
 
-        await assertSucceeds(deleteDoc(doc(db, "productIdeas", "idea-3")));
-      });
-
-      test("admins cannot delete others' ideas", async () => {
-        const db = testEnv
-          .authenticatedContext("admin-1", { role: "admin" })
-          .firestore();
-
-        await assertFails(deleteDoc(doc(db, "productIdeas", "idea-1")));
+        await assertSucceeds(deleteDoc(doc(db, "productIdeas", "idea-1")));
       });
 
       test("viewers cannot delete any ideas", async () => {
@@ -751,6 +762,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Updated",
+            summary: "Updated summary",
+            status: "active",
             ownerId: "other-user",
           }),
         );
@@ -764,6 +777,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Updated",
+            summary: "Updated summary",
+            status: "active",
             ownerId: "admin-1",
           }),
         );
@@ -777,7 +792,25 @@ describe("Product Ideas Collection", () => {
         await assertSucceeds(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "Updated",
+            summary: "Updated summary",
+            status: "active",
             ownerId: "contrib-1",
+          }),
+        );
+      });
+
+      test("cannot change createdAt timestamp", async () => {
+        const db = testEnv
+          .authenticatedContext("contrib-1", { role: "contributor" })
+          .firestore();
+
+        await assertFails(
+          updateDoc(doc(db, "productIdeas", "idea-1"), {
+            title: "Updated",
+            summary: "Updated summary",
+            status: "active",
+            ownerId: "contrib-1",
+            createdAt: serverTimestamp(),
           }),
         );
       });
@@ -799,8 +832,9 @@ describe("Product Ideas Collection", () => {
             summary: "Test summary",
             status: "draft",
             ownerId: "contrib-1",
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            archivedAt: null,
           }),
         );
       });
@@ -815,8 +849,9 @@ describe("Product Ideas Collection", () => {
             title: "Test title",
             status: "draft",
             ownerId: "contrib-1",
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            archivedAt: null,
           }),
         );
       });
@@ -831,8 +866,9 @@ describe("Product Ideas Collection", () => {
             title: "Test title",
             summary: "Test summary",
             ownerId: "contrib-1",
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            archivedAt: null,
           }),
         );
       });
@@ -847,8 +883,9 @@ describe("Product Ideas Collection", () => {
             title: "Test title",
             summary: "Test summary",
             status: "draft",
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            archivedAt: null,
           }),
         );
       });
@@ -922,6 +959,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "",
+            summary: "Valid summary",
+            status: "draft",
             ownerId: "contrib-1",
           }),
         );
@@ -942,6 +981,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: "a".repeat(101),
+            summary: "Valid summary",
+            status: "draft",
             ownerId: "contrib-1",
           }),
         );
@@ -962,6 +1003,8 @@ describe("Product Ideas Collection", () => {
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
             title: 123 as any,
+            summary: "Valid summary",
+            status: "draft",
             ownerId: "contrib-1",
           }),
         );
@@ -1035,7 +1078,9 @@ describe("Product Ideas Collection", () => {
 
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
+            title: "Valid title",
             summary: "a".repeat(1001),
+            status: "draft",
             ownerId: "contrib-1",
           }),
         );
@@ -1085,6 +1130,8 @@ describe("Product Ideas Collection", () => {
 
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
+            title: "Valid title",
+            summary: "Valid summary",
             status: "invalid",
             ownerId: "contrib-1",
           }),
@@ -1159,6 +1206,9 @@ describe("Product Ideas Collection", () => {
 
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
+            title: "Valid title",
+            summary: "Valid summary",
+            status: "draft",
             tags: Array(11).fill("tag"),
             ownerId: "contrib-1",
           }),
@@ -1233,6 +1283,9 @@ describe("Product Ideas Collection", () => {
 
         await assertFails(
           updateDoc(doc(db, "productIdeas", "idea-1"), {
+            title: "Valid title",
+            summary: "Valid summary",
+            status: "draft",
             priority: "urgent",
             ownerId: "contrib-1",
           }),
@@ -1254,6 +1307,9 @@ describe("Product Ideas Collection", () => {
         for (const priority of ["now", "next", "later"]) {
           await assertSucceeds(
             updateDoc(doc(db, "productIdeas", "idea-1"), {
+              title: "Valid title",
+              summary: "Valid summary",
+              status: "draft",
               priority,
               ownerId: "contrib-1",
             }),
@@ -1412,7 +1468,77 @@ describe("Product Ideas Collection", () => {
       });
 
       describe("update operations", () => {
-        test("notes cannot be updated (immutable)", async () => {
+        test("note authors can update their own notes", async () => {
+          const db = testEnv
+            .authenticatedContext("contrib-1", { role: "contributor" })
+            .firestore();
+
+          await assertSucceeds(
+            updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
+              body: "Updated content",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+            }),
+          );
+        });
+
+        test("note authors cannot update others' notes", async () => {
+          const db = testEnv
+            .authenticatedContext("contrib-2", { role: "contributor" })
+            .firestore();
+
+          await assertFails(
+            updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
+              body: "Trying to update someone else's note",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+            }),
+          );
+        });
+
+        test("moderators can update any note", async () => {
+          const db = testEnv
+            .authenticatedContext("mod-1", { role: "moderator" })
+            .firestore();
+
+          await assertSucceeds(
+            updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
+              body: "Moderator updated content",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+            }),
+          );
+        });
+
+        test("admins can update any note", async () => {
+          const db = testEnv
+            .authenticatedContext("admin-1", { role: "admin" })
+            .firestore();
+
+          await assertSucceeds(
+            updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
+              body: "Admin updated content",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+            }),
+          );
+        });
+
+        test("viewers cannot update any notes", async () => {
+          const db = testEnv
+            .authenticatedContext("viewer-1", { role: "viewer" })
+            .firestore();
+
+          await assertFails(
+            updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
+              body: "Viewer trying to update",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+            }),
+          );
+        });
+
+        test("cannot change authorId", async () => {
           const db = testEnv
             .authenticatedContext("contrib-1", { role: "contributor" })
             .firestore();
@@ -1420,30 +1546,65 @@ describe("Product Ideas Collection", () => {
           await assertFails(
             updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
               body: "Updated content",
+              authorId: "different-user",
+              authorDisplayName: "Test User",
             }),
           );
         });
 
-        test("even admins cannot update notes", async () => {
+        test("cannot change createdAt timestamp", async () => {
           const db = testEnv
-            .authenticatedContext("admin-1", { role: "admin" })
+            .authenticatedContext("contrib-1", { role: "contributor" })
             .firestore();
 
           await assertFails(
             updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
-              body: "Admin trying to update",
+              body: "Updated content",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+              createdAt: serverTimestamp(),
+            }),
+          );
+        });
+
+        test("contributors can archive their own notes", async () => {
+          const db = testEnv
+            .authenticatedContext("contrib-1", { role: "contributor" })
+            .firestore();
+
+          await assertSucceeds(
+            updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
+              body: "Test note content",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+              archivedAt: serverTimestamp(),
+            }),
+          );
+        });
+
+        test("moderators can archive any note", async () => {
+          const db = testEnv
+            .authenticatedContext("mod-1", { role: "moderator" })
+            .firestore();
+
+          await assertSucceeds(
+            updateDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1"), {
+              body: "Test note content",
+              authorId: "contrib-1",
+              authorDisplayName: "Test User",
+              archivedAt: serverTimestamp(),
             }),
           );
         });
       });
 
       describe("delete operations", () => {
-        test("note authors can delete their own notes", async () => {
+        test("note authors cannot delete their own notes", async () => {
           const db = testEnv
             .authenticatedContext("contrib-1", { role: "contributor" })
             .firestore();
 
-          await assertSucceeds(
+          await assertFails(
             deleteDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1")),
           );
         });
@@ -1458,7 +1619,7 @@ describe("Product Ideas Collection", () => {
           );
         });
 
-        test("moderators cannot delete others' notes", async () => {
+        test("moderators cannot delete any notes", async () => {
           const db = testEnv
             .authenticatedContext("mod-1", { role: "moderator" })
             .firestore();
@@ -1468,12 +1629,12 @@ describe("Product Ideas Collection", () => {
           );
         });
 
-        test("admins cannot delete others' notes", async () => {
+        test("admins can delete any note", async () => {
           const db = testEnv
             .authenticatedContext("admin-1", { role: "admin" })
             .firestore();
 
-          await assertFails(
+          await assertSucceeds(
             deleteDoc(doc(db, "productIdeas", "idea-1", "notes", "note-1")),
           );
         });
@@ -1486,7 +1647,7 @@ describe("Product Ideas Collection", () => {
           );
         });
 
-        test("viewers cannot delete anyone's notes", async () => {
+        test("viewers cannot delete any notes", async () => {
           const db = testEnv
             .authenticatedContext("viewer-1", { role: "viewer" })
             .firestore();
@@ -1531,7 +1692,11 @@ describe("Product Ideas Collection", () => {
           await assertFails(
             addDoc(collection(db, "productIdeas", "idea-1", "notes"), {
               authorId: "contrib-1",
-              createdAt: new Date(),
+              authorDisplayName: "Test User",
+              authorPhotoURL: null,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              archivedAt: null,
             }),
           );
         });
@@ -1544,7 +1709,28 @@ describe("Product Ideas Collection", () => {
           await assertFails(
             addDoc(collection(db, "productIdeas", "idea-1", "notes"), {
               body: "Test note",
-              createdAt: new Date(),
+              authorDisplayName: "Test User",
+              authorPhotoURL: null,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              archivedAt: null,
+            }),
+          );
+        });
+
+        test("create fails with missing authorDisplayName", async () => {
+          const db = testEnv
+            .authenticatedContext("contrib-1", { role: "contributor" })
+            .firestore();
+
+          await assertFails(
+            addDoc(collection(db, "productIdeas", "idea-1", "notes"), {
+              body: "Test note",
+              authorId: "contrib-1",
+              authorPhotoURL: null,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              archivedAt: null,
             }),
           );
         });
@@ -1614,7 +1800,44 @@ describe("Product Ideas Collection", () => {
             addDoc(collection(db, "productIdeas", "idea-1", "notes"), {
               body: "Test note",
               authorId: 123 as any,
-              createdAt: new Date(),
+              authorDisplayName: "Test User",
+              authorPhotoURL: null,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              archivedAt: null,
+            }),
+          );
+        });
+      });
+
+      describe("authorDisplayName validation", () => {
+        test("create fails with empty authorDisplayName", async () => {
+          const db = testEnv
+            .authenticatedContext("contrib-1", { role: "contributor" })
+            .firestore();
+
+          await assertFails(
+            addDoc(
+              collection(db, "productIdeas", "idea-1", "notes"),
+              createTestNote("contrib-1", { authorDisplayName: "" }),
+            ),
+          );
+        });
+
+        test("create fails with non-string authorDisplayName", async () => {
+          const db = testEnv
+            .authenticatedContext("contrib-1", { role: "contributor" })
+            .firestore();
+
+          await assertFails(
+            addDoc(collection(db, "productIdeas", "idea-1", "notes"), {
+              body: "Test note",
+              authorId: "contrib-1",
+              authorDisplayName: 123 as any,
+              authorPhotoURL: null,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              archivedAt: null,
             }),
           );
         });
