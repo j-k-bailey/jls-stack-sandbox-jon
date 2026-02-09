@@ -182,15 +182,15 @@ const ghostButtonVariants = cva(`${baseClasses} border border-transparent`, {
   variants: {
     semantic: {
       primary:
-        "text-primary-on-background hover:bg-primary hover:text-primary-foreground",
+        "text-primary-on-background hover:bg-primary hover:text-primary-foreground hover:border-border-primary",
       accent:
-        "text-accent-on-background hover:bg-accent hover:text-accent-foreground",
+        "text-accent-on-background hover:bg-accent hover:text-accent-foreground hover:border-border-accent",
       success:
-        "text-success-on-background hover:bg-success hover:text-success-foreground",
+        "text-success-on-background hover:bg-success hover:text-success-foreground hover:border-border-success",
       warning:
-        "text-warning-on-background hover:bg-warning hover:text-warning-foreground",
+        "text-warning-on-background hover:bg-warning hover:text-warning-foreground hover:border-border-warning",
       neutral:
-        "text-neutral-on-background hover:bg-neutral hover:text-neutral-foreground",
+        "text-neutral-on-background hover:bg-neutral hover:text-neutral-foreground hover:border-border-neutral",
     },
     size: sizeVariants,
   },

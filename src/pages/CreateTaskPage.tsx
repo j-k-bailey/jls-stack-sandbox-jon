@@ -51,6 +51,7 @@ import { getAuth } from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { SimpleSignIn } from "@/components/common/SimpleSignIn";
+import { PRODUCT_IDEA_TAG_VALUES } from "@/lib/types/productIdeas";
 
 // Constants
 const CATEGORIES = [
@@ -62,19 +63,6 @@ const CATEGORIES = [
   "Operations",
   "Sales",
   "Support",
-] as const;
-
-const TAGS = [
-  "urgent",
-  "bug-fix",
-  "feature",
-  "enhancement",
-  "documentation",
-  "testing",
-  "review-needed",
-  "blocked",
-  "in-progress",
-  "backlog",
 ] as const;
 
 const taskNameSchema = z
@@ -538,7 +526,7 @@ export const CreateTaskPage = () => {
                     <Field invalid={!!errors.tags}>
                       <FieldLabel htmlFor="tags">Tags</FieldLabel>
                       <FieldDescription>
-                        Add up to 5 tags to help categorize tasks
+                        Add up to 10 tags to help categorize tasks
                       </FieldDescription>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -583,7 +571,7 @@ export const CreateTaskPage = () => {
                             <CommandList>
                               <CommandEmpty>No tag found.</CommandEmpty>
                               <CommandGroup>
-                                {TAGS.map((tag) => {
+                                {PRODUCT_IDEA_TAG_VALUES.map((tag) => {
                                   const isSelected = field.value?.includes(tag);
                                   const isDisabled =
                                     (field.value?.length || 0) >= 5 &&

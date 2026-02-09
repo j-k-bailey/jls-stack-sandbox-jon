@@ -38,8 +38,8 @@ import {
   type CreateProductIdeaInput,
   IDEA_STATUSES,
   IDEA_PRIORITIES,
-  IDEA_TAGS,
 } from "@/lib/zodSchemas/productIdea";
+import { PRODUCT_IDEA_TAG_VALUES } from "@/lib/types/productIdeas";
 
 interface CreateIdeaDialogProps {
   open: boolean;
@@ -289,7 +289,7 @@ export function CreateIdeaDialog({
                     name="tags"
                     label="Tags"
                     error={errors.tags}
-                    options={[...IDEA_TAGS]}
+                    options={[...PRODUCT_IDEA_TAG_VALUES]}
                     maxTags={10}
                   />
                 </FieldGroup>

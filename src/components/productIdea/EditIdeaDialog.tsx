@@ -27,7 +27,10 @@ import { FormTagSelect } from "@/components/form/FormTagSelect";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { updateProductIdea } from "@/lib/firestore/productIdeas";
+import {
+  getProductIdea,
+  updateProductIdea,
+} from "@/lib/firestore/productIdeas";
 import { canEditProductIdea } from "@/lib/permissions/productIdeas";
 
 import {
@@ -35,27 +38,30 @@ import {
   type CreateProductIdeaInput,
   IDEA_STATUSES,
   IDEA_PRIORITIES,
-  IDEA_TAGS,
+  type UpdateProductIdeaInput,
 } from "@/lib/zodSchemas/productIdea";
-import type {
-  ProductIdeaPriority,
-  ProductIdeaStatus,
-  ProductIdeaTag,
+import {
+  PRODUCT_IDEA_TAG_VALUES,
+  type ProductIdea,
+  type ProductIdeaPriority,
+  type ProductIdeaStatus,
+  type ProductIdeaTag,
 } from "@/lib/types/productIdeas";
+import { Timestamp } from "firebase/firestore";
 
 interface EditIdeaDialogProps {
+  idea: ProductIdea;
+  ideaId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  ideaId: string;
-  idea: CreateProductIdeaInput & { ownerId: string };
-  onSuccess?: () => void;
+  onSuccess?: (updatedIdea: ProductIdea) => void;
 }
 
 export function EditIdeaDialog({
+  idea,
+  ideaId,
   open,
   onOpenChange,
-  ideaId,
-  idea,
   onSuccess,
 }: EditIdeaDialogProps) {
   const { user, userProfile } = useAuth();
@@ -81,7 +87,7 @@ export function EditIdeaDialog({
     if (open) reset(idea);
   }, [open, idea, reset]);
 
-  const onSubmit: SubmitHandler<CreateProductIdeaInput> = async (data) => {
+  const onSubmit: SubmitHandler<UpdateProductIdeaInput> = async (data) => {
     if (!user || !canEdit) {
       setError("root", {
         type: "permission",
@@ -91,6 +97,7 @@ export function EditIdeaDialog({
     }
 
     try {
+      // Update the idea
       await updateProductIdea(ideaId, idea.ownerId, {
         title: data.title,
         summary: data.summary,
@@ -99,7 +106,20 @@ export function EditIdeaDialog({
         priority: data.priority as ProductIdeaPriority,
       });
 
-      onSuccess?.();
+      // Fetch the updated idea to return it
+      const updatedIdea = await getProductIdea(ideaId);
+
+      if (updatedIdea) {
+        onSuccess?.(updatedIdea);
+      } else {
+        // Fallback if we can't fetch the updated idea
+        onSuccess?.({
+          ...idea,
+          ...data,
+          updatedAt: Timestamp.now(),
+        } as ProductIdea);
+      }
+
       onOpenChange(false);
     } catch (error) {
       setError("root", {
@@ -215,7 +235,7 @@ export function EditIdeaDialog({
                 name="tags"
                 label="Tags"
                 error={errors.tags}
-                options={[...IDEA_TAGS]}
+                options={[...PRODUCT_IDEA_TAG_VALUES]}
                 maxTags={10}
               />
             </FieldGroup>

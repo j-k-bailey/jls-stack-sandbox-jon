@@ -63,7 +63,7 @@ function SheetContent({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "fixed z-50 flex flex-col gap-stack bg-surface-4 shadow-high",
+          "fixed p-inset-lg z-50 flex flex-col gap-stack bg-surface-4 shadow-high",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "transition-transform ease-in-out",
           "data-[state=closed]:duration-300 data-[state=open]:duration-500",
@@ -103,7 +103,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sheet-header"
       className={cn(
-        "flex flex-col gap-stack p-inset-lg pr-[calc(var(--spacing-inset-lg)*2+var(--spacing-hit-target)*2+var(--spacing-inline))]",
+        "flex flex-col gap-stack pr-[calc(var(--spacing-inset-lg)*2+var(--spacing-hit-target)*2+var(--spacing-inline))]",
         className,
       )}
       {...props}
@@ -115,7 +115,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn("mt-auto flex flex-col gap-stack p-inset-lg", className)}
+      className={cn("mt-auto flex flex-col gap-stack", className)}
       {...props}
     />
   );

@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { InlineAlert } from "@/components/common/InlineAlert";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -54,28 +53,41 @@ import {
   canCreateProductIdeaNote,
   canDeleteProductIdeaNote,
 } from "@/lib/permissions/productIdeaNotes";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { FormTextarea } from "@/components/form/FormField";
 
 interface IdeaDetailSheetProps {
   idea: ProductIdea;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpdate?: () => void;
+  onUpdate?: (updatedIdea?: ProductIdea) => void;
 }
 
 export function IdeaDetailSheet({
-  idea,
+  idea: initialIdea,
   open,
   onOpenChange,
   onUpdate,
 }: IdeaDetailSheetProps) {
   const { user, userProfile } = useAuth();
+  const [currentIdea, setCurrentIdea] = useState<ProductIdea>(initialIdea);
   const [notes, setNotes] = useState<ProductIdeaNote[]>([]);
   const [loadingNotes, setLoadingNotes] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingIdea, setDeletingIdea] = useState(false);
 
-  const isOwner = user?.uid === idea.ownerId;
+  // Update local idea when prop changes
+  useEffect(() => {
+    setCurrentIdea(initialIdea);
+  }, [initialIdea]);
+
+  const isOwner = user?.uid === currentIdea.ownerId;
   const userRole = userProfile?.role;
 
   // Permission checks
@@ -84,24 +96,30 @@ export function IdeaDetailSheet({
   const canAddNote = canCreateProductIdeaNote(userRole, user?.uid, user?.uid);
 
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
     setError,
   } = useForm<CreateNoteInput>({
     resolver: zodResolver(createNoteSchema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
     defaultValues: {
       body: "",
     },
   });
 
   const loadNotes = useCallback(async () => {
-    if (!idea?.id) return;
+    if (!currentIdea?.id) return;
 
-    setLoadingNotes(true);
+    // Only show loading state on first load
+    if (isFirstLoad) {
+      setLoadingNotes(true);
+    }
+
     try {
-      const fetchedNotes = await getProductIdeaNotes(idea.id);
+      const fetchedNotes = await getProductIdeaNotes(currentIdea.id);
       const sortedNotes = fetchedNotes.sort((a, b) => {
         if (!a.createdAt || !b.createdAt) return 0;
         return a.createdAt.toMillis() - b.createdAt.toMillis();
@@ -111,11 +129,16 @@ export function IdeaDetailSheet({
       console.error("Error loading notes:", error);
     } finally {
       setLoadingNotes(false);
+      setIsFirstLoad(false);
     }
-  }, [idea?.id]);
+  }, [currentIdea?.id, isFirstLoad]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      // Reset first load state when sheet closes
+      setIsFirstLoad(true);
+      return;
+    }
     loadNotes();
   }, [open, loadNotes]);
 
@@ -129,7 +152,7 @@ export function IdeaDetailSheet({
     }
 
     try {
-      await createProductIdeaNote(idea.id, data.body, user.uid);
+      await createProductIdeaNote(currentIdea.id, data.body, user.uid);
       reset();
       await loadNotes();
     } catch (error) {
@@ -145,17 +168,18 @@ export function IdeaDetailSheet({
 
   const handleDeleteNote = async (noteId: string) => {
     try {
-      await deleteProductIdeaNote(idea.id, noteId);
+      await deleteProductIdeaNote(currentIdea.id, noteId);
       await loadNotes();
     } catch (error) {
       console.error("Error deleting note:", error);
+      throw error;
     }
   };
 
   const handleDeleteIdea = async () => {
     setDeletingIdea(true);
     try {
-      await deleteProductIdea(idea.id);
+      await deleteProductIdea(currentIdea.id);
       onOpenChange(false);
       onUpdate?.();
     } catch (error) {
@@ -163,6 +187,14 @@ export function IdeaDetailSheet({
     } finally {
       setDeletingIdea(false);
     }
+  };
+
+  const handleIdeaUpdate = (updatedIdea: ProductIdea) => {
+    // Update local state immediately
+    setCurrentIdea(updatedIdea);
+    setEditDialogOpen(false);
+    // Notify parent to update the list
+    onUpdate?.(updatedIdea);
   };
 
   return (
@@ -175,7 +207,12 @@ export function IdeaDetailSheet({
             (canEdit || canDelete) && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button semantic="neutral" variant="ghost" size="icon">
+                  <Button
+                    semantic="neutral"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Idea options menu"
+                  >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -202,37 +239,44 @@ export function IdeaDetailSheet({
         >
           <SheetHeader className="space-y-3">
             <div className="min-w-0">
-              <SheetTitle className="headline-1">{idea.title}</SheetTitle>
+              <SheetTitle className="headline-1">
+                {currentIdea.title}
+              </SheetTitle>
               <SheetDescription className="flex items-center gap-x-inline mt-2">
-                <span className="subtitle-1 capitalize">{idea.status}</span>
-                {idea.priority && (
+                <span className="subtitle-1 capitalize">
+                  {currentIdea.status}
+                </span>
+                {currentIdea.priority && (
                   <>
                     <span className="h-1 w-1 rounded-full bg-muted-foreground" />
                     <span className="subtitle-1 capitalize">
-                      {idea.priority} priority
+                      {currentIdea.priority} priority
                     </span>
                   </>
                 )}
               </SheetDescription>
             </div>
           </SheetHeader>
-          <div className="h-px bg-linear-to-r from-border-primary via-accent to-transparent my-6" />
+          <div className="relative my-6">
+            <div className="absolute inset-0 h-px bg-linear-to-r from-transparent via-accent to-transparent" />
+            <div className="absolute inset-0 h-px bg-linear-to-r from-primary/20 via-accent/50 to-primary/20 blur-sm" />
+          </div>
 
           <div className="space-y-section pb-6">
             {/* Summary Section */}
             <div>
               <h3 className="headline-5 mb-stack">Summary</h3>
               <p className="body-1 text-muted-foreground wrap-break-word">
-                {idea.summary}
+                {currentIdea.summary}
               </p>
             </div>
 
             {/* Tags */}
-            {idea.tags && idea.tags.length > 0 && (
+            {currentIdea.tags && currentIdea.tags.length > 0 && (
               <div>
                 <h3 className="headline-5 mb-stack">Tags</h3>
                 <div className="flex flex-wrap gap-inline">
-                  {idea.tags.map((tag) => (
+                  {currentIdea.tags.map((tag) => (
                     <Badge key={tag} variant="accent-subtle">
                       {tag}
                     </Badge>
@@ -243,16 +287,22 @@ export function IdeaDetailSheet({
 
             {/* Metadata */}
             <div className="caption text-muted-foreground space-y-inline">
-              {idea.createdAt && (
+              {currentIdea.createdAt && (
                 <div>
                   Created{" "}
-                  {format(idea.createdAt.toDate(), "MMM d, yyyy 'at' h:mm a")}
+                  {format(
+                    currentIdea.createdAt.toDate(),
+                    "MMM d, yyyy 'at' h:mm a",
+                  )}
                 </div>
               )}
-              {idea.updatedAt && (
+              {currentIdea.updatedAt && (
                 <div>
                   Updated{" "}
-                  {format(idea.updatedAt.toDate(), "MMM d, yyyy 'at' h:mm a")}
+                  {format(
+                    currentIdea.updatedAt.toDate(),
+                    "MMM d, yyyy 'at' h:mm a",
+                  )}
                 </div>
               )}
             </div>
@@ -265,46 +315,6 @@ export function IdeaDetailSheet({
                 <MessageSquare className="h-5 w-5" />
                 <h3 className="headline-5">Notes ({notes.length})</h3>
               </div>
-
-              {/* Add Note Form - Only show if user can add notes */}
-              {canAddNote && (
-                <form onSubmit={handleSubmit(onSubmitNote)}>
-                  <div className="space-y-stack">
-                    {errors.root?.message && (
-                      <InlineAlert variant="warning" dismissible>
-                        {errors.root.message}
-                      </InlineAlert>
-                    )}
-
-                    <div className="space-y-inline">
-                      <Textarea
-                        placeholder="Add a note..."
-                        rows={3}
-                        {...register("body")}
-                        className="resize-none"
-                      />
-                      {errors.body && (
-                        <p className="caption text-warning">
-                          {errors.body.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex justify-end pb-section">
-                      <Button
-                        type="submit"
-                        variant="filled"
-                        semantic="primary"
-                        size="sm"
-                        disabled={isSubmitting}
-                      >
-                        <Send className="h-3 w-3" />
-                        {isSubmitting ? "Adding..." : "Add Note"}
-                      </Button>
-                    </div>
-                  </div>
-                </form>
-              )}
 
               {/* Notes List */}
               <div className="space-y-stack">
@@ -341,6 +351,43 @@ export function IdeaDetailSheet({
                   ))
                 )}
               </div>
+
+              {/* Add Note Form - Only show if user can add notes */}
+              {canAddNote && (
+                <form
+                  onSubmit={handleSubmit(onSubmitNote)}
+                  className="space-y-stack mt-section"
+                >
+                  {errors.root?.message && (
+                    <InlineAlert variant="warning" dismissible>
+                      {errors.root.message}
+                    </InlineAlert>
+                  )}
+
+                  <FormTextarea
+                    control={control}
+                    name="body"
+                    label="Add a note"
+                    placeholder="Add a note..."
+                    error={errors.body}
+                    maxLength={2000}
+                    rows={3}
+                  />
+
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      variant="filled"
+                      semantic="primary"
+                      size="sm"
+                      disabled={isSubmitting}
+                    >
+                      <Send className="h-3 w-3" />
+                      {isSubmitting ? "Adding..." : "Add Note"}
+                    </Button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         </SheetContent>
@@ -349,14 +396,11 @@ export function IdeaDetailSheet({
       {/* Edit Dialog */}
       {canEdit && (
         <EditIdeaDialog
-          idea={idea}
-          ideaId={idea.id}
+          idea={currentIdea}
+          ideaId={currentIdea.id}
           open={editDialogOpen}
           onOpenChange={setEditDialogOpen}
-          onSuccess={() => {
-            setEditDialogOpen(false);
-            onUpdate?.();
-          }}
+          onSuccess={handleIdeaUpdate}
         />
       )}
 
@@ -367,8 +411,8 @@ export function IdeaDetailSheet({
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Product Idea?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will permanently delete "{idea.title}" and all associated
-                notes. This action cannot be undone.
+                This will permanently delete "{currentIdea.title}" and all
+                associated notes. This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -390,7 +434,7 @@ export function IdeaDetailSheet({
   );
 }
 
-// Note Card Component
+// Note Card Component remains the same
 interface NoteCardProps {
   note: ProductIdeaNote;
   canDelete: boolean;
@@ -398,30 +442,106 @@ interface NoteCardProps {
 }
 
 function NoteCard({ note, canDelete, onDelete }: NoteCardProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await onDelete();
+      setDeleteDialogOpen(false);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <Card>
-      <CardContent className="space-y-stack">
-        <div className="flex items-start justify-between gap-stack">
-          <p className="body-1 flex-1 wrap-break-word overflow-wrap-anywhere">
+    <>
+      <Card className="group">
+        <CardContent className="space-y-stack">
+          {/* Desktop: hover button */}
+          <div className="hidden sm:flex items-start justify-between gap-stack">
+            <p className="body-1 flex-1 wrap-break-word overflow-wrap-anywhere whitespace-pre-wrap min-w-0">
+              {note.body}
+            </p>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  semantic="warning"
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setDeleteDialogOpen(true)}
+                  aria-label="Delete note"
+                  className={
+                    canDelete
+                      ? "opacity-0 group-hover:opacity-100 transition-opacity"
+                      : "invisible"
+                  }
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Delete note</TooltipContent>
+            </Tooltip>
+          </div>
+
+          {/* Mobile: no inline button */}
+          <p className="body-1 sm:hidden wrap-break-word overflow-wrap-anywhere whitespace-pre-wrap">
             {note.body}
           </p>
-          {canDelete && (
-            <Button
-              semantic="warning"
-              variant="ghost"
-              size="icon-sm"
-              onClick={onDelete}
-            >
-              <Trash2 className="h-3 w-3" />
-            </Button>
+
+          {/* Footer with timestamp and mobile delete */}
+          {note.createdAt && (
+            <div className="flex items-center justify-between">
+              <p className="caption">
+                {format(note.createdAt.toDate(), "MMM d, yyyy 'at' h:mm a")}
+              </p>
+              {canDelete && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      semantic="warning"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setDeleteDialogOpen(true)}
+                      aria-label="Delete note"
+                      className="sm:hidden"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete note</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           )}
-        </div>
-        {note.createdAt && (
-          <p className="caption">
-            {format(note.createdAt.toDate(), "MMM d, yyyy 'at' h:mm a")}
-          </p>
-        )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Note?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this note. This action cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="bg-warning text-warning-foreground hover:bg-warning-hover border border-border-warning"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

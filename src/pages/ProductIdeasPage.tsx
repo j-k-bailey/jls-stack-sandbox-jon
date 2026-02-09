@@ -23,7 +23,6 @@ import { getFilteredProductIdeas } from "@/lib/firestore/productIdeas";
 import type {
   ProductIdea,
   ProductIdeaFilters,
-  // ProductIdeaTag,
   ProductIdeaStatus,
   ProductIdeaPriority,
 } from "@/lib/types/productIdeas";
@@ -38,6 +37,29 @@ import {
 
 type BadgeVariant = VariantProps<typeof badgeVariants>["variant"];
 
+// Loading skeleton component
+function LoadingCard() {
+  return (
+    <Card className="h-70">
+      <CardContent className="space-y-stack">
+        <div className="flex gap-2">
+          <Skeleton className="h-6 w-16" />
+          <Skeleton className="h-6 w-16" />
+        </div>
+        <Skeleton className="h-6 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+        <div className="flex gap-2 mt-auto">
+          <Skeleton className="h-6 w-16" />
+          <Skeleton className="h-6 w-16" />
+          <Skeleton className="h-6 w-16" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export const ProductIdeasPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, userProfile } = useAuth();
@@ -50,6 +72,7 @@ export const ProductIdeasPage = () => {
 
   const [ideas, setIdeas] = useState<ProductIdea[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [selectedIdea, setSelectedIdea] = useState<ProductIdea | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
@@ -61,7 +84,12 @@ export const ProductIdeasPage = () => {
   const loadIdeas = useCallback(async () => {
     if (!user) return;
 
-    setLoading(true);
+    const startTime = Date.now();
+
+    if (isFirstLoad) {
+      setLoading(true);
+    }
+
     try {
       const filters: ProductIdeaFilters = {};
       if (statusFilter) filters.status = statusFilter as ProductIdeaStatus;
@@ -70,14 +98,23 @@ export const ProductIdeasPage = () => {
       if (myIdeasFilter) filters.ownerId = user.uid;
 
       const fetchedIdeas = await getFilteredProductIdeas(filters);
+
+      if (isFirstLoad) {
+        const elapsed = Date.now() - startTime;
+        const remainingTime = Math.max(0, 300 - elapsed);
+        await new Promise((resolve) => setTimeout(resolve, remainingTime));
+      }
+
       setIdeas(fetchedIdeas);
     } catch (error) {
       console.error("Error loading ideas:", error);
     } finally {
       setLoading(false);
+      setIsFirstLoad(false);
     }
-  }, [user, statusFilter, priorityFilter, myIdeasFilter]);
+  }, [user, statusFilter, priorityFilter, myIdeasFilter, isFirstLoad]);
 
+  // ADD THIS useEffect
   useEffect(() => {
     if (!user || !canReadIdeas) {
       setLoading(false);
@@ -147,7 +184,7 @@ export const ProductIdeasPage = () => {
                   handleFilterChange("status", value === "all" ? null : value)
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger aria-label="Filter by status">
                   <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
                 <SelectContent>
@@ -166,7 +203,7 @@ export const ProductIdeasPage = () => {
                   handleFilterChange("priority", value === "all" ? null : value)
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger aria-label="Filter by priority">
                   <SelectValue placeholder="All priorities" />
                 </SelectTrigger>
                 <SelectContent>
@@ -203,68 +240,64 @@ export const ProductIdeasPage = () => {
         </CardContent>
       </Card>
 
-      {/* Ideas Grid */}
-      {loading ? (
-        <ResponsiveGrid maxColumns="three">
-          {[1, 2, 3].map((i) => (
-            <Card key={i}>
-              <CardContent className="space-y-stack">
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <div className="flex gap-2">
-                  <Skeleton className="h-6 w-16" />
-                  <Skeleton className="h-6 w-16" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </ResponsiveGrid>
-      ) : ideas.length === 0 ? (
-        <EmptyState
-          icon={<Lightbulb className="h-12 w-12" />}
-          title={hasActiveFilters ? "No ideas match filters" : "No ideas yet"}
-          description={
-            hasActiveFilters
-              ? "Try adjusting your filters to see more ideas"
-              : canCreateIdeas
-                ? "Create your first product idea to get started"
-                : "You don’t have permission to create product ideas"
-          }
-          action={
-            hasActiveFilters
-              ? {
-                  label: "Clear filters",
-                  onClick: clearFilters,
-                  variant: "neutral",
-                }
-              : canCreateIdeas
-                ? {
-                    label: "Create Idea",
-                    onClick: () => setCreateDialogOpen(true),
-                    variant: "primary",
-                  }
-                : undefined
-          }
-        />
-      ) : (
-        <ResponsiveGrid maxColumns="two">
-          {ideas.map((idea) => (
+      {/* Ideas Grid - FIXED maxColumns to "two" */}
+      <ResponsiveGrid maxColumns="two">
+        {loading ? (
+          <>
+            <LoadingCard />
+            <LoadingCard />
+            <LoadingCard />
+            <LoadingCard />
+          </>
+        ) : ideas.length === 0 ? (
+          <div className="col-span-full">
+            <EmptyState
+              icon={<Lightbulb className="h-12 w-12" />}
+              title={
+                hasActiveFilters ? "No ideas match filters" : "No ideas yet"
+              }
+              description={
+                hasActiveFilters
+                  ? "Try adjusting your filters to see more ideas"
+                  : canCreateIdeas
+                    ? "Create your first product idea to get started"
+                    : "You don't have permission to create product ideas"
+              }
+              action={
+                hasActiveFilters
+                  ? {
+                      label: "Clear filters",
+                      onClick: clearFilters,
+                      variant: "neutral",
+                    }
+                  : canCreateIdeas
+                    ? {
+                        label: "Create Idea",
+                        onClick: () => setCreateDialogOpen(true),
+                        variant: "primary",
+                      }
+                    : undefined
+              }
+            />
+          </div>
+        ) : (
+          ideas.map((idea) => (
             <IdeaCard
               key={idea.id}
               idea={idea}
               onClick={() => setSelectedIdea(idea)}
               isOwner={idea.ownerId === user?.uid}
             />
-          ))}
-        </ResponsiveGrid>
-      )}
-      {canCreateIdeas ? (
+          ))
+        )}
+      </ResponsiveGrid>
+
+      {canCreateIdeas && (
         <Button onClick={() => setCreateDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           New Idea
         </Button>
-      ) : undefined}
+      )}
 
       {/* Dialogs */}
       {canCreateIdeas && (
@@ -334,7 +367,7 @@ function IdeaCard({ idea, onClick, isOwner }: IdeaCardProps) {
           )}
         </div>
         <div className="flex items-start justify-between gap-inline">
-          <h3 className="headline-4 line-clamp-2">{idea.title}</h3>
+          <h2 className="headline-4 line-clamp-2">{idea.title}</h2>
         </div>
 
         <p className="text-sm text-muted-foreground line-clamp-3 mb-stack">
