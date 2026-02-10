@@ -193,6 +193,53 @@ export function subscribeToIdeaById(
   );
 }
 
+export function subscribeToActiveFilteredIdeas(
+  filters: ProductIdeaFilters,
+  onNext: (ideas: ProductIdea[]) => void,
+  onError?: (err: unknown) => void,
+): Unsubscribe {
+  const constraints: QueryConstraint[] = [];
+
+  // Always exclude archived in the "active" subscription
+  constraints.push(where("archivedAt", "==", null));
+
+  // Apply optional filters
+  if (filters.status) constraints.push(where("status", "==", filters.status));
+  if (filters.ownerId)
+    constraints.push(where("ownerId", "==", filters.ownerId));
+  if (filters.tags)
+    constraints.push(where("tags", "array-contains", filters.tags));
+  if (filters.priority)
+    constraints.push(where("priority", "==", filters.priority));
+
+  constraints.push(orderBy("updatedAt", "desc"));
+
+  const q = query(productIdeasCol(), ...constraints);
+
+  return onSnapshot(
+    q,
+    (snap) => onNext(snap.docs.map((d) => mapDocToIdea(d))),
+    (err) => onError?.(err),
+  );
+}
+
+export function subscribeToArchivedIdeas(
+  onNext: (ideas: ProductIdea[]) => void,
+  onError?: (err: unknown) => void,
+): Unsubscribe {
+  const q = query(
+    productIdeasCol(),
+    where("archivedAt", "!=", null),
+    orderBy("archivedAt", "desc"),
+  );
+
+  return onSnapshot(
+    q,
+    (snap) => onNext(snap.docs.map((d) => mapDocToIdea(d))),
+    (err) => onError?.(err),
+  );
+}
+
 export function subscribeToActiveIdeaNotes(
   ideaId: string,
   onNext: (ideaNotes: ProductIdeaNote[]) => void,
@@ -202,7 +249,7 @@ export function subscribeToActiveIdeaNotes(
   const q = query(
     productIdeaNotesCol(ideaId),
     where("archivedAt", "==", null),
-    orderBy("updatedAt", "desc"),
+    orderBy("createdAt", "asc"),
   );
 
   // onSnapshot gives initial results immediately, then updates on changes :contentReference[oaicite:8]{index=8}
@@ -233,6 +280,24 @@ export function subscribeToIdeaNoteById(
       }
       onNext(mapDocToNote(snap));
     },
+    (err) => onError?.(err),
+  );
+}
+
+export function subscribeToArchivedIdeaNotes(
+  ideaId: string,
+  onNext: (notes: ProductIdeaNote[]) => void,
+  onError?: (err: unknown) => void,
+): Unsubscribe {
+  const q = query(
+    productIdeaNotesCol(ideaId),
+    where("archivedAt", "!=", null),
+    orderBy("archivedAt", "desc"),
+  );
+
+  return onSnapshot(
+    q,
+    (snap) => onNext(snap.docs.map((d) => mapDocToNote(d))),
     (err) => onError?.(err),
   );
 }

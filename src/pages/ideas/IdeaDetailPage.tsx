@@ -1,18 +1,8 @@
-// @/pages/ideas/IdeaDetailPage.tsx
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useReducer, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  MessageSquare,
-  Archive,
-  Send,
-  ArrowLeft,
-  Edit3,
-  X,
-  Save,
-  Loader2,
-} from "lucide-react";
+import { Archive, ArrowLeft, Edit3, X, Save, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/BrandButton";
@@ -24,33 +14,23 @@ import {
 } from "@/components/productIdea/IdeaStatusDisplay";
 import { InlineAlert } from "@/components/common/InlineAlert";
 import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
+import { ProgressBar } from "@/components/common/ProgressBar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  getProductIdea,
-  getProductIdeaNotes,
-  createProductIdeaNote,
+  subscribeToIdeaById,
   updateProductIdea,
   archiveProductIdea,
-  updateProductIdeaNote,
-  archiveProductIdeaNote,
 } from "@/lib/firestore/productIdeas";
 import {
-  createNoteSchema,
-  type CreateNoteInput,
   updateProductIdeaSchema,
   type UpdateProductIdeaInput,
   IDEA_STATUSES,
   IDEA_PRIORITIES,
 } from "@/lib/zodSchemas/productIdea";
-import type {
-  CreateProductIdeaNoteInput,
-  ProductIdea,
-  ProductIdeaNote,
-} from "@/lib/types/productIdeas";
+import type { ProductIdea } from "@/lib/types/productIdeas";
 import { format } from "date-fns";
-import { NoteCard } from "@/components/productIdea/NoteCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -66,17 +46,64 @@ import {
   canDeleteProductIdea as canDeleteIdea,
 } from "@/lib/permissions/productIdeas";
 import {
-  canCreateProductIdeaNote,
-  canDeleteProductIdeaNote,
-  canEditProductIdeaNote,
-} from "@/lib/permissions/productIdeaNotes";
-import {
   FormInput,
   FormTextarea,
   FormSelect,
 } from "@/components/form/FormField";
 import { FormTagInput } from "@/components/form/FormTagInput";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
+import { IdeaNotesSection } from "@/pages/ideas/IdeaNotesSection";
+
+// ─── Reducers ─────────────────────────────────────────────────────────────────
+
+type IdeaState = {
+  idea: ProductIdea | null;
+  loading: boolean; // first load → skeleton
+  refreshing: boolean; // live update pulse → progress bar
+  error: string | null;
+};
+
+type IdeaAction =
+  | { type: "LOAD_START" }
+  | { type: "LOAD_SUCCESS"; idea: ProductIdea }
+  | { type: "NOT_FOUND" }
+  | { type: "REFRESH_START" }
+  | { type: "REFRESH_SUCCESS"; idea: ProductIdea }
+  | { type: "ERROR"; message: string };
+
+const ideaInitialState: IdeaState = {
+  idea: null,
+  loading: true,
+  refreshing: false,
+  error: null,
+};
+
+function ideaReducer(state: IdeaState, action: IdeaAction): IdeaState {
+  switch (action.type) {
+    case "LOAD_START":
+      return { ...state, loading: true, refreshing: false, error: null };
+    case "LOAD_SUCCESS":
+      return {
+        idea: action.idea,
+        loading: false,
+        refreshing: false,
+        error: null,
+      };
+    case "NOT_FOUND":
+      return { ...state, loading: false, error: "Idea not found." };
+    case "REFRESH_START":
+      return { ...state, refreshing: true };
+    case "REFRESH_SUCCESS":
+      return { ...state, idea: action.idea, refreshing: false, error: null };
+    case "ERROR":
+      return {
+        ...state,
+        loading: false,
+        refreshing: false,
+        error: action.message,
+      };
+  }
+}
 
 // ─── Detail page skeleton ─────────────────────────────────────────────────────
 
@@ -94,7 +121,6 @@ function IdeaDetailSkeleton() {
           <Skeleton className="h-4 w-2/3" />
         </CardContent>
       </Card>
-      {/* Notes skeleton */}
       <div className="space-y-stack">
         <Skeleton className="h-6 w-32" />
         <Card>
@@ -116,50 +142,35 @@ export function IdeaDetailPage() {
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
 
-  const [idea, setIdea] = useState<ProductIdea | null>(null);
-  const [notes, setNotes] = useState<ProductIdeaNote[]>([]);
+  const [ideaState, ideaDispatch] = useReducer(ideaReducer, ideaInitialState);
+  const {
+    idea,
+    loading: ideaLoading,
+    refreshing: ideaRefreshing,
+    error: ideaError,
+  } = ideaState;
 
-  // Idea loading
-  const [ideaLoading, setIdeaLoading] = useState(true); // first load only
-  const [ideaError, setIdeaError] = useState<string | null>(null);
-
-  // Notes loading — no skeleton; use inline indicator + error instead
-  const [notesRefreshing, setNotesRefreshing] = useState(false);
-  const [notesError, setNotesError] = useState<string | null>(null);
-  const hasLoadedNotesOnce = useRef(false);
+  const ideaLoadedOnce = useRef(false);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const [cancelEditDialogOpen, setCancelEditDialogOpen] = useState(false);
   const [archiving, setArchiving] = useState(false);
 
+  // Ref so the subscription callback can read current edit mode
+  // without it being a dependency of the subscription effect
+  const isEditModeRef = useRef(false);
+  useEffect(() => {
+    isEditModeRef.current = isEditMode;
+  }, [isEditMode]);
+
   const isOwner = user?.uid === idea?.ownerId;
   const userRole = userProfile?.role;
 
   const canEdit = canEditProductIdea(userRole, isOwner);
   const canArchive = canDeleteIdea(isOwner);
-  const canAddNote = canCreateProductIdeaNote(userRole, user?.uid, user?.uid);
 
-  // ─── Note form ─────────────────────────────────────────────────────────────
-
-  const {
-    control: noteControl,
-    handleSubmit: handleSubmitNote,
-    reset: resetNote,
-    formState: {
-      errors: noteErrors,
-      isSubmitting: isSubmittingNote,
-      isDirty: isNoteDirty,
-    },
-    setError: setNoteError,
-  } = useForm<CreateNoteInput>({
-    resolver: zodResolver(createNoteSchema),
-    mode: "onBlur",
-    reValidateMode: "onChange",
-    defaultValues: { body: "" },
-  });
-
-  // ─── Edit form ─────────────────────────────────────────────────────────────
+  // ─── Edit form ──────────────────────────────────────────────────────────────
 
   const {
     control: editControl,
@@ -176,130 +187,60 @@ export function IdeaDetailPage() {
     mode: "onBlur",
   });
 
-  // ─── Load idea ─────────────────────────────────────────────────────────────
-
-  const loadIdea = useCallback(async () => {
-    if (!ideaId) return;
-
-    setIdeaError(null);
-    try {
-      const fetchedIdea = await getProductIdea(ideaId);
-      if (!fetchedIdea) {
-        setIdeaError("Idea not found.");
-        return;
-      }
-      setIdea(fetchedIdea);
-      resetEdit({
-        title: fetchedIdea.title,
-        summary: fetchedIdea.summary,
-        status: fetchedIdea.status,
-        tags: fetchedIdea.tags || [],
-        priority: fetchedIdea.priority,
-      });
-    } catch (err) {
-      console.error("Error loading idea:", err);
-      setIdeaError(err instanceof Error ? err.message : "Failed to load idea.");
-    } finally {
-      setIdeaLoading(false);
-    }
-  }, [ideaId, resetEdit]);
-
-  // ─── Load notes ────────────────────────────────────────────────────────────
-
-  const loadNotes = useCallback(async () => {
-    if (!ideaId) return;
-
-    setNotesRefreshing(true);
-    setNotesError(null);
-
-    try {
-      const fetchedNotes = await getProductIdeaNotes(ideaId);
-      const sortedNotes = fetchedNotes.sort((a, b) => {
-        if (!a.createdAt || !b.createdAt) return 0;
-        return a.createdAt.toMillis() - b.createdAt.toMillis();
-      });
-      setNotes(sortedNotes);
-      hasLoadedNotesOnce.current = true;
-    } catch (err) {
-      console.error("Error loading notes:", err);
-      setNotesError(
-        err instanceof Error ? err.message : "Failed to load notes.",
-      );
-    } finally {
-      setNotesRefreshing(false);
-    }
-  }, [ideaId]);
+  // ─── Idea subscription ──────────────────────────────────────────────────────
 
   useEffect(() => {
-    loadIdea();
-    loadNotes();
-  }, [loadIdea, loadNotes]);
-
-  // ─── Note handlers ─────────────────────────────────────────────────────────
-
-  const onSubmitNote: SubmitHandler<CreateNoteInput> = async (data) => {
-    if (!user || !canAddNote || !ideaId) {
-      setNoteError("root", {
-        type: "auth",
-        message: "You must be signed in to add a note.",
-      });
-      return;
-    }
-
-    try {
-      const authorDisplayName = userProfile
-        ? `${userProfile.firstName}${userProfile.lastNameInitial ? ` ${userProfile.lastNameInitial}.` : ""}`
-        : user.displayName || user.email?.split("@")[0] || "Anonymous";
-
-      const noteInput: CreateProductIdeaNoteInput = {
-        body: data.body,
-        authorDisplayName,
-        authorPhotoURL: user.photoURL ?? null,
-      };
-
-      await createProductIdeaNote(ideaId, noteInput, user.uid);
-      resetNote();
-      toast.success("Note added");
-      await loadNotes();
-    } catch (err) {
-      setNoteError("root", {
-        type: "server",
-        message:
-          err instanceof Error
-            ? err.message
-            : "Failed to add note. Please try again.",
-      });
-      toast.error("Failed to add note");
-    }
-  };
-
-  const handleUpdateNote = async (noteId: string, body: string) => {
     if (!ideaId) return;
-    try {
-      await updateProductIdeaNote(ideaId, noteId, { body });
-      toast.success("Note updated");
-      await loadNotes();
-    } catch (err) {
-      console.error("Error updating note:", err);
-      toast.error("Failed to update note");
-      throw err;
-    }
-  };
 
-  const handleArchiveNote = async (noteId: string) => {
-    if (!ideaId) return;
-    try {
-      await archiveProductIdeaNote(ideaId, noteId);
-      toast.success("Note removed");
-      await loadNotes();
-    } catch (err) {
-      console.error("Error archiving note:", err);
-      toast.error("Failed to remove note");
-      throw err;
-    }
-  };
+    ideaDispatch({ type: "LOAD_START" });
 
-  // ─── Idea handlers ─────────────────────────────────────────────────────────
+    const unsubscribe = subscribeToIdeaById(
+      ideaId,
+      async (nextIdea) => {
+        if (!nextIdea) {
+          ideaDispatch({ type: "NOT_FOUND" });
+          return;
+        }
+
+        const isFirst = !ideaLoadedOnce.current;
+
+        if (isFirst) {
+          await new Promise<void>((resolve) =>
+            setTimeout(resolve, MIN_SKELETON_MS),
+          );
+          ideaLoadedOnce.current = true;
+          ideaDispatch({ type: "LOAD_SUCCESS", idea: nextIdea });
+        } else {
+          ideaDispatch({ type: "REFRESH_START" });
+          await new Promise<void>((resolve) => setTimeout(resolve, 400));
+          ideaDispatch({ type: "REFRESH_SUCCESS", idea: nextIdea });
+        }
+
+        // Always resync form base state unless user is mid-edit,
+        // which would clobber their in-progress changes
+        if (!isEditModeRef.current) {
+          resetEdit({
+            title: nextIdea.title,
+            summary: nextIdea.summary,
+            status: nextIdea.status,
+            tags: nextIdea.tags ?? [],
+            priority: nextIdea.priority,
+          });
+        }
+      },
+      (err) => {
+        console.error("Idea subscription error:", err);
+        ideaDispatch({
+          type: "ERROR",
+          message: "Failed to load idea in real time.",
+        });
+      },
+    );
+
+    return () => unsubscribe();
+  }, [ideaId, resetEdit]);
+
+  // ─── Idea handlers ──────────────────────────────────────────────────────────
 
   const handleArchiveIdea = async () => {
     if (!ideaId) return;
@@ -339,7 +280,7 @@ export function IdeaDetailPage() {
       await updateProductIdea(ideaId, data);
       toast.success("Idea updated");
       setIsEditMode(false);
-      await loadIdea();
+      // No manual reload — subscription fires automatically
     } catch (err) {
       setEditError("root", {
         type: "server",
@@ -352,14 +293,12 @@ export function IdeaDetailPage() {
     }
   };
 
-  // ─── States ────────────────────────────────────────────────────────────────
+  // ─── States ─────────────────────────────────────────────────────────────────
 
-  // First load skeleton
   if (ideaLoading) {
     return <IdeaDetailSkeleton />;
   }
 
-  // Load error — idea not found or network failure
   if (ideaError || !idea) {
     return (
       <div className="p-inset-2xl space-y-section container max-w-4xl">
@@ -372,15 +311,12 @@ export function IdeaDetailPage() {
             </Button>
           }
         />
-        <FetchErrorBanner
-          message={ideaError || "Idea not found."}
-          onRetry={loadIdea}
-        />
+        <FetchErrorBanner message={ideaError || "Idea not found."} />
       </div>
     );
   }
 
-  // ─── Render ────────────────────────────────────────────────────────────────
+  // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <>
@@ -395,16 +331,15 @@ export function IdeaDetailPage() {
           }
         />
 
-        {/* Status + priority — headline-weight typographic display, not badges */}
         <div className="flex items-start gap-x-6">
           <IdeaStatusDisplay status={idea.status} />
           {idea.priority && <IdeaPriorityDisplay priority={idea.priority} />}
         </div>
 
-        <Card>
+        {/* Idea card — progress bar pulses on live updates */}
+        <Card className="overflow-hidden">
           <CardContent className="space-y-section p-inset-xl">
             {isEditMode ? (
-              /* ── EDIT MODE ── */
               <form
                 onSubmit={handleSubmitEdit(onSubmitEdit)}
                 className="space-y-section"
@@ -525,16 +460,12 @@ export function IdeaDetailPage() {
                 </div>
               </form>
             ) : (
-              /* ── VIEW MODE ── */
               <>
-                {/* Summary — no label, it's the content */}
                 <p className="body-1 text-foreground wrap-break-word leading-relaxed">
                   {idea.summary}
                 </p>
 
-                {/* Footer strip: tags left · meta + actions right */}
                 <div className="flex flex-wrap items-end justify-between gap-stack pt-stack border-t border-dashed">
-                  {/* Tags */}
                   {idea.tags && idea.tags.length > 0 ? (
                     <div className="flex flex-wrap gap-inline">
                       {idea.tags.map((tag) => (
@@ -551,9 +482,7 @@ export function IdeaDetailPage() {
                     <span />
                   )}
 
-                  {/* Meta + actions — right-aligned, grouped tightly */}
                   <div className="flex flex-col sm:flex-row sm:items-center gap-inline sm:gap-stack m-auto mt-section sm:mt-stack sm:ml-auto sm:mr-0">
-                    {/* Date meta — single condensed line; updated takes priority */}
                     <p className="caption text-muted-foreground">
                       {idea.updatedAt
                         ? `Edited ${format(idea.updatedAt.toDate(), "MMM d, yyyy")}`
@@ -562,7 +491,6 @@ export function IdeaDetailPage() {
                           : null}
                     </p>
 
-                    {/* Action buttons — subtle until needed */}
                     {canEdit && (
                       <Button
                         variant="ghost"
@@ -591,109 +519,15 @@ export function IdeaDetailPage() {
               </>
             )}
           </CardContent>
+          <ProgressBar active={ideaRefreshing} />
         </Card>
 
         <Separator />
 
         {/* ── Notes Section ── */}
-        <div className="space-y-stack">
-          <div className="flex items-center gap-stack">
-            <MessageSquare className="h-5 w-5" />
-            <h2 className="headline-4">Notes ({notes.length})</h2>
-            {/* Non-disruptive notes refresh indicator */}
-            {notesRefreshing && (
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground ml-auto" />
-            )}
-          </div>
-
-          {/* Notes fetch error */}
-          {notesError && (
-            <FetchErrorBanner message={notesError} onRetry={loadNotes} />
-          )}
-
-          {/* Add note form */}
-          {canAddNote && !isEditMode && (
-            <Card>
-              <CardContent className="p-inset-xl">
-                <form
-                  onSubmit={handleSubmitNote(onSubmitNote)}
-                  className="space-y-stack"
-                >
-                  {noteErrors.root?.message && (
-                    <InlineAlert variant="warning" dismissible>
-                      {noteErrors.root.message}
-                    </InlineAlert>
-                  )}
-
-                  <FormTextarea
-                    control={noteControl}
-                    name="body"
-                    label="Add a note"
-                    placeholder="Add a note..."
-                    error={noteErrors.body}
-                    maxLength={2000}
-                    rows={3}
-                  />
-
-                  <div className="flex justify-end">
-                    <Button
-                      type="submit"
-                      variant="filled"
-                      semantic="primary"
-                      size="sm"
-                      aria-label="Submit note"
-                      disabled={isSubmittingNote || !isNoteDirty}
-                    >
-                      {isSubmittingNote ? (
-                        <>
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                          Adding…
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-3 w-3" />
-                          Add Note
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Notes list */}
-          <div className="space-y-stack">
-            {!notesError && notes.length === 0 ? (
-              <Card>
-                <CardContent className="p-inset-xl">
-                  <p className="body-2 text-center text-muted-foreground py-inset-lg">
-                    No notes yet.{canAddNote && " Add the first one above."}
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              notes.map((note) => (
-                <NoteCard
-                  key={note.noteId}
-                  note={note}
-                  canEdit={canEditProductIdeaNote(
-                    user?.uid === note.authorId,
-                    userRole,
-                  )}
-                  canArchive={canDeleteProductIdeaNote(
-                    user?.uid === note.authorId,
-                  )}
-                  onUpdate={handleUpdateNote}
-                  onArchive={handleArchiveNote}
-                />
-              ))
-            )}
-          </div>
-        </div>
+        <IdeaNotesSection ideaId={ideaId} hideForm={isEditMode} />
       </div>
 
-      {/* ── Cancel edit confirmation ── */}
       <AlertDialog
         open={cancelEditDialogOpen}
         onOpenChange={setCancelEditDialogOpen}
@@ -714,7 +548,6 @@ export function IdeaDetailPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* ── Archive confirmation ── */}
       {canArchive && (
         <AlertDialog
           open={archiveDialogOpen}
@@ -751,3 +584,5 @@ export function IdeaDetailPage() {
     </>
   );
 }
+
+const MIN_SKELETON_MS = 300;

@@ -1,5 +1,5 @@
 // @/pages/ideas/ProductIdeasPage.tsx
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useReducer, useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Plus, Filter, Lightbulb } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -19,7 +19,7 @@ import {
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { SimpleSignIn } from "@/components/common/SimpleSignIn";
 import { useAuth } from "@/contexts/AuthContext";
-import { getFilteredProductIdeas } from "@/lib/firestore/productIdeas";
+import { subscribeToActiveFilteredIdeas } from "@/lib/firestore/productIdeas";
 import type {
   ProductIdea,
   ProductIdeaFilters,
@@ -31,8 +31,88 @@ import {
   canReadProductIdeas,
   canCreateProductIdea,
 } from "@/lib/permissions/productIdeas";
+import { ProgressBar } from "@/components/common/ProgressBar";
 
 const SKELETON_COUNT = 4;
+const MIN_SKELETON_MS = 300;
+
+// ─── Reducer ───────────────────────────────────────────────────────────────
+
+type PageState = {
+  ideas: ProductIdea[];
+  loading: boolean; // true only on very first load → skeletons
+  filtering: boolean; // true when filter changed, data already loaded → bar
+  refreshing: boolean; // true for brief pulse on live subscription update → bar
+  fetchError: string | null;
+};
+
+type PageAction =
+  | { type: "SUBSCRIBE_START_COLD" } // first ever load
+  | { type: "SUBSCRIBE_START_WARM" } // filter changed, already have data
+  | { type: "LOAD_SUCCESS"; ideas: ProductIdea[] }
+  | { type: "REFRESH_START" } // live update incoming
+  | { type: "REFRESH_SUCCESS"; ideas: ProductIdea[] }
+  | { type: "ERROR"; message: string }
+  | { type: "AUTH_UNAVAILABLE" };
+
+const initialState: PageState = {
+  ideas: [],
+  loading: true,
+  filtering: false,
+  refreshing: false,
+  fetchError: null,
+};
+
+function pageReducer(state: PageState, action: PageAction): PageState {
+  switch (action.type) {
+    case "SUBSCRIBE_START_COLD":
+      return {
+        ...state,
+        loading: true,
+        filtering: false,
+        refreshing: false,
+        fetchError: null,
+      };
+    case "SUBSCRIBE_START_WARM":
+      return {
+        ...state,
+        loading: false,
+        filtering: true,
+        refreshing: false,
+        fetchError: null,
+      };
+    case "LOAD_SUCCESS":
+      return {
+        ideas: action.ideas,
+        loading: false,
+        filtering: false,
+        refreshing: false,
+        fetchError: null,
+      };
+    case "REFRESH_START":
+      return { ...state, refreshing: true };
+    case "REFRESH_SUCCESS":
+      return {
+        ...state,
+        ideas: action.ideas,
+        filtering: false,
+        refreshing: false,
+        fetchError: null,
+      };
+    case "ERROR":
+      return {
+        ...state,
+        loading: false,
+        filtering: false,
+        refreshing: false,
+        fetchError: action.message,
+      };
+    case "AUTH_UNAVAILABLE":
+      return { ...state, loading: false };
+  }
+}
+
+// ─── Component ────────────────────────────────────────────────────────────
 
 export const ProductIdeasPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,15 +124,9 @@ export const ProductIdeasPage = () => {
   const canReadIdeas = canReadProductIdeas(isSignedIn);
   const canCreateIdeas = canCreateProductIdea(role, user?.uid);
 
-  const [ideas, setIdeas] = useState<ProductIdea[]>([]);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(pageReducer, initialState);
+  const { ideas, loading, filtering, refreshing, fetchError } = state;
 
-  /**
-   * `loading` — true only on the very first fetch (shows skeleton cards)
-   * `refreshing` — true on all subsequent fetches (shows slim progress bar only)
-   */
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const hasLoadedOnce = useRef(false);
 
   // Filters from URL
@@ -60,73 +134,70 @@ export const ProductIdeasPage = () => {
   const priorityFilter = searchParams.get("priority") || undefined;
   const myIdeasFilter = searchParams.get("mine") === "true";
 
-  const loadIdeas = useCallback(async () => {
-    if (!user) return;
+  const hasActiveFilters = !!(statusFilter || priorityFilter || myIdeasFilter);
 
-    const isFirst = !hasLoadedOnce.current;
-
-    if (isFirst) {
-      setLoading(true);
-    } else {
-      setRefreshing(true);
-    }
-    setFetchError(null);
-
-    try {
-      const filters: ProductIdeaFilters = {};
-      if (statusFilter) filters.status = statusFilter as ProductIdeaStatus;
-      if (priorityFilter)
-        filters.priority = priorityFilter as ProductIdeaPriority;
-      if (myIdeasFilter) filters.ownerId = user.uid;
-
-      const fetchedIdeas = await getFilteredProductIdeas(filters);
-
-      // Brief minimum delay on first load only — prevents flash of skeleton
-      if (isFirst) {
-        const MIN_SKELETON_MS = 300;
-        await new Promise<void>((resolve) =>
-          setTimeout(resolve, MIN_SKELETON_MS),
-        );
-      }
-
-      setIdeas(fetchedIdeas);
-      hasLoadedOnce.current = true;
-    } catch (error) {
-      console.error("Error loading ideas:", error);
-      setFetchError(
-        error instanceof Error
-          ? error.message
-          : "Unable to load ideas. Please try again.",
-      );
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [user, statusFilter, priorityFilter, myIdeasFilter]);
-
+  // ─── Subscription effect ─────────────────────────────────────────────────
   useEffect(() => {
     if (!user || !canReadIdeas) {
-      setLoading(false);
+      dispatch({ type: "AUTH_UNAVAILABLE" });
       return;
     }
-    loadIdeas();
-  }, [user, canReadIdeas, loadIdeas]);
 
+    // Cold if this is the very first load, warm if filters changed
+    const isCold = !hasLoadedOnce.current;
+    dispatch({
+      type: isCold ? "SUBSCRIBE_START_COLD" : "SUBSCRIBE_START_WARM",
+    });
+
+    const filters: ProductIdeaFilters = {};
+    if (statusFilter) filters.status = statusFilter as ProductIdeaStatus;
+    if (priorityFilter)
+      filters.priority = priorityFilter as ProductIdeaPriority;
+    if (myIdeasFilter) filters.ownerId = user.uid;
+
+    const unsubscribe = subscribeToActiveFilteredIdeas(
+      filters,
+      async (nextIdeas) => {
+        if (!hasLoadedOnce.current) {
+          // First emission on cold load — honour skeleton delay
+          await new Promise<void>((resolve) =>
+            setTimeout(resolve, MIN_SKELETON_MS),
+          );
+          hasLoadedOnce.current = true;
+          dispatch({ type: "LOAD_SUCCESS", ideas: nextIdeas });
+        } else {
+          // Subsequent emissions — pulse the refresh bar briefly
+          dispatch({ type: "REFRESH_START" });
+          await new Promise<void>((resolve) => setTimeout(resolve, 400));
+          dispatch({ type: "REFRESH_SUCCESS", ideas: nextIdeas });
+        }
+      },
+      (err) => {
+        console.error("Subscription error:", err);
+        dispatch({
+          type: "ERROR",
+          message: "Failed to load ideas in real time.",
+        });
+      },
+    );
+
+    return () => {
+      // Don't reset hasLoadedOnce here — we want warm starts on filter changes
+      unsubscribe();
+    };
+  }, [user, canReadIdeas, statusFilter, priorityFilter, myIdeasFilter]);
+
+  // ─── Filter helpers ───────────────────────────────────────────────────────
   const handleFilterChange = (key: string, value: string | null) => {
     const newParams = new URLSearchParams(searchParams);
-    if (value) {
-      newParams.set(key, value);
-    } else {
-      newParams.delete(key);
-    }
+    if (value) newParams.set(key, value);
+    else newParams.delete(key);
     setSearchParams(newParams);
   };
 
   const clearFilters = () => setSearchParams({});
 
-  const hasActiveFilters = statusFilter || priorityFilter || myIdeasFilter;
-
-  // ─── Auth gate ─────────────────────────────────────────────────────────────
+  // ─── Auth gate ────────────────────────────────────────────────────────────
   if (!canReadIdeas) {
     return (
       <div className="p-inset-2xl space-y-section container">
@@ -140,7 +211,7 @@ export const ProductIdeasPage = () => {
     );
   }
 
-  // ─── Render ────────────────────────────────────────────────────────────────
+  // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="p-inset-2xl space-y-section container">
       <PageHeader
@@ -228,25 +299,20 @@ export const ProductIdeasPage = () => {
             )}
           </div>
         </CardContent>
+        <ProgressBar active={filtering || refreshing} />
       </Card>
 
       {/* Ideas Grid */}
       <div className="flex flex-col gap-stack">
-        {/* Non-disruptive refresh indicator — shown only on filter changes / reloads */}
         <RefreshingIndicator active={refreshing} className="-mt-stack" />
 
-        {/* Fetch error */}
-        {fetchError && !loading && (
-          <FetchErrorBanner message={fetchError} onRetry={loadIdeas} />
-        )}
+        {fetchError && !loading && <FetchErrorBanner message={fetchError} />}
 
         {loading ? (
-          /* First-load skeletons */
           Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <IdeaCardSkeleton key={i} />
           ))
         ) : ideas.length === 0 && !fetchError ? (
-          /* Empty state */
           <EmptyState
             icon={<Lightbulb className="h-12 w-12" />}
             title={hasActiveFilters ? "No ideas match filters" : "No ideas yet"}
@@ -274,7 +340,6 @@ export const ProductIdeasPage = () => {
             }
           />
         ) : (
-          /* Content — stays visible during background refreshes (opacity hint) */
           <div
             className="flex flex-col gap-stack transition-opacity duration-200"
             style={{ opacity: refreshing ? 0.6 : 1 }}
@@ -304,7 +369,7 @@ export const ProductIdeasPage = () => {
         )}
 
         <Button asChild variant="link" className="ml-auto mr-0 p-0">
-          <Link to="/ideas/archived" className="caption text-muted-foreground ">
+          <Link to="/ideas/archived" className="caption text-muted-foreground">
             View archived ideas →
           </Link>
         </Button>

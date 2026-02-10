@@ -1,41 +1,111 @@
 // @/hooks/useArchivedIdeas.ts
-import { useState, useCallback, useRef } from "react";
+import { useReducer, useEffect, useRef, useCallback } from "react";
 import {
-  getArchivedProductIdeas,
+  subscribeToArchivedIdeas,
   unarchiveProductIdea,
 } from "@/lib/firestore/productIdeas";
 import type { ProductIdea } from "@/lib/types/productIdeas";
 
+const MIN_SKELETON_MS = 300;
+
+// ─── Reducer ──────────────────────────────────────────────────────────────────
+
+type State = {
+  ideas: ProductIdea[];
+  loading: boolean;
+  refreshing: boolean;
+  fetchError: string | null;
+};
+
+type Action =
+  | { type: "LOAD_START" }
+  | { type: "LOAD_SUCCESS"; ideas: ProductIdea[] }
+  | { type: "REFRESH_START" }
+  | { type: "REFRESH_SUCCESS"; ideas: ProductIdea[] }
+  | { type: "ERROR"; message: string }
+  | { type: "OPTIMISTIC_REMOVE"; ids: Set<string> };
+
+const initialState: State = {
+  ideas: [],
+  loading: true,
+  refreshing: false,
+  fetchError: null,
+};
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "LOAD_START":
+      return { ...state, loading: true, refreshing: false, fetchError: null };
+    case "LOAD_SUCCESS":
+      return {
+        ideas: action.ideas,
+        loading: false,
+        refreshing: false,
+        fetchError: null,
+      };
+    case "REFRESH_START":
+      return { ...state, refreshing: true };
+    case "REFRESH_SUCCESS":
+      return {
+        ...state,
+        ideas: action.ideas,
+        refreshing: false,
+        fetchError: null,
+      };
+    case "ERROR":
+      return {
+        ...state,
+        loading: false,
+        refreshing: false,
+        fetchError: action.message,
+      };
+    case "OPTIMISTIC_REMOVE":
+      return {
+        ...state,
+        ideas: state.ideas.filter((i) => !action.ids.has(i.ideaId)),
+      };
+  }
+}
+
+// ─── Hook ─────────────────────────────────────────────────────────────────────
+
 export function useArchivedIdeas() {
-  const [ideas, setIdeas] = useState<ProductIdea[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const hasLoadedOnce = useRef(false);
 
-  const load = useCallback(async () => {
-    const isFirst = !hasLoadedOnce.current;
-    if (isFirst) setLoading(true);
-    else setRefreshing(true);
-    setFetchError(null);
+  useEffect(() => {
+    hasLoadedOnce.current = false;
+    dispatch({ type: "LOAD_START" });
 
-    try {
-      const fetched = await getArchivedProductIdeas();
-      setIdeas(fetched);
-      hasLoadedOnce.current = true;
-    } catch (err) {
-      setFetchError(
-        err instanceof Error ? err.message : "Failed to load archived ideas.",
-      );
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+    const unsubscribe = subscribeToArchivedIdeas(
+      async (nextIdeas) => {
+        const isFirst = !hasLoadedOnce.current;
+
+        if (isFirst) {
+          await new Promise<void>((resolve) =>
+            setTimeout(resolve, MIN_SKELETON_MS),
+          );
+          hasLoadedOnce.current = true;
+          dispatch({ type: "LOAD_SUCCESS", ideas: nextIdeas });
+        } else {
+          dispatch({ type: "REFRESH_START" });
+          await new Promise<void>((resolve) => setTimeout(resolve, 0));
+          dispatch({ type: "REFRESH_SUCCESS", ideas: nextIdeas });
+        }
+      },
+      (err) => {
+        console.error("Archived ideas subscription error:", err);
+        dispatch({ type: "ERROR", message: "Failed to load archived ideas." });
+      },
+    );
+
+    return () => unsubscribe();
   }, []);
 
   const restore = useCallback(
     async (ideaIds: string[]): Promise<{ failed: string[] }> => {
       const failed: string[] = [];
+
       await Promise.all(
         ideaIds.map(async (id) => {
           try {
@@ -45,17 +115,19 @@ export function useArchivedIdeas() {
           }
         }),
       );
-      // Optimistically remove successfully restored items from local state
+
+      // Optimistically remove restored items — subscription will confirm
       if (failed.length < ideaIds.length) {
         const restoredSet = new Set(
           ideaIds.filter((id) => !failed.includes(id)),
         );
-        setIdeas((prev) => prev.filter((i) => !restoredSet.has(i.ideaId)));
+        dispatch({ type: "OPTIMISTIC_REMOVE", ids: restoredSet });
       }
+
       return { failed };
     },
     [],
   );
 
-  return { ideas, loading, refreshing, fetchError, load, restore };
+  return { ...state, restore };
 }

@@ -24,6 +24,7 @@ import {
   updateNoteSchema,
   type UpdateNoteInput,
 } from "@/lib/zodSchemas/productIdea";
+import { cn } from "@/lib/utils";
 
 interface NoteCardProps {
   note: ProductIdeaNote;
@@ -31,6 +32,7 @@ interface NoteCardProps {
   canArchive: boolean;
   onUpdate: (noteId: string, body: string) => Promise<void>;
   onArchive: (noteId: string) => Promise<void>;
+  className?: string;
 }
 
 export function NoteCard({
@@ -39,6 +41,7 @@ export function NoteCard({
   canArchive,
   onUpdate,
   onArchive,
+  className,
 }: NoteCardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
@@ -122,7 +125,7 @@ export function NoteCard({
 
   return (
     <>
-      <Card className="group">
+      <Card className={cn("group", className)}>
         <CardContent className="space-y-stack">
           {/* Author Header */}
           <div className="flex items-center justify-between gap-inline">

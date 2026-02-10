@@ -1,15 +1,9 @@
 // @/pages/ideas/ArchivedIdeaDetailPage.tsx
-import { useState, useEffect, useCallback } from "react";
+import { useReducer, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArchiveRestore,
-  ArrowLeft,
-  Loader2,
-  MessageSquare,
-} from "lucide-react";
+import { ArchiveRestore, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
@@ -28,18 +22,72 @@ import {
 } from "@/components/ui/alert-dialog";
 import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
 import { ArchivedIdeaBanner } from "@/components/productIdea/ArchivedIdeaBanner";
+import { ProgressBar } from "@/components/common/ProgressBar";
 import {
   IdeaStatusDisplay,
   IdeaPriorityDisplay,
 } from "@/components/productIdea/IdeaStatusDisplay";
+import { IdeaNotesSection } from "@/pages/ideas/IdeaNotesSection";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  getProductIdea,
-  getProductIdeaNotes,
+  subscribeToIdeaById,
   unarchiveProductIdea,
 } from "@/lib/firestore/productIdeas";
 import { canDeleteProductIdea as canRestoreIdea } from "@/lib/permissions/productIdeas";
-import type { ProductIdea, ProductIdeaNote } from "@/lib/types/productIdeas";
+import type { ProductIdea } from "@/lib/types/productIdeas";
+
+const MIN_SKELETON_MS = 300;
+
+// ─── Reducer ──────────────────────────────────────────────────────────────────
+
+type IdeaState = {
+  idea: ProductIdea | null;
+  loading: boolean;
+  refreshing: boolean;
+  error: string | null;
+};
+
+type IdeaAction =
+  | { type: "LOAD_START" }
+  | { type: "LOAD_SUCCESS"; idea: ProductIdea }
+  | { type: "NOT_FOUND" }
+  | { type: "REFRESH_START" }
+  | { type: "REFRESH_SUCCESS"; idea: ProductIdea }
+  | { type: "ERROR"; message: string };
+
+const ideaInitialState: IdeaState = {
+  idea: null,
+  loading: true,
+  refreshing: false,
+  error: null,
+};
+
+function ideaReducer(state: IdeaState, action: IdeaAction): IdeaState {
+  switch (action.type) {
+    case "LOAD_START":
+      return { ...state, loading: true, refreshing: false, error: null };
+    case "LOAD_SUCCESS":
+      return {
+        idea: action.idea,
+        loading: false,
+        refreshing: false,
+        error: null,
+      };
+    case "NOT_FOUND":
+      return { ...state, loading: false, error: "Idea not found." };
+    case "REFRESH_START":
+      return { ...state, refreshing: true };
+    case "REFRESH_SUCCESS":
+      return { ...state, idea: action.idea, refreshing: false, error: null };
+    case "ERROR":
+      return {
+        ...state,
+        loading: false,
+        refreshing: false,
+        error: action.message,
+      };
+  }
+}
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -59,30 +107,6 @@ function ArchivedDetailSkeleton() {
   );
 }
 
-// ─── Read-only note ───────────────────────────────────────────────────────────
-
-function ReadOnlyNote({ note }: { note: ProductIdeaNote }) {
-  return (
-    <Card className="border-border bg-neutral-background">
-      <CardContent className="p-inset-xl space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="subtitle-2 font-medium text-foreground">
-            {note.authorDisplayName ?? "Anonymous"}
-          </span>
-          {note.createdAt && (
-            <span className="caption text-muted-foreground">
-              {format(note.createdAt.toDate(), "MMM d, yyyy 'at' h:mm a")}
-            </span>
-          )}
-        </div>
-        <p className="body-2 text-foreground whitespace-pre-wrap">
-          {note.body}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function ArchivedIdeaDetailPage() {
@@ -90,60 +114,62 @@ export function ArchivedIdeaDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [idea, setIdea] = useState<ProductIdea | null>(null);
-  const [notes, setNotes] = useState<ProductIdeaNote[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [ideaError, setIdeaError] = useState<string | null>(null);
-  const [notesError, setNotesError] = useState<string | null>(null);
+  const [ideaState, ideaDispatch] = useReducer(ideaReducer, ideaInitialState);
+  const { idea, loading, refreshing, error } = ideaState;
+  const ideaLoadedOnce = useRef(false);
+
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [restoring, setRestoring] = useState(false);
 
   const isOwner = user?.uid === idea?.ownerId;
   const canRestore = canRestoreIdea(isOwner);
 
-  const loadIdea = useCallback(async () => {
-    if (!ideaId) return;
-    setIdeaError(null);
-    try {
-      const fetched = await getProductIdea(ideaId);
-      if (!fetched) {
-        setIdeaError("Idea not found.");
-        return;
-      }
-      // Guard: redirect to active page if somehow not archived
-      if (!fetched.archivedAt) {
-        navigate(`/ideas/${ideaId}`, { replace: true });
-        return;
-      }
-      setIdea(fetched);
-    } catch (err) {
-      setIdeaError(err instanceof Error ? err.message : "Failed to load idea.");
-    } finally {
-      setLoading(false);
-    }
-  }, [ideaId, navigate]);
-
-  const loadNotes = useCallback(async () => {
-    if (!ideaId) return;
-    setNotesError(null);
-    try {
-      const fetched = await getProductIdeaNotes(ideaId, true); // include archived notes
-      const sorted = [...fetched].sort((a, b) => {
-        if (!a.createdAt || !b.createdAt) return 0;
-        return a.createdAt.toMillis() - b.createdAt.toMillis();
-      });
-      setNotes(sorted);
-    } catch (err) {
-      setNotesError(
-        err instanceof Error ? err.message : "Failed to load notes.",
-      );
-    }
-  }, [ideaId]);
+  // ─── Idea subscription ────────────────────────────────────────────────────
 
   useEffect(() => {
-    loadIdea();
-    loadNotes();
-  }, [loadIdea, loadNotes]);
+    if (!ideaId) return;
+
+    ideaLoadedOnce.current = false;
+    ideaDispatch({ type: "LOAD_START" });
+
+    const unsubscribe = subscribeToIdeaById(
+      ideaId,
+      async (nextIdea) => {
+        if (!nextIdea) {
+          ideaDispatch({ type: "NOT_FOUND" });
+          return;
+        }
+
+        // If idea has been restored, redirect to active detail page
+        if (!nextIdea.archivedAt) {
+          navigate(`/ideas/${ideaId}`, { replace: true });
+          return;
+        }
+
+        const isFirst = !ideaLoadedOnce.current;
+
+        if (isFirst) {
+          await new Promise<void>((resolve) =>
+            setTimeout(resolve, MIN_SKELETON_MS),
+          );
+          ideaLoadedOnce.current = true;
+          ideaDispatch({ type: "LOAD_SUCCESS", idea: nextIdea });
+        } else {
+          ideaDispatch({ type: "REFRESH_START" });
+          await new Promise<void>((resolve) => setTimeout(resolve, 0));
+          ideaDispatch({ type: "REFRESH_SUCCESS", idea: nextIdea });
+        }
+      },
+      (err) => {
+        console.error("Archived idea subscription error:", err);
+        ideaDispatch({ type: "ERROR", message: "Failed to load idea." });
+      },
+    );
+
+    return () => unsubscribe();
+  }, [ideaId, navigate]);
+
+  // ─── Restore handler ──────────────────────────────────────────────────────
 
   const handleRestore = async () => {
     if (!ideaId) return;
@@ -151,21 +177,20 @@ export function ArchivedIdeaDetailPage() {
     try {
       await unarchiveProductIdea(ideaId);
       toast.success("Idea restored");
-      navigate(`/ideas/${ideaId}`, { replace: true });
+      // Subscription will detect archivedAt becoming null and redirect
     } catch (err) {
       console.error("Error restoring idea:", err);
       toast.error("Failed to restore idea");
-    } finally {
       setRestoring(false);
       setRestoreDialogOpen(false);
     }
   };
 
-  // ─── States ──────────────────────────────────────────────────────────────
+  // ─── States ───────────────────────────────────────────────────────────────
 
   if (loading) return <ArchivedDetailSkeleton />;
 
-  if (ideaError || !idea) {
+  if (error || !idea) {
     return (
       <div className="p-inset-2xl space-y-section container max-w-4xl">
         <PageHeader
@@ -177,10 +202,7 @@ export function ArchivedIdeaDetailPage() {
             </Button>
           }
         />
-        <FetchErrorBanner
-          message={ideaError || "Idea not found."}
-          onRetry={loadIdea}
-        />
+        <FetchErrorBanner message={error || "Idea not found."} />
       </div>
     );
   }
@@ -200,7 +222,6 @@ export function ArchivedIdeaDetailPage() {
           }
         />
 
-        {/* Archived context — always visible, above everything */}
         <ArchivedIdeaBanner
           message={
             idea.archivedAt
@@ -209,23 +230,18 @@ export function ArchivedIdeaDetailPage() {
           }
         />
 
-        {/* Status + priority display */}
         <div className="flex items-start gap-x-6 opacity-70">
           <IdeaStatusDisplay status={idea.status} />
           {idea.priority && <IdeaPriorityDisplay priority={idea.priority} />}
         </div>
 
-        {/* Main content card — read-only */}
-        <Card className="border-border-neutral bg-neutral-background">
+        <Card className="overflow-hidden border-border-neutral bg-neutral-background">
           <CardContent className="p-inset-xl space-y-section">
-            {/* Summary */}
             <p className="body-1 text-foreground wrap-break-word leading-relaxed">
               {idea.summary}
             </p>
 
-            {/* Footer strip */}
             <div className="flex flex-wrap items-start sm:items-end justify-between gap-stack pt-stack border-t border-dashed border-border-neutral">
-              {/* Tags */}
               {idea.tags && idea.tags.length > 0 ? (
                 <div className="flex flex-wrap gap-inline">
                   {idea.tags.map((tag) => (
@@ -242,7 +258,6 @@ export function ArchivedIdeaDetailPage() {
                 <span />
               )}
 
-              {/* Meta + restore */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-inline sm:gap-stack sm:ml-auto">
                 <p className="caption text-muted-foreground">
                   {idea.updatedAt
@@ -266,42 +281,14 @@ export function ArchivedIdeaDetailPage() {
               </div>
             </div>
           </CardContent>
+          <ProgressBar active={refreshing} />
         </Card>
 
         <Separator />
 
-        {/* Notes — read-only */}
-        <div className="space-y-stack">
-          <div className="flex items-center gap-stack">
-            <MessageSquare className="h-5 w-5 text-muted-foreground" />
-            <h2 className="headline-4 text-foreground">
-              Notes ({notes.length})
-            </h2>
-          </div>
-
-          {notesError && (
-            <FetchErrorBanner message={notesError} onRetry={loadNotes} />
-          )}
-
-          {!notesError && notes.length === 0 ? (
-            <Card className="border-border bg-neutral-background">
-              <CardContent className="p-inset-xl">
-                <p className="body-2 text-center text-muted-foreground py-inset-lg">
-                  No notes were added to this idea.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-stack">
-              {notes.map((note) => (
-                <ReadOnlyNote key={note.noteId} note={note} />
-              ))}
-            </div>
-          )}
-        </div>
+        <IdeaNotesSection ideaId={ideaId} hideForm archived />
       </div>
 
-      {/* Restore confirmation */}
       <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

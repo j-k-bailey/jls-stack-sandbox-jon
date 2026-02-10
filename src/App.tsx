@@ -23,6 +23,7 @@ import { CreateIdeaPage } from "@/pages/ideas/CreateIdeaPage";
 import { IdeaDetailPage } from "@/pages/ideas/IdeaDetailPage";
 import { ArchivedIdeasPage } from "@/pages/ideas/ArchivedIdeasPage";
 import { ArchivedIdeaDetailPage } from "@/pages/ideas/ArchivedIdeaDetailPage";
+import { IdeaNotesPage } from "./pages/ideas/IdeaNotesPage";
 
 function App() {
   return (
@@ -45,7 +46,9 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path=":ideaId" element={<IdeaDetailPage />} />
+
+          <Route path="/ideas/:ideaId" element={<IdeaDetailPage />} />
+          <Route path="/ideas/:ideaId/notes" element={<IdeaNotesPage />} />
           <Route path="/ideas/archived" element={<ArchivedIdeasPage />} />
           <Route
             path="/ideas/archived/:ideaId"

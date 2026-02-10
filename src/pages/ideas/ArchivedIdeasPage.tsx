@@ -1,10 +1,9 @@
 // @/pages/ideas/ArchivedIdeasPage.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArchiveRestore, ArchiveX, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +24,8 @@ import {
   canDeleteProductIdea as canRestoreIdea,
 } from "@/lib/permissions/productIdeas";
 import type { ProductIdea } from "@/lib/types/productIdeas";
+
+const SKELETON_COUNT = 3;
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -75,7 +76,6 @@ function ArchivedIdeaCard({
         isSelected && "border-neutral bg-neutral-background",
       )}
     >
-      {/* Checkbox — only rendered for owners/admins who can restore */}
       {canRestore && (
         <Checkbox
           id={`select-${idea.ideaId}`}
@@ -86,12 +86,10 @@ function ArchivedIdeaCard({
         />
       )}
 
-      {/* Card body — links to archived detail */}
       <Link
         to={`/ideas/archived/${idea.ideaId}`}
         className="flex-1 min-w-0 group"
       >
-        {/* Meta row: status · priority · archived date */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2.5 mb-2">
           <div className="flex items-center gap-2.5">
             <IdeaStatusBadge status={idea.status} />
@@ -105,17 +103,14 @@ function ArchivedIdeaCard({
           )}
         </div>
 
-        {/* Title */}
         <h2 className="headline-5 leading-snug line-clamp-2 text-foreground group-hover:text-foreground transition-colors duration-150 mb-1.5">
           {idea.title}
         </h2>
 
-        {/* Summary */}
         <p className="body-2 text-muted-foreground line-clamp-2 leading-relaxed mb-3">
           {idea.summary}
         </p>
 
-        {/* Footer: tags · created date */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
           {idea.tags && idea.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
@@ -123,7 +118,7 @@ function ArchivedIdeaCard({
                 <Badge
                   key={tag}
                   variant="neutral-outline"
-                  className="text-[10px] px-1.5 py-0 h-[18px] leading-none opacity-60"
+                  className="text-[10px] px-1.5 py-0 h-4.5 leading-none opacity-60"
                 >
                   {tag}
                 </Badge>
@@ -131,7 +126,7 @@ function ArchivedIdeaCard({
               {idea.tags.length > 4 && (
                 <Badge
                   variant="muted-subtle"
-                  className="text-[10px] px-1.5 py-0 h-[18px] leading-none opacity-60"
+                  className="text-[10px] px-1.5 py-0 h-4.5 leading-none opacity-60"
                 >
                   +{idea.tags.length - 4}
                 </Badge>
@@ -154,20 +149,14 @@ function ArchivedIdeaCard({
 export function ArchivedIdeasPage() {
   const { user } = useAuth();
   const isSignedIn = !!user;
-
   const canRead = canReadProductIdeas(isSignedIn);
 
-  const { ideas, loading, refreshing, fetchError, load, restore } =
+  const { ideas, loading, refreshing, fetchError, restore } =
     useArchivedIdeas();
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [restoring, setRestoring] = useState(false);
 
-  useEffect(() => {
-    if (canRead) load();
-  }, [canRead, load]);
-
-  // Derive pruned selection — stale ids (removed after restore) are dropped at render time
   const ideaIdSet = new Set(ideas.map((i) => i.ideaId));
   const prunedSelected = new Set(
     [...selected].filter((id) => ideaIdSet.has(id)),
@@ -176,16 +165,12 @@ export function ArchivedIdeasPage() {
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
 
-  // Per-idea restore permission — owner OR admin/moderator
   const restorableIds = ideas
     .filter((i) => canRestoreIdea(i.ownerId === user?.uid))
     .map((i) => i.ideaId);
@@ -221,6 +206,12 @@ export function ArchivedIdeasPage() {
     restorableIds.length > 0 && prunedSelected.size === restorableIds.length;
   const someSelected = prunedSelected.size > 0 && !allSelected;
 
+  // ─── Auth gate ──────────────────────────────────────────────────────────────
+
+  if (!canRead) return null;
+
+  // ─── Render ─────────────────────────────────────────────────────────────────
+
   return (
     <div className="p-inset-2xl space-y-section container">
       <PageHeader
@@ -240,20 +231,14 @@ export function ArchivedIdeasPage() {
         }
       />
 
-      {/* Persistent archived context — always visible */}
       <ArchivedIdeaBanner />
 
-      {/* Fetch error */}
-      {fetchError && !loading && (
-        <FetchErrorBanner message={fetchError} onRetry={load} />
-      )}
+      {fetchError && !loading && <FetchErrorBanner message={fetchError} />}
 
-      {/* Select-all + bulk restore toolbar */}
       {!loading && !fetchError && restorableIds.length > 0 && (
         <div className="flex items-center gap-3 py-2 border-b border-dashed border-border-neutral">
           <Checkbox
             id="select-all"
-            // indeterminate when some-but-not-all are selected
             checked={
               allSelected ? true : someSelected ? "indeterminate" : false
             }
@@ -294,10 +279,9 @@ export function ArchivedIdeasPage() {
         </div>
       )}
 
-      {/* List */}
       <div className="flex flex-col gap-stack">
         {loading ? (
-          Array.from({ length: 3 }).map((_, i) => (
+          Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <ArchivedCardSkeleton key={i} />
           ))
         ) : ideas.length === 0 && !fetchError ? (
