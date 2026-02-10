@@ -1,16 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+// @/pages/ideas/ProductIdeasPage.tsx
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Plus, Filter, Lightbulb } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/productIdea/EmptyState";
-import {
-  IdeaStatusBadge,
-  IdeaPriorityBadge,
-} from "@/components/productIdea/IdeaBadges";
+import { IdeaCard, IdeaCardSkeleton } from "@/components/productIdea/IdeaCard";
+import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
+import { RefreshingIndicator } from "@/components/ui/RefreshingIndicator";
 import {
   Select,
   SelectContent,
@@ -29,34 +27,12 @@ import type {
   ProductIdeaPriority,
 } from "@/lib/types/productIdeas";
 import { IDEA_STATUSES, IDEA_PRIORITIES } from "@/lib/zodSchemas/productIdea";
-import { format } from "date-fns";
 import {
   canReadProductIdeas,
   canCreateProductIdea,
 } from "@/lib/permissions/productIdeas";
 
-// Loading skeleton component
-function LoadingCard() {
-  return (
-    <Card className="h-70">
-      <CardContent className="space-y-stack">
-        <div className="flex gap-2">
-          <Skeleton className="h-6 w-16" />
-          <Skeleton className="h-6 w-16" />
-        </div>
-        <Skeleton className="h-6 w-3/4" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-2/3" />
-        <div className="flex gap-2 mt-auto">
-          <Skeleton className="h-6 w-16" />
-          <Skeleton className="h-6 w-16" />
-          <Skeleton className="h-6 w-16" />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+const SKELETON_COUNT = 4;
 
 export const ProductIdeasPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -69,8 +45,15 @@ export const ProductIdeasPage = () => {
   const canCreateIdeas = canCreateProductIdea(role, user?.uid);
 
   const [ideas, setIdeas] = useState<ProductIdea[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  /**
+   * `loading` — true only on the very first fetch (shows skeleton cards)
+   * `refreshing` — true on all subsequent fetches (shows slim progress bar only)
+   */
   const [loading, setLoading] = useState(true);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const hasLoadedOnce = useRef(false);
 
   // Filters from URL
   const statusFilter = searchParams.get("status") || undefined;
@@ -80,11 +63,14 @@ export const ProductIdeasPage = () => {
   const loadIdeas = useCallback(async () => {
     if (!user) return;
 
-    const startTime = Date.now();
+    const isFirst = !hasLoadedOnce.current;
 
-    if (isFirstLoad) {
+    if (isFirst) {
       setLoading(true);
+    } else {
+      setRefreshing(true);
     }
+    setFetchError(null);
 
     try {
       const filters: ProductIdeaFilters = {};
@@ -95,27 +81,34 @@ export const ProductIdeasPage = () => {
 
       const fetchedIdeas = await getFilteredProductIdeas(filters);
 
-      if (isFirstLoad) {
-        const elapsed = Date.now() - startTime;
-        const remainingTime = Math.max(0, 300 - elapsed);
-        await new Promise((resolve) => setTimeout(resolve, remainingTime));
+      // Brief minimum delay on first load only — prevents flash of skeleton
+      if (isFirst) {
+        const MIN_SKELETON_MS = 300;
+        await new Promise<void>((resolve) =>
+          setTimeout(resolve, MIN_SKELETON_MS),
+        );
       }
 
       setIdeas(fetchedIdeas);
+      hasLoadedOnce.current = true;
     } catch (error) {
       console.error("Error loading ideas:", error);
+      setFetchError(
+        error instanceof Error
+          ? error.message
+          : "Unable to load ideas. Please try again.",
+      );
     } finally {
       setLoading(false);
-      setIsFirstLoad(false);
+      setRefreshing(false);
     }
-  }, [user, statusFilter, priorityFilter, myIdeasFilter, isFirstLoad]);
+  }, [user, statusFilter, priorityFilter, myIdeasFilter]);
 
   useEffect(() => {
     if (!user || !canReadIdeas) {
       setLoading(false);
       return;
     }
-
     loadIdeas();
   }, [user, canReadIdeas, loadIdeas]);
 
@@ -129,12 +122,11 @@ export const ProductIdeasPage = () => {
     setSearchParams(newParams);
   };
 
-  const clearFilters = () => {
-    setSearchParams({});
-  };
+  const clearFilters = () => setSearchParams({});
 
   const hasActiveFilters = statusFilter || priorityFilter || myIdeasFilter;
 
+  // ─── Auth gate ─────────────────────────────────────────────────────────────
   if (!canReadIdeas) {
     return (
       <div className="p-inset-2xl space-y-section container">
@@ -148,6 +140,7 @@ export const ProductIdeasPage = () => {
     );
   }
 
+  // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="p-inset-2xl space-y-section container">
       <PageHeader
@@ -238,53 +231,65 @@ export const ProductIdeasPage = () => {
       </Card>
 
       {/* Ideas Grid */}
-      <ResponsiveGrid maxColumns="two">
-        {loading ? (
-          <>
-            <LoadingCard />
-            <LoadingCard />
-            <LoadingCard />
-            <LoadingCard />
-          </>
-        ) : ideas.length === 0 ? (
-          <div className="col-span-full">
-            <EmptyState
-              icon={<Lightbulb className="h-12 w-12" />}
-              title={
-                hasActiveFilters ? "No ideas match filters" : "No ideas yet"
-              }
-              description={
-                hasActiveFilters
-                  ? "Try adjusting your filters to see more ideas"
-                  : canCreateIdeas
-                    ? "Create your first product idea to get started"
-                    : "You don't have permission to create product ideas"
-              }
-              action={
-                hasActiveFilters
-                  ? {
-                      label: "Clear filters",
-                      onClick: clearFilters,
-                      variant: "neutral",
-                    }
-                  : canCreateIdeas
-                    ? {
-                        label: "Create Idea",
-                        onClick: () => null,
-                        variant: "primary",
-                      }
-                    : undefined
-              }
-            />
-          </div>
-        ) : (
-          ideas.map((idea) => (
-            <Link key={idea.ideaId} to={`/ideas/${idea.ideaId}`}>
-              <IdeaCard idea={idea} isOwner={idea.ownerId === user?.uid} />
-            </Link>
-          ))
+      <div className="flex flex-col gap-stack">
+        {/* Non-disruptive refresh indicator — shown only on filter changes / reloads */}
+        <RefreshingIndicator active={refreshing} className="-mt-stack" />
+
+        {/* Fetch error */}
+        {fetchError && !loading && (
+          <FetchErrorBanner message={fetchError} onRetry={loadIdeas} />
         )}
-      </ResponsiveGrid>
+
+        {loading ? (
+          /* First-load skeletons */
+          Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+            <IdeaCardSkeleton key={i} />
+          ))
+        ) : ideas.length === 0 && !fetchError ? (
+          /* Empty state */
+          <EmptyState
+            icon={<Lightbulb className="h-12 w-12" />}
+            title={hasActiveFilters ? "No ideas match filters" : "No ideas yet"}
+            description={
+              hasActiveFilters
+                ? "Try adjusting your filters to see more ideas"
+                : canCreateIdeas
+                  ? "Create your first product idea to get started"
+                  : "You don't have permission to create product ideas"
+            }
+            action={
+              hasActiveFilters
+                ? {
+                    label: "Clear filters",
+                    onClick: clearFilters,
+                    variant: "neutral",
+                  }
+                : canCreateIdeas
+                  ? {
+                      label: "Create Idea",
+                      onClick: () => null,
+                      variant: "primary",
+                    }
+                  : undefined
+            }
+          />
+        ) : (
+          /* Content — stays visible during background refreshes (opacity hint) */
+          <div
+            className="flex flex-col gap-stack transition-opacity duration-200"
+            style={{ opacity: refreshing ? 0.6 : 1 }}
+          >
+            {ideas.map((idea) => (
+              <IdeaCard
+                key={idea.ideaId}
+                idea={idea}
+                isOwner={idea.ownerId === user?.uid}
+                maxTags={5}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {canCreateIdeas && (
         <Button asChild>
@@ -297,53 +302,3 @@ export const ProductIdeasPage = () => {
     </div>
   );
 };
-
-// Idea Card Component
-interface IdeaCardProps {
-  idea: ProductIdea;
-  isOwner: boolean;
-}
-
-function IdeaCard({ idea, isOwner }: IdeaCardProps) {
-  return (
-    <Card className="cursor-pointer hover:border-primary transition-colors h-full flex flex-col">
-      <CardContent className="flex flex-col flex-1 gap-y-stack">
-        <div className="flex flex-row gap-inline pb-stack">
-          <IdeaStatusBadge status={idea.status} />
-          {idea.priority && <IdeaPriorityBadge priority={idea.priority} />}
-          {isOwner && (
-            <Badge variant="accent-outline" className="shrink-0 ml-auto mr-0">
-              Owner
-            </Badge>
-          )}
-        </div>
-        <div className="flex items-start justify-between gap-inline">
-          <h2 className="headline-4 line-clamp-2">{idea.title}</h2>
-        </div>
-
-        <p className="text-sm text-muted-foreground line-clamp-3 mb-stack">
-          {idea.summary}
-        </p>
-
-        {idea.tags && idea.tags.length > 0 && (
-          <div className="flex flex-wrap gap-inline mt-auto">
-            {idea.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="neutral-outline" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-            {idea.tags.length > 3 && (
-              <Badge variant="muted-subtle" className="text-xs">
-                +{idea.tags.length - 3}
-              </Badge>
-            )}
-          </div>
-        )}
-
-        <div className="text-xs text-muted-foreground ml-auto mt-stack">
-          {idea.createdAt && format(idea.createdAt.toDate(), "MMM d, yyyy")}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}

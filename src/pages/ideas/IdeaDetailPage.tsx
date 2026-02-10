@@ -1,5 +1,5 @@
 // @/pages/ideas/IdeaDetailPage.tsx
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +11,7 @@ import {
   Edit3,
   X,
   Save,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -18,6 +19,8 @@ import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { InlineAlert } from "@/components/common/InlineAlert";
+import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
+
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
@@ -76,7 +79,38 @@ import {
 import { FormTagInput } from "@/components/form/FormTagInput";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 
-// TODO:No allowing "save" on summary or notes if the form isn't dirty
+// ─── Detail page skeleton ─────────────────────────────────────────────────────
+
+function IdeaDetailSkeleton() {
+  return (
+    <div className="p-inset-2xl space-y-section container max-w-4xl">
+      <div className="flex items-center gap-stack">
+        <Skeleton className="h-10 w-32" />
+      </div>
+      <Card>
+        <CardContent className="space-y-stack p-inset-xl">
+          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-2/3" />
+        </CardContent>
+      </Card>
+      {/* Notes skeleton */}
+      <div className="space-y-stack">
+        <Skeleton className="h-6 w-32" />
+        <Card>
+          <CardContent className="p-inset-xl space-y-stack">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+            <Skeleton className="h-4 w-3/5" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 export function IdeaDetailPage() {
   const { ideaId } = useParams<{ ideaId: string }>();
@@ -85,21 +119,30 @@ export function IdeaDetailPage() {
 
   const [idea, setIdea] = useState<ProductIdea | null>(null);
   const [notes, setNotes] = useState<ProductIdeaNote[]>([]);
+
+  // Idea loading
+  const [ideaLoading, setIdeaLoading] = useState(true); // first load only
+  const [ideaError, setIdeaError] = useState<string | null>(null);
+
+  // Notes loading — no skeleton; use inline indicator + error instead
+  const [notesRefreshing, setNotesRefreshing] = useState(false);
+  const [notesError, setNotesError] = useState<string | null>(null);
+  const hasLoadedNotesOnce = useRef(false);
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const [cancelEditDialogOpen, setCancelEditDialogOpen] = useState(false);
   const [archiving, setArchiving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const isOwner = user?.uid === idea?.ownerId;
   const userRole = userProfile?.role;
 
-  // Permission checks
   const canEdit = canEditProductIdea(userRole, isOwner);
   const canArchive = canDeleteIdea(isOwner);
   const canAddNote = canCreateProductIdeaNote(userRole, user?.uid, user?.uid);
 
-  // Note form
+  // ─── Note form ─────────────────────────────────────────────────────────────
+
   const {
     control: noteControl,
     handleSubmit: handleSubmitNote,
@@ -110,12 +153,11 @@ export function IdeaDetailPage() {
     resolver: zodResolver(createNoteSchema),
     mode: "onBlur",
     reValidateMode: "onChange",
-    defaultValues: {
-      body: "",
-    },
+    defaultValues: { body: "" },
   });
 
-  // Edit form
+  // ─── Edit form ─────────────────────────────────────────────────────────────
+
   const {
     control: editControl,
     handleSubmit: handleSubmitEdit,
@@ -131,21 +173,19 @@ export function IdeaDetailPage() {
     mode: "onBlur",
   });
 
-  // Load idea
+  // ─── Load idea ─────────────────────────────────────────────────────────────
+
   const loadIdea = useCallback(async () => {
     if (!ideaId) return;
 
-    setError(null);
+    setIdeaError(null);
     try {
       const fetchedIdea = await getProductIdea(ideaId);
       if (!fetchedIdea) {
-        setError("Idea not found");
-        toast.error("Idea not found");
-        navigate("/ideas");
+        setIdeaError("Idea not found.");
         return;
       }
       setIdea(fetchedIdea);
-      // Reset edit form with idea data
       resetEdit({
         title: fetchedIdea.title,
         summary: fetchedIdea.summary,
@@ -153,17 +193,21 @@ export function IdeaDetailPage() {
         tags: fetchedIdea.tags || [],
         priority: fetchedIdea.priority,
       });
-    } catch (error) {
-      console.error("Error loading idea:", error);
-      setError("Failed to load idea");
-      toast.error("Failed to load idea");
-      navigate("/ideas");
+    } catch (err) {
+      console.error("Error loading idea:", err);
+      setIdeaError(err instanceof Error ? err.message : "Failed to load idea.");
+    } finally {
+      setIdeaLoading(false);
     }
-  }, [ideaId, navigate, resetEdit]);
+  }, [ideaId, resetEdit]);
 
-  // Load notes
+  // ─── Load notes ────────────────────────────────────────────────────────────
+
   const loadNotes = useCallback(async () => {
     if (!ideaId) return;
+
+    setNotesRefreshing(true);
+    setNotesError(null);
 
     try {
       const fetchedNotes = await getProductIdeaNotes(ideaId);
@@ -172,23 +216,29 @@ export function IdeaDetailPage() {
         return a.createdAt.toMillis() - b.createdAt.toMillis();
       });
       setNotes(sortedNotes);
-    } catch (error) {
-      console.error("Error loading notes:", error);
-      toast.error("Failed to load notes");
+      hasLoadedNotesOnce.current = true;
+    } catch (err) {
+      console.error("Error loading notes:", err);
+      setNotesError(
+        err instanceof Error ? err.message : "Failed to load notes.",
+      );
+    } finally {
+      setNotesRefreshing(false);
     }
   }, [ideaId]);
 
-  // Load on mount
   useEffect(() => {
     loadIdea();
     loadNotes();
   }, [loadIdea, loadNotes]);
 
+  // ─── Note handlers ─────────────────────────────────────────────────────────
+
   const onSubmitNote: SubmitHandler<CreateNoteInput> = async (data) => {
     if (!user || !canAddNote || !ideaId) {
       setNoteError("root", {
         type: "auth",
-        message: "You must be signed in to add a note",
+        message: "You must be signed in to add a note.",
       });
       return;
     }
@@ -208,12 +258,12 @@ export function IdeaDetailPage() {
       resetNote();
       toast.success("Note added");
       await loadNotes();
-    } catch (error) {
+    } catch (err) {
       setNoteError("root", {
         type: "server",
         message:
-          error instanceof Error
-            ? error.message
+          err instanceof Error
+            ? err.message
             : "Failed to add note. Please try again.",
       });
       toast.error("Failed to add note");
@@ -224,10 +274,12 @@ export function IdeaDetailPage() {
     if (!ideaId) return;
     try {
       await updateProductIdeaNote(ideaId, noteId, { body });
+      toast.success("Note updated");
       await loadNotes();
-    } catch (error) {
-      console.error("Error updating note:", error);
-      throw error;
+    } catch (err) {
+      console.error("Error updating note:", err);
+      toast.error("Failed to update note");
+      throw err;
     }
   };
 
@@ -235,12 +287,16 @@ export function IdeaDetailPage() {
     if (!ideaId) return;
     try {
       await archiveProductIdeaNote(ideaId, noteId);
+      toast.success("Note removed");
       await loadNotes();
-    } catch (error) {
-      console.error("Error archiving note:", error);
-      throw error;
+    } catch (err) {
+      console.error("Error archiving note:", err);
+      toast.error("Failed to remove note");
+      throw err;
     }
   };
+
+  // ─── Idea handlers ─────────────────────────────────────────────────────────
 
   const handleArchiveIdea = async () => {
     if (!ideaId) return;
@@ -249,17 +305,15 @@ export function IdeaDetailPage() {
       await archiveProductIdea(ideaId);
       toast.success("Idea archived");
       navigate("/ideas");
-    } catch (error) {
-      console.error("Error archiving idea:", error);
+    } catch (err) {
+      console.error("Error archiving idea:", err);
       toast.error("Failed to archive idea");
     } finally {
       setArchiving(false);
     }
   };
 
-  const handleEnterEditMode = () => {
-    setIsEditMode(true);
-  };
+  const handleEnterEditMode = () => setIsEditMode(true);
 
   const handleCancelEdit = () => {
     if (isEditDirty) {
@@ -278,48 +332,36 @@ export function IdeaDetailPage() {
 
   const onSubmitEdit: SubmitHandler<UpdateProductIdeaInput> = async (data) => {
     if (!ideaId) return;
-
     try {
       await updateProductIdea(ideaId, data);
       toast.success("Idea updated");
       setIsEditMode(false);
       await loadIdea();
-    } catch (error) {
+    } catch (err) {
       setEditError("root", {
         type: "server",
         message:
-          error instanceof Error
-            ? error.message
+          err instanceof Error
+            ? err.message
             : "Failed to update idea. Please try again.",
       });
       toast.error("Failed to update idea");
     }
   };
 
-  // Show loading skeleton only on initial page load
-  if (!idea && !error) {
-    return (
-      <div className="p-inset-2xl space-y-section container max-w-4xl">
-        <div className="flex items-center gap-stack">
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <Card>
-          <CardContent className="space-y-stack p-inset-xl">
-            <Skeleton className="h-8 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-2/3" />
-          </CardContent>
-        </Card>
-      </div>
-    );
+  // ─── States ────────────────────────────────────────────────────────────────
+
+  // First load skeleton
+  if (ideaLoading) {
+    return <IdeaDetailSkeleton />;
   }
 
-  if (error || !idea) {
+  // Load error — idea not found or network failure
+  if (ideaError || !idea) {
     return (
       <div className="p-inset-2xl space-y-section container max-w-4xl">
         <PageHeader
-          pageTitle="Error"
+          pageTitle="Product Idea"
           actions={
             <Button variant="ghost" onClick={() => navigate("/ideas")}>
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -327,10 +369,15 @@ export function IdeaDetailPage() {
             </Button>
           }
         />
-        <InlineAlert variant="warning">{error || "Idea not found"}</InlineAlert>
+        <FetchErrorBanner
+          message={ideaError || "Idea not found."}
+          onRetry={loadIdea}
+        />
       </div>
     );
   }
+
+  // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
     <>
@@ -358,7 +405,7 @@ export function IdeaDetailPage() {
         <Card>
           <CardContent className="space-y-section p-inset-xl">
             {isEditMode ? (
-              /* EDIT MODE - Inline Form */
+              /* ── EDIT MODE ── */
               <form
                 onSubmit={handleSubmitEdit(onSubmitEdit)}
                 className="space-y-stack"
@@ -402,7 +449,6 @@ export function IdeaDetailPage() {
                       description: s.description,
                     }))}
                   />
-
                   <FormSelect
                     control={editControl}
                     name="priority"
@@ -427,7 +473,6 @@ export function IdeaDetailPage() {
                   helpText="Separate tags with commas"
                 />
 
-                {/* Metadata - Read Only in Edit Mode */}
                 <div className="caption text-muted-foreground space-y-inline pt-stack border-t">
                   {idea.createdAt && (
                     <div>
@@ -449,7 +494,6 @@ export function IdeaDetailPage() {
                   )}
                 </div>
 
-                {/* Edit Actions */}
                 <div className="flex gap-stack pt-stack border-t">
                   <Button
                     type="button"
@@ -465,13 +509,22 @@ export function IdeaDetailPage() {
                     disabled={isSubmittingEdit}
                     className="ml-auto"
                   >
-                    <Save className="h-4 w-4 mr-2" />
-                    {isSubmittingEdit ? "Saving..." : "Save Changes"}
+                    {isSubmittingEdit ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Saving…
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Changes
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>
             ) : (
-              /* VIEW MODE - Static Content */
+              /* ── VIEW MODE ── */
               <>
                 <div>
                   <h3 className="headline-5 mb-stack">Summary</h3>
@@ -514,7 +567,6 @@ export function IdeaDetailPage() {
                   )}
                 </div>
 
-                {/* View Actions */}
                 {(canEdit || canArchive) && (
                   <div className="flex gap-stack pt-stack border-t">
                     {canEdit && (
@@ -543,13 +595,23 @@ export function IdeaDetailPage() {
 
         <Separator />
 
-        {/* Notes Section */}
+        {/* ── Notes Section ── */}
         <div className="space-y-stack">
           <div className="flex items-center gap-stack">
             <MessageSquare className="h-5 w-5" />
             <h3 className="headline-5">Notes ({notes.length})</h3>
+            {/* Non-disruptive notes refresh indicator */}
+            {notesRefreshing && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground ml-auto" />
+            )}
           </div>
 
+          {/* Notes fetch error */}
+          {notesError && (
+            <FetchErrorBanner message={notesError} onRetry={loadNotes} />
+          )}
+
+          {/* Add note form */}
           {canAddNote && !isEditMode && (
             <Card>
               <CardContent className="p-inset-xl">
@@ -581,8 +643,17 @@ export function IdeaDetailPage() {
                       size="sm"
                       disabled={isSubmittingNote}
                     >
-                      <Send className="h-3 w-3" />
-                      {isSubmittingNote ? "Adding..." : "Add Note"}
+                      {isSubmittingNote ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Adding…
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-3 w-3" />
+                          Add Note
+                        </>
+                      )}
                     </Button>
                   </div>
                 </form>
@@ -590,9 +661,9 @@ export function IdeaDetailPage() {
             </Card>
           )}
 
-          {/* Notes List - No loading skeleton, just updates */}
+          {/* Notes list */}
           <div className="space-y-stack">
-            {notes.length === 0 ? (
+            {!notesError && notes.length === 0 ? (
               <Card>
                 <CardContent className="p-inset-xl">
                   <p className="body-2 text-center text-muted-foreground py-inset-lg">
@@ -621,7 +692,7 @@ export function IdeaDetailPage() {
         </div>
       </div>
 
-      {/* Cancel Edit Confirmation */}
+      {/* ── Cancel edit confirmation ── */}
       <AlertDialog
         open={cancelEditDialogOpen}
         onOpenChange={setCancelEditDialogOpen}
@@ -642,7 +713,7 @@ export function IdeaDetailPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Archive Confirmation */}
+      {/* ── Archive confirmation ── */}
       {canArchive && (
         <AlertDialog
           open={archiveDialogOpen}
@@ -663,7 +734,14 @@ export function IdeaDetailPage() {
                 disabled={archiving}
                 className="bg-warning text-warning-foreground hover:bg-warning-hover border border-border-warning"
               >
-                {archiving ? "Archiving..." : "Archive"}
+                {archiving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Archiving…
+                  </>
+                ) : (
+                  "Archive"
+                )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

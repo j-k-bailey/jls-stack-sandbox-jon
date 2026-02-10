@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/common/PageHeader";
@@ -71,12 +71,10 @@ export function CreateIdeaPage() {
     try {
       const docRef = await createProductIdea(data, user.uid);
 
-      // Show success toast
       toast.success("Idea created!", {
         description: `"${data.title}" has been created successfully.`,
       });
 
-      // Navigate to the new idea detail page
       navigate(`/ideas/${docRef.id}`);
     } catch (error) {
       setError("root", {
@@ -87,7 +85,6 @@ export function CreateIdeaPage() {
             : "Failed to create idea. Please try again.",
       });
 
-      // Show error toast
       toast.error("Failed to create idea", {
         description:
           error instanceof Error ? error.message : "Please try again.",
@@ -95,9 +92,7 @@ export function CreateIdeaPage() {
     }
   };
 
-  const handleBackToList = () => {
-    navigate("/ideas");
-  };
+  const handleBackToList = () => navigate("/ideas");
 
   return (
     <div className="p-inset-2xl space-y-section container max-w-4xl">
@@ -112,6 +107,7 @@ export function CreateIdeaPage() {
         }
       />
 
+      {/* Permission error — shown when user lacks create access */}
       {!canCreateIdea && (
         <InlineAlert variant="warning">
           You must be a contributor, moderator, or admin to create product
@@ -119,6 +115,7 @@ export function CreateIdeaPage() {
         </InlineAlert>
       )}
 
+      {/* Server / validation root error */}
       {errors.root?.message && (
         <InlineAlert variant="warning" dismissible>
           {errors.root.message}
@@ -128,7 +125,7 @@ export function CreateIdeaPage() {
       <Card>
         <CardContent className="p-inset-xl">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-section">
-            <FieldSet disabled={!canCreateIdea}>
+            <FieldSet disabled={!canCreateIdea || isSubmitting}>
               <FieldGroup>
                 <FieldLegend>Basic Information</FieldLegend>
 
@@ -220,7 +217,14 @@ export function CreateIdeaPage() {
                 disabled={!canCreateIdea || isSubmitting}
                 className="sm:ml-auto"
               >
-                {isSubmitting ? "Creating..." : "Create Idea"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Creating…
+                  </>
+                ) : (
+                  "Create Idea"
+                )}
               </Button>
             </div>
           </form>
