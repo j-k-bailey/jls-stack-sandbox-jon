@@ -18,9 +18,12 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  IdeaStatusDisplay,
+  IdeaPriorityDisplay,
+} from "@/components/productIdea/IdeaStatusDisplay";
 import { InlineAlert } from "@/components/common/InlineAlert";
 import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
-
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,10 +51,6 @@ import type {
 } from "@/lib/types/productIdeas";
 import { format } from "date-fns";
 import { NoteCard } from "@/components/productIdea/NoteCard";
-import {
-  IdeaStatusBadge,
-  IdeaPriorityBadge,
-} from "@/components/productIdea/IdeaBadges";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -147,7 +146,11 @@ export function IdeaDetailPage() {
     control: noteControl,
     handleSubmit: handleSubmitNote,
     reset: resetNote,
-    formState: { errors: noteErrors, isSubmitting: isSubmittingNote },
+    formState: {
+      errors: noteErrors,
+      isSubmitting: isSubmittingNote,
+      isDirty: isNoteDirty,
+    },
     setError: setNoteError,
   } = useForm<CreateNoteInput>({
     resolver: zodResolver(createNoteSchema),
@@ -392,14 +395,10 @@ export function IdeaDetailPage() {
           }
         />
 
-        <div className="flex items-center gap-x-inline">
-          <IdeaStatusBadge status={idea.status} />
-          {idea.priority && (
-            <>
-              <span className="h-1 w-1 rounded-full bg-muted-foreground" />
-              <IdeaPriorityBadge priority={idea.priority} />
-            </>
-          )}
+        {/* Status + priority — headline-weight typographic display, not badges */}
+        <div className="flex items-start gap-x-6">
+          <IdeaStatusDisplay status={idea.status} />
+          {idea.priority && <IdeaPriorityDisplay priority={idea.priority} />}
         </div>
 
         <Card>
@@ -408,7 +407,7 @@ export function IdeaDetailPage() {
               /* ── EDIT MODE ── */
               <form
                 onSubmit={handleSubmitEdit(onSubmitEdit)}
-                className="space-y-stack"
+                className="space-y-section"
               >
                 {editErrors.root?.message && (
                   <InlineAlert variant="warning" dismissible>
@@ -473,7 +472,7 @@ export function IdeaDetailPage() {
                   helpText="Separate tags with commas"
                 />
 
-                <div className="caption text-muted-foreground space-y-inline pt-stack border-t">
+                <div className="caption text-muted-foreground space-y-inline py-section">
                   {idea.createdAt && (
                     <div>
                       Created{" "}
@@ -500,14 +499,16 @@ export function IdeaDetailPage() {
                     variant="outline"
                     onClick={handleCancelEdit}
                     disabled={isSubmittingEdit}
+                    aria-label="Cancel Product Idea Edit"
                   >
                     <X className="h-4 w-4 mr-2" />
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    disabled={isSubmittingEdit}
+                    disabled={isSubmittingEdit || !isEditDirty}
                     className="ml-auto"
+                    aria-label="Submit Product Idea Edit"
                   >
                     {isSubmittingEdit ? (
                       <>
@@ -526,68 +527,67 @@ export function IdeaDetailPage() {
             ) : (
               /* ── VIEW MODE ── */
               <>
-                <div>
-                  <h3 className="headline-5 mb-stack">Summary</h3>
-                  <p className="body-1 text-muted-foreground wrap-break-word">
-                    {idea.summary}
-                  </p>
-                </div>
+                {/* Summary — no label, it's the content */}
+                <p className="body-1 text-foreground wrap-break-word leading-relaxed">
+                  {idea.summary}
+                </p>
 
-                {idea.tags && idea.tags.length > 0 && (
-                  <div>
-                    <h3 className="headline-5 mb-stack">Tags</h3>
+                {/* Footer strip: tags left · meta + actions right */}
+                <div className="flex flex-wrap items-end justify-between gap-stack pt-stack border-t border-dashed">
+                  {/* Tags */}
+                  {idea.tags && idea.tags.length > 0 ? (
                     <div className="flex flex-wrap gap-inline">
                       {idea.tags.map((tag) => (
-                        <Badge key={tag} variant="accent-subtle">
+                        <Badge
+                          key={tag}
+                          variant="neutral-outline"
+                          className="text-xs"
+                        >
                           {tag}
                         </Badge>
                       ))}
                     </div>
-                  </div>
-                )}
-
-                <div className="caption text-muted-foreground space-y-inline">
-                  {idea.createdAt && (
-                    <div>
-                      Created{" "}
-                      {format(
-                        idea.createdAt.toDate(),
-                        "MMM d, yyyy 'at' h:mm a",
-                      )}
-                    </div>
+                  ) : (
+                    <span />
                   )}
-                  {idea.updatedAt && (
-                    <div>
-                      Updated{" "}
-                      {format(
-                        idea.updatedAt.toDate(),
-                        "MMM d, yyyy 'at' h:mm a",
-                      )}
-                    </div>
-                  )}
-                </div>
 
-                {(canEdit || canArchive) && (
-                  <div className="flex gap-stack pt-stack border-t">
+                  {/* Meta + actions — right-aligned, grouped tightly */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-inline sm:gap-stack m-auto mt-section sm:mt-stack sm:ml-auto sm:mr-0">
+                    {/* Date meta — single condensed line; updated takes priority */}
+                    <p className="caption text-muted-foreground">
+                      {idea.updatedAt
+                        ? `Edited ${format(idea.updatedAt.toDate(), "MMM d, yyyy")}`
+                        : idea.createdAt
+                          ? `Created ${format(idea.createdAt.toDate(), "MMM d, yyyy")}`
+                          : null}
+                    </p>
+
+                    {/* Action buttons — subtle until needed */}
                     {canEdit && (
-                      <Button variant="outline" onClick={handleEnterEditMode}>
-                        <Edit3 className="h-4 w-4 mr-2" />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleEnterEditMode}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Edit3 className="h-3.5 w-3.5 mr-1.5" />
                         Edit
                       </Button>
                     )}
                     {canArchive && (
                       <Button
-                        variant="outline"
+                        variant="ghost"
+                        size="sm"
                         semantic="warning"
                         onClick={() => setArchiveDialogOpen(true)}
-                        className="ml-auto"
+                        className="text-muted-foreground hover:text-warning-foreground"
                       >
-                        <Archive className="h-4 w-4 mr-2" />
+                        <Archive className="h-3.5 w-3.5 mr-1.5" />
                         Archive
                       </Button>
                     )}
                   </div>
-                )}
+                </div>
               </>
             )}
           </CardContent>
@@ -599,7 +599,7 @@ export function IdeaDetailPage() {
         <div className="space-y-stack">
           <div className="flex items-center gap-stack">
             <MessageSquare className="h-5 w-5" />
-            <h3 className="headline-5">Notes ({notes.length})</h3>
+            <h2 className="headline-4">Notes ({notes.length})</h2>
             {/* Non-disruptive notes refresh indicator */}
             {notesRefreshing && (
               <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground ml-auto" />
@@ -641,7 +641,8 @@ export function IdeaDetailPage() {
                       variant="filled"
                       semantic="primary"
                       size="sm"
-                      disabled={isSubmittingNote}
+                      aria-label="Submit note"
+                      disabled={isSubmittingNote || !isNoteDirty}
                     >
                       {isSubmittingNote ? (
                         <>

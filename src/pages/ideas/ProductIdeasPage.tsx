@@ -291,14 +291,24 @@ export const ProductIdeasPage = () => {
         )}
       </div>
 
-      {canCreateIdeas && (
-        <Button asChild>
-          <Link to="/ideas/new">
-            <Plus className="h-4 w-4 mr-2" />
-            New Idea
+      <div className="flex items-center justify-between">
+        {canCreateIdeas ? (
+          <Button asChild>
+            <Link to="/ideas/new">
+              <Plus className="h-4 w-4 mr-2" />
+              New Idea
+            </Link>
+          </Button>
+        ) : (
+          <span />
+        )}
+
+        <Button asChild variant="link" className="ml-auto mr-0 p-0">
+          <Link to="/ideas/archived" className="caption text-muted-foreground ">
+            View archived ideas →
           </Link>
         </Button>
-      )}
+      </div>
     </div>
   );
 };
