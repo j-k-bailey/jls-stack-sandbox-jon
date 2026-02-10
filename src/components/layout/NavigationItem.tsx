@@ -16,6 +16,7 @@ interface NavItemConfig {
   type: "item";
   label: string;
   to: string;
+  end?: boolean;
   icon?: React.ComponentType<{ className?: string }>;
   badge?: BadgeConfig;
   notification?: NotificationConfig;
@@ -36,6 +37,7 @@ interface NavigationGroupProps {
 interface NavItemProps {
   label: string;
   to: string;
+  end?: boolean;
   icon?: React.ComponentType<{ className?: string }>;
   onClick?: () => void;
   nested?: boolean;
@@ -49,14 +51,23 @@ interface NavHeadingProps {
 
 const NavigationItem = React.forwardRef<HTMLAnchorElement, NavItemProps>(
   (
-    { label, to, icon: Icon, onClick, nested = false, badge, notification },
+    {
+      label,
+      to,
+      end,
+      icon: Icon,
+      onClick,
+      nested = false,
+      badge,
+      notification,
+    },
     ref,
   ) => {
     return (
       <NavLink
         ref={ref}
         to={to}
-        end={to === "/"}
+        end={end ?? to === "/"} // use prop if provided, fall back to existing logic
         onClick={onClick}
         className={({ isActive }) =>
           cn(
@@ -151,6 +162,7 @@ const NavigationGroup = React.forwardRef<HTMLDivElement, NavigationGroupProps>(
                   key={item.to}
                   label={item.label}
                   to={item.to}
+                  end={item.end} // pass it through
                   icon={item.icon}
                   badge={item.badge}
                   notification={item.notification}
