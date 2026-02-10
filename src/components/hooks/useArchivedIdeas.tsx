@@ -5,6 +5,7 @@ import {
   unarchiveProductIdea,
 } from "@/lib/firestore/productIdeas";
 import type { ProductIdea } from "@/lib/types/productIdeas";
+import { useLiveStatus } from "@/contexts/LiveStatusContext";
 
 const MIN_SKELETON_MS = 300;
 
@@ -73,9 +74,13 @@ export function useArchivedIdeas() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const hasLoadedOnce = useRef(false);
 
+  const { registerListener, reportError } = useLiveStatus();
+
   useEffect(() => {
     hasLoadedOnce.current = false;
     dispatch({ type: "LOAD_START" });
+
+    const unregister = registerListener();
 
     const unsubscribe = subscribeToArchivedIdeas(
       async (nextIdeas) => {
@@ -96,11 +101,15 @@ export function useArchivedIdeas() {
       (err) => {
         console.error("Archived ideas subscription error:", err);
         dispatch({ type: "ERROR", message: "Failed to load archived ideas." });
+        reportError();
       },
     );
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      unsubscribe();
+      unregister();
+    };
+  }, [registerListener, reportError]);
 
   const restore = useCallback(
     async (ideaIds: string[]): Promise<{ failed: string[] }> => {

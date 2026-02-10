@@ -1,4 +1,3 @@
-// @/pages/ideas/ProductIdeasPage.tsx
 import { useReducer, useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Plus, Filter, Lightbulb } from "lucide-react";
@@ -32,6 +31,7 @@ import {
   canCreateProductIdea,
 } from "@/lib/permissions/productIdeas";
 import { ProgressBar } from "@/components/common/ProgressBar";
+import { useLiveStatus } from "@/contexts/LiveStatusContext";
 
 const SKELETON_COUNT = 4;
 const MIN_SKELETON_MS = 300;
@@ -118,6 +118,8 @@ export const ProductIdeasPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, userProfile } = useAuth();
 
+  const { registerListener, reportError } = useLiveStatus();
+
   const isSignedIn = !!user;
   const role = userProfile?.role;
 
@@ -148,6 +150,8 @@ export const ProductIdeasPage = () => {
     dispatch({
       type: isCold ? "SUBSCRIBE_START_COLD" : "SUBSCRIBE_START_WARM",
     });
+
+    const unregister = registerListener();
 
     const filters: ProductIdeaFilters = {};
     if (statusFilter) filters.status = statusFilter as ProductIdeaStatus;
@@ -184,8 +188,17 @@ export const ProductIdeasPage = () => {
     return () => {
       // Don't reset hasLoadedOnce here — we want warm starts on filter changes
       unsubscribe();
+      unregister();
     };
-  }, [user, canReadIdeas, statusFilter, priorityFilter, myIdeasFilter]);
+  }, [
+    user,
+    canReadIdeas,
+    statusFilter,
+    priorityFilter,
+    myIdeasFilter,
+    registerListener,
+    reportError,
+  ]);
 
   // ─── Filter helpers ───────────────────────────────────────────────────────
   const handleFilterChange = (key: string, value: string | null) => {

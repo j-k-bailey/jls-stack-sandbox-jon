@@ -6,15 +6,18 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import App from "./App";
 import "./index.css";
+import { LiveStatusProvider } from "@/contexts/LiveStatusContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster position="top-center" />
-          <App />
-        </TooltipProvider>
+        <LiveStatusProvider>
+          <TooltipProvider>
+            <Toaster position="top-center" />
+            <App />
+          </TooltipProvider>
+        </LiveStatusProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

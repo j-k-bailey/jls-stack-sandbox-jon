@@ -1,4 +1,3 @@
-// @/pages/ideas/IdeaNotesSectionPage.tsx
 import { useReducer, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { MessageSquare, Send, Loader2 } from "lucide-react";
@@ -34,6 +33,7 @@ import {
   canDeleteProductIdeaNote,
   canEditProductIdeaNote,
 } from "@/lib/permissions/productIdeaNotes";
+import { useLiveStatus } from "@/contexts/LiveStatusContext";
 
 const MIN_SKELETON_MS = 300;
 
@@ -104,6 +104,9 @@ export function IdeaNotesSection({
   const ideaId = propIdeaId ?? params.ideaId;
 
   const { user, userProfile } = useAuth();
+
+  const { registerListener, reportError } = useLiveStatus();
+
   const [notesState, notesDispatch] = useReducer(
     notesReducer,
     notesInitialState,
@@ -125,6 +128,8 @@ export function IdeaNotesSection({
 
     notesLoadedOnce.current = false;
     notesDispatch({ type: "LOAD_START" });
+
+    const unregister = registerListener();
 
     const subscribe = archived
       ? subscribeToArchivedIdeaNotes
@@ -156,8 +161,11 @@ export function IdeaNotesSection({
       },
     );
 
-    return () => unsubscribe();
-  }, [ideaId, archived]);
+    return () => {
+      unsubscribe();
+      unregister();
+    };
+  }, [ideaId, archived, registerListener, reportError]);
 
   // ─── Note form ─────────────────────────────────────────────────────────────
 

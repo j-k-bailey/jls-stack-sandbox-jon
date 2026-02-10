@@ -1,36 +1,24 @@
 import { useReducer, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArchiveRestore,
+  Archive,
+  ArrowLeft,
+  Edit3,
+  Loader2,
+  Save,
+  X,
+} from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Archive, ArrowLeft, Edit3, X, Save, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  IdeaStatusDisplay,
-  IdeaPriorityDisplay,
-} from "@/components/productIdea/IdeaStatusDisplay";
-import { InlineAlert } from "@/components/common/InlineAlert";
-import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
-import { ProgressBar } from "@/components/common/ProgressBar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  subscribeToIdeaById,
-  updateProductIdea,
-  archiveProductIdea,
-} from "@/lib/firestore/productIdeas";
-import {
-  updateProductIdeaSchema,
-  type UpdateProductIdeaInput,
-  IDEA_STATUSES,
-  IDEA_PRIORITIES,
-} from "@/lib/zodSchemas/productIdea";
-import type { ProductIdea } from "@/lib/types/productIdeas";
-import { format } from "date-fns";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,25 +29,50 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
+import { ArchivedIdeaBanner } from "@/components/productIdea/ArchivedIdeaBanner";
+import { InlineAlert } from "@/components/common/InlineAlert";
+import { ProgressBar } from "@/components/common/ProgressBar";
 import {
-  canEditProductIdea,
-  canDeleteProductIdea as canDeleteIdea,
-} from "@/lib/permissions/productIdeas";
+  IdeaStatusDisplay,
+  IdeaPriorityDisplay,
+} from "@/components/productIdea/IdeaStatusDisplay";
+import { IdeaNotesSection } from "@/pages/ideas/IdeaNotesSection";
+import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import {
   FormInput,
   FormTextarea,
   FormSelect,
 } from "@/components/form/FormField";
 import { FormTagInput } from "@/components/form/FormTagInput";
-import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
-import { IdeaNotesSection } from "@/pages/ideas/IdeaNotesSection";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  subscribeToIdeaById,
+  updateProductIdea,
+  archiveProductIdea,
+  unarchiveProductIdea,
+} from "@/lib/firestore/productIdeas";
+import {
+  updateProductIdeaSchema,
+  type UpdateProductIdeaInput,
+  IDEA_STATUSES,
+  IDEA_PRIORITIES,
+} from "@/lib/zodSchemas/productIdea";
+import type { ProductIdea } from "@/lib/types/productIdeas";
+import {
+  canEditProductIdea,
+  canDeleteProductIdea as canArchiveOrRestoreIdea,
+} from "@/lib/permissions/productIdeas";
+import { useLiveStatus } from "@/contexts/LiveStatusContext";
 
-// ─── Reducers ─────────────────────────────────────────────────────────────────
+const MIN_SKELETON_MS = 300;
+
+// ─── Reducer ──────────────────────────────────────────────────────────────────
 
 type IdeaState = {
   idea: ProductIdea | null;
-  loading: boolean; // first load → skeleton
-  refreshing: boolean; // live update pulse → progress bar
+  loading: boolean;
+  refreshing: boolean;
   error: string | null;
 };
 
@@ -105,7 +118,7 @@ function ideaReducer(state: IdeaState, action: IdeaAction): IdeaState {
   }
 }
 
-// ─── Detail page skeleton ─────────────────────────────────────────────────────
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
 function IdeaDetailSkeleton() {
   return (
@@ -135,42 +148,43 @@ function IdeaDetailSkeleton() {
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function IdeaDetailPage() {
   const { ideaId } = useParams<{ ideaId: string }>();
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
 
+  const { registerListener, reportError } = useLiveStatus();
+
   const [ideaState, ideaDispatch] = useReducer(ideaReducer, ideaInitialState);
-  const {
-    idea,
-    loading: ideaLoading,
-    refreshing: ideaRefreshing,
-    error: ideaError,
-  } = ideaState;
+  const { idea, loading, refreshing, error } = ideaState;
 
   const ideaLoadedOnce = useRef(false);
+  const isEditModeRef = useRef(false);
+  const wasArchivedRef = useRef<boolean | null>(null);
+  const isNavigatingRef = useRef(false);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+  const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [cancelEditDialogOpen, setCancelEditDialogOpen] = useState(false);
   const [archiving, setArchiving] = useState(false);
+  const [restoring, setRestoring] = useState(false);
 
-  // Ref so the subscription callback can read current edit mode
-  // without it being a dependency of the subscription effect
-  const isEditModeRef = useRef(false);
+  // Keep ref in sync for use inside subscription closure
   useEffect(() => {
     isEditModeRef.current = isEditMode;
   }, [isEditMode]);
 
+  const isArchived = !!idea?.archivedAt;
   const isOwner = user?.uid === idea?.ownerId;
   const userRole = userProfile?.role;
+  const canEdit = canEditProductIdea(userRole, isOwner) && !isArchived;
+  const canArchive = canArchiveOrRestoreIdea(isOwner) && !isArchived;
+  const canRestore = canArchiveOrRestoreIdea(isOwner) && isArchived;
 
-  const canEdit = canEditProductIdea(userRole, isOwner);
-  const canArchive = canDeleteIdea(isOwner);
-
-  // ─── Edit form ──────────────────────────────────────────────────────────────
+  // ─── Edit form ─────────────────────────────────────────────────────────────
 
   const {
     control: editControl,
@@ -187,11 +201,14 @@ export function IdeaDetailPage() {
     mode: "onBlur",
   });
 
-  // ─── Idea subscription ──────────────────────────────────────────────────────
+  // ─── Idea subscription ─────────────────────────────────────────────────────
 
   useEffect(() => {
     if (!ideaId) return;
 
+    const unregister = registerListener();
+    ideaLoadedOnce.current = false;
+    wasArchivedRef.current = null;
     ideaDispatch({ type: "LOAD_START" });
 
     const unsubscribe = subscribeToIdeaById(
@@ -203,21 +220,41 @@ export function IdeaDetailPage() {
         }
 
         const isFirst = !ideaLoadedOnce.current;
+        const isNowArchived = !!nextIdea.archivedAt;
 
         if (isFirst) {
           await new Promise<void>((resolve) =>
             setTimeout(resolve, MIN_SKELETON_MS),
           );
           ideaLoadedOnce.current = true;
+          wasArchivedRef.current = isNowArchived;
           ideaDispatch({ type: "LOAD_SUCCESS", idea: nextIdea });
         } else {
+          const wasArchived = wasArchivedRef.current;
+
+          // Always update the ref before any early return
+          wasArchivedRef.current = isNowArchived;
+
+          // Detect archive state transition
+          if (wasArchived !== null && wasArchived !== isNowArchived) {
+            // Only redirect if this change came from another session,
+            // not from an action the user took in this window
+            if (!isNavigatingRef.current) {
+              if (isNowArchived) {
+                navigate(`/ideas/archived/${ideaId}`, { replace: true });
+              } else {
+                navigate(`/ideas/${ideaId}`, { replace: true });
+              }
+            }
+            return;
+          }
+
           ideaDispatch({ type: "REFRESH_START" });
-          await new Promise<void>((resolve) => setTimeout(resolve, 400));
+          await new Promise<void>((resolve) => setTimeout(resolve, 0));
           ideaDispatch({ type: "REFRESH_SUCCESS", idea: nextIdea });
         }
 
-        // Always resync form base state unless user is mid-edit,
-        // which would clobber their in-progress changes
+        // Resync edit form base state unless user is mid-edit
         if (!isEditModeRef.current) {
           resetEdit({
             title: nextIdea.title,
@@ -230,32 +267,19 @@ export function IdeaDetailPage() {
       },
       (err) => {
         console.error("Idea subscription error:", err);
-        ideaDispatch({
-          type: "ERROR",
-          message: "Failed to load idea in real time.",
-        });
+        ideaDispatch({ type: "ERROR", message: "Failed to load idea." });
+        reportError();
       },
     );
 
-    return () => unsubscribe();
-  }, [ideaId, resetEdit]);
+    return () => {
+      isNavigatingRef.current = false;
+      unsubscribe();
+      unregister();
+    };
+  }, [ideaId, navigate, resetEdit, registerListener, reportError]);
 
-  // ─── Idea handlers ──────────────────────────────────────────────────────────
-
-  const handleArchiveIdea = async () => {
-    if (!ideaId) return;
-    setArchiving(true);
-    try {
-      await archiveProductIdea(ideaId);
-      toast.success("Idea archived");
-      navigate("/ideas");
-    } catch (err) {
-      console.error("Error archiving idea:", err);
-      toast.error("Failed to archive idea");
-    } finally {
-      setArchiving(false);
-    }
-  };
+  // ─── Handlers ──────────────────────────────────────────────────────────────
 
   const handleEnterEditMode = () => setIsEditMode(true);
 
@@ -280,7 +304,6 @@ export function IdeaDetailPage() {
       await updateProductIdea(ideaId, data);
       toast.success("Idea updated");
       setIsEditMode(false);
-      // No manual reload — subscription fires automatically
     } catch (err) {
       setEditError("root", {
         type: "server",
@@ -293,30 +316,70 @@ export function IdeaDetailPage() {
     }
   };
 
-  // ─── States ─────────────────────────────────────────────────────────────────
+  const handleArchive = async () => {
+    if (!ideaId) return;
+    setArchiving(true);
+    try {
+      await archiveProductIdea(ideaId);
+      toast.success("Idea archived");
+      // Flag before navigating so the subscription's transition
+      // detection doesn't race with our intentional navigation
+      isNavigatingRef.current = true;
+      navigate("/ideas");
+    } catch (err) {
+      console.error("Error archiving idea:", err);
+      toast.error("Failed to archive idea");
+      setArchiving(false);
+      setArchiveDialogOpen(false);
+    }
+  };
 
-  if (ideaLoading) {
-    return <IdeaDetailSkeleton />;
-  }
+  const handleRestore = async () => {
+    if (!ideaId) return;
+    setRestoring(true);
+    try {
+      await unarchiveProductIdea(ideaId);
+      toast.success("Idea restored");
+      // Flag so the subscription redirect takes over cleanly
+      // rather than racing with any navigation we might add here
+      isNavigatingRef.current = true;
+      // No explicit navigate — subscription detects archivedAt: null
+      // and redirects to /ideas/:ideaId
+    } catch (err) {
+      console.error("Error restoring idea:", err);
+      toast.error("Failed to restore idea");
+      setRestoring(false);
+      setRestoreDialogOpen(false);
+    }
+  };
 
-  if (ideaError || !idea) {
+  // ─── Loading / error states ────────────────────────────────────────────────
+
+  if (loading) return <IdeaDetailSkeleton />;
+
+  if (error || !idea) {
     return (
       <div className="p-inset-2xl space-y-section container max-w-4xl">
         <PageHeader
           pageTitle="Product Idea"
           actions={
-            <Button variant="ghost" onClick={() => navigate("/ideas")}>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                navigate(isArchived ? "/ideas/archived" : "/ideas")
+              }
+            >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Ideas
             </Button>
           }
         />
-        <FetchErrorBanner message={ideaError || "Idea not found."} />
+        <FetchErrorBanner message={error || "Idea not found."} />
       </div>
     );
   }
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
     <>
@@ -324,20 +387,46 @@ export function IdeaDetailPage() {
         <PageHeader
           pageTitle={idea.title}
           actions={
-            <Button variant="ghost" onClick={() => navigate("/ideas")}>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                navigate(isArchived ? "/ideas/archived" : "/ideas")
+              }
+            >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Ideas
+              {isArchived ? "Back to Archive" : "Back to Ideas"}
             </Button>
           }
         />
 
-        <div className="flex items-start gap-x-6">
+        {isArchived && (
+          <ArchivedIdeaBanner
+            message={
+              idea.archivedAt
+                ? `This idea was archived on ${format(idea.archivedAt.toDate(), "MMMM d, yyyy")}. It is read-only until restored.`
+                : "This idea is archived and read-only until restored."
+            }
+          />
+        )}
+
+        <div
+          className={
+            isArchived
+              ? "flex items-start gap-x-6 opacity-70"
+              : "flex items-start gap-x-6"
+          }
+        >
           <IdeaStatusDisplay status={idea.status} />
           {idea.priority && <IdeaPriorityDisplay priority={idea.priority} />}
         </div>
 
-        {/* Idea card — progress bar pulses on live updates */}
-        <Card className="overflow-hidden">
+        <Card
+          className={
+            isArchived
+              ? "overflow-hidden border-border-neutral bg-neutral-background"
+              : "overflow-hidden"
+          }
+        >
           <CardContent className="space-y-section p-inset-xl">
             {isEditMode ? (
               <form
@@ -434,7 +523,6 @@ export function IdeaDetailPage() {
                     variant="outline"
                     onClick={handleCancelEdit}
                     disabled={isSubmittingEdit}
-                    aria-label="Cancel Product Idea Edit"
                   >
                     <X className="h-4 w-4 mr-2" />
                     Cancel
@@ -443,7 +531,6 @@ export function IdeaDetailPage() {
                     type="submit"
                     disabled={isSubmittingEdit || !isEditDirty}
                     className="ml-auto"
-                    aria-label="Submit Product Idea Edit"
                   >
                     {isSubmittingEdit ? (
                       <>
@@ -465,14 +552,16 @@ export function IdeaDetailPage() {
                   {idea.summary}
                 </p>
 
-                <div className="flex flex-wrap items-end justify-between gap-stack pt-stack border-t border-dashed">
+                <div
+                  className={`flex flex-wrap items-end justify-between gap-stack pt-stack border-t ${isArchived ? "border-dashed border-border-neutral" : "border-dashed"}`}
+                >
                   {idea.tags && idea.tags.length > 0 ? (
                     <div className="flex flex-wrap gap-inline">
                       {idea.tags.map((tag) => (
                         <Badge
                           key={tag}
                           variant="neutral-outline"
-                          className="text-xs"
+                          className={`text-xs ${isArchived ? "opacity-60" : ""}`}
                         >
                           {tag}
                         </Badge>
@@ -502,6 +591,7 @@ export function IdeaDetailPage() {
                         Edit
                       </Button>
                     )}
+
                     {canArchive && (
                       <Button
                         variant="ghost"
@@ -514,20 +604,32 @@ export function IdeaDetailPage() {
                         Archive
                       </Button>
                     )}
+
+                    {canRestore && (
+                      <Button
+                        variant="outline"
+                        semantic="neutral"
+                        size="sm"
+                        onClick={() => setRestoreDialogOpen(true)}
+                      >
+                        <ArchiveRestore className="h-3.5 w-3.5 mr-1.5" />
+                        Restore
+                      </Button>
+                    )}
                   </div>
                 </div>
               </>
             )}
           </CardContent>
-          <ProgressBar active={ideaRefreshing} />
+          <ProgressBar active={refreshing} />
         </Card>
 
         <Separator />
 
-        {/* ── Notes Section ── */}
-        <IdeaNotesSection ideaId={ideaId} hideForm={isEditMode} />
+        <IdeaNotesSection ideaId={ideaId} hideForm={isArchived || isEditMode} />
       </div>
 
+      {/* Cancel edit dialog */}
       <AlertDialog
         open={cancelEditDialogOpen}
         onOpenChange={setCancelEditDialogOpen}
@@ -548,6 +650,7 @@ export function IdeaDetailPage() {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Archive dialog */}
       {canArchive && (
         <AlertDialog
           open={archiveDialogOpen}
@@ -555,16 +658,16 @@ export function IdeaDetailPage() {
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Archive Product Idea?</AlertDialogTitle>
+              <AlertDialogTitle>Archive this idea?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will archive "{idea.title}" and all associated notes. You
-                can restore it later from the archived ideas view.
+                "{idea.title}" will be archived and become read-only. You can
+                restore it later from the archived ideas view.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={archiving}>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                onClick={handleArchiveIdea}
+                onClick={handleArchive}
                 disabled={archiving}
                 className="bg-warning text-warning-foreground hover:bg-warning-hover border border-border-warning"
               >
@@ -581,8 +684,37 @@ export function IdeaDetailPage() {
           </AlertDialogContent>
         </AlertDialog>
       )}
+
+      {/* Restore dialog */}
+      {canRestore && (
+        <AlertDialog
+          open={restoreDialogOpen}
+          onOpenChange={setRestoreDialogOpen}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Restore this idea?</AlertDialogTitle>
+              <AlertDialogDescription>
+                "{idea.title}" will be moved back to your active ideas and
+                become editable again.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={restoring}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleRestore} disabled={restoring}>
+                {restoring ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Restoring…
+                  </>
+                ) : (
+                  "Restore"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </>
   );
 }
-
-const MIN_SKELETON_MS = 300;

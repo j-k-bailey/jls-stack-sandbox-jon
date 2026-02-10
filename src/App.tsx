@@ -22,7 +22,6 @@ import { LoginPage } from "@/pages/LoginPage";
 import { CreateIdeaPage } from "@/pages/ideas/CreateIdeaPage";
 import { IdeaDetailPage } from "@/pages/ideas/IdeaDetailPage";
 import { ArchivedIdeasPage } from "@/pages/ideas/ArchivedIdeasPage";
-import { ArchivedIdeaDetailPage } from "@/pages/ideas/ArchivedIdeaDetailPage";
 import { IdeaNotesPage } from "./pages/ideas/IdeaNotesPage";
 
 function App() {
@@ -50,10 +49,7 @@ function App() {
           <Route path="/ideas/:ideaId" element={<IdeaDetailPage />} />
           <Route path="/ideas/:ideaId/notes" element={<IdeaNotesPage />} />
           <Route path="/ideas/archived" element={<ArchivedIdeasPage />} />
-          <Route
-            path="/ideas/archived/:ideaId"
-            element={<ArchivedIdeaDetailPage />}
-          />
+          <Route path="/ideas/archived/:ideaId" element={<IdeaDetailPage />} />
         </Route>
 
         {/* "/layout-sandbox" → layout sandbox page */}
