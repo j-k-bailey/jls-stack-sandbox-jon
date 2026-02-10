@@ -63,19 +63,19 @@ function ArchivedDetailSkeleton() {
 
 function ReadOnlyNote({ note }: { note: ProductIdeaNote }) {
   return (
-    <Card className="border-border/50 bg-warning-background/10">
+    <Card className="border-border bg-neutral-background">
       <CardContent className="p-inset-xl space-y-2">
         <div className="flex items-center gap-2">
-          <span className="subtitle-2 font-medium text-foreground/70">
+          <span className="subtitle-2 font-medium text-foreground">
             {note.authorDisplayName ?? "Anonymous"}
           </span>
           {note.createdAt && (
-            <span className="caption text-muted-foreground/60">
+            <span className="caption text-muted-foreground">
               {format(note.createdAt.toDate(), "MMM d, yyyy 'at' h:mm a")}
             </span>
           )}
         </div>
-        <p className="body-2 text-foreground/60 whitespace-pre-wrap">
+        <p className="body-2 text-foreground whitespace-pre-wrap">
           {note.body}
         </p>
       </CardContent>
@@ -216,15 +216,15 @@ export function ArchivedIdeaDetailPage() {
         </div>
 
         {/* Main content card — read-only */}
-        <Card className="border-border-warning/30 bg-warning-background/10">
+        <Card className="border-border-neutral bg-neutral-background">
           <CardContent className="p-inset-xl space-y-section">
             {/* Summary */}
-            <p className="body-1 text-foreground/70 wrap-break-word leading-relaxed">
+            <p className="body-1 text-foreground wrap-break-word leading-relaxed">
               {idea.summary}
             </p>
 
             {/* Footer strip */}
-            <div className="flex flex-wrap items-start sm:items-end justify-between gap-stack pt-stack border-t border-dashed border-border-warning/40">
+            <div className="flex flex-wrap items-start sm:items-end justify-between gap-stack pt-stack border-t border-dashed border-border-neutral">
               {/* Tags */}
               {idea.tags && idea.tags.length > 0 ? (
                 <div className="flex flex-wrap gap-inline">
@@ -244,7 +244,7 @@ export function ArchivedIdeaDetailPage() {
 
               {/* Meta + restore */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-inline sm:gap-stack sm:ml-auto">
-                <p className="caption text-muted-foreground/60">
+                <p className="caption text-muted-foreground">
                   {idea.updatedAt
                     ? `Last edited ${format(idea.updatedAt.toDate(), "MMM d, yyyy")}`
                     : idea.createdAt
@@ -255,9 +255,9 @@ export function ArchivedIdeaDetailPage() {
                 {canRestore && (
                   <Button
                     variant="outline"
+                    semantic="neutral"
                     size="sm"
                     onClick={() => setRestoreDialogOpen(true)}
-                    className="border-warning/50 text-warning hover:bg-warning-background hover:text-warning"
                   >
                     <ArchiveRestore className="h-3.5 w-3.5 mr-1.5" />
                     Restore
@@ -273,8 +273,8 @@ export function ArchivedIdeaDetailPage() {
         {/* Notes — read-only */}
         <div className="space-y-stack">
           <div className="flex items-center gap-stack">
-            <MessageSquare className="h-5 w-5 text-muted-foreground/60" />
-            <h2 className="headline-4 text-foreground/70">
+            <MessageSquare className="h-5 w-5 text-muted-foreground" />
+            <h2 className="headline-4 text-foreground">
               Notes ({notes.length})
             </h2>
           </div>
@@ -284,9 +284,9 @@ export function ArchivedIdeaDetailPage() {
           )}
 
           {!notesError && notes.length === 0 ? (
-            <Card className="border-border/40 bg-warning-background/10">
+            <Card className="border-border bg-neutral-background">
               <CardContent className="p-inset-xl">
-                <p className="body-2 text-center text-muted-foreground/60 py-inset-lg">
+                <p className="body-2 text-center text-muted-foreground py-inset-lg">
                   No notes were added to this idea.
                 </p>
               </CardContent>

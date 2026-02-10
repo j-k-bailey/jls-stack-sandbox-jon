@@ -30,7 +30,7 @@ import type { ProductIdea } from "@/lib/types/productIdeas";
 
 function ArchivedCardSkeleton() {
   return (
-    <div className="flex items-start gap-3 border border-border-warning/30 rounded-lg p-4 bg-warning-background/20">
+    <div className="flex items-start gap-3 border border-border-neutral rounded-lg p-4 bg-neutral-background">
       <Skeleton className="h-4 w-4 mt-0.5 shrink-0 rounded-sm" />
       <div className="flex-1 space-y-2">
         <div className="flex gap-2">
@@ -71,8 +71,8 @@ function ArchivedIdeaCard({
     <div
       className={cn(
         "flex items-start gap-3 border rounded-lg p-4 transition-colors duration-150",
-        "bg-warning-background/20 border-border-warning/40",
-        isSelected && "border-warning bg-warning-background/50",
+        "bg-neutral-background border-border-neutral",
+        isSelected && "border-neutral bg-neutral-background",
       )}
     >
       {/* Checkbox — only rendered for owners/admins who can restore */}
@@ -98,20 +98,20 @@ function ArchivedIdeaCard({
             {idea.priority && <IdeaPriorityBadge priority={idea.priority} />}
           </div>
           {idea.archivedAt && (
-            <span className="overline text-warning/80 tracking-[0.13em] flex items-center gap-1 sm:ml-auto shrink-0">
-              <ArchiveX className="h-3 w-3" aria-hidden />
+            <span className="overline-text text-neutral-on-background tracking-[0.13em] flex items-center gap-1 sm:ml-auto shrink-0">
+              <ArchiveX className="h-4 w-4" aria-hidden />
               Archived {format(idea.archivedAt.toDate(), "MMM d, yyyy")}
             </span>
           )}
         </div>
 
         {/* Title */}
-        <h2 className="headline-5 leading-snug line-clamp-2 text-foreground/70 group-hover:text-foreground transition-colors duration-150 mb-1.5">
+        <h2 className="headline-5 leading-snug line-clamp-2 text-foreground group-hover:text-foreground transition-colors duration-150 mb-1.5">
           {idea.title}
         </h2>
 
         {/* Summary */}
-        <p className="body-2 text-muted-foreground/70 line-clamp-2 leading-relaxed mb-3">
+        <p className="body-2 text-muted-foreground line-clamp-2 leading-relaxed mb-3">
           {idea.summary}
         </p>
 
@@ -139,7 +139,7 @@ function ArchivedIdeaCard({
             </div>
           )}
           {idea.createdAt && (
-            <span className="caption text-muted-foreground/50 sm:ml-auto whitespace-nowrap">
+            <span className="caption text-muted-foreground sm:ml-auto whitespace-nowrap">
               Created {format(idea.createdAt.toDate(), "MMM d, yyyy")}
             </span>
           )}
@@ -209,7 +209,7 @@ export function ArchivedIdeasPage() {
         ids.length === 1 ? "Idea restored" : `${ids.length} ideas restored`,
       );
     } else if (failed.length < ids.length) {
-      toast.warning(
+      toast.error(
         `${ids.length - failed.length} restored, ${failed.length} failed`,
       );
     } else {
@@ -225,7 +225,6 @@ export function ArchivedIdeasPage() {
     <div className="p-inset-2xl space-y-section container">
       <PageHeader
         pageTitle="Archived Ideas"
-        pageDescription="Ideas that have been archived. Restore them to make them active again."
         actions={
           <div className="flex items-center gap-stack">
             {refreshing && (
@@ -251,7 +250,7 @@ export function ArchivedIdeasPage() {
 
       {/* Select-all + bulk restore toolbar */}
       {!loading && !fetchError && restorableIds.length > 0 && (
-        <div className="flex items-center gap-3 py-2 border-b border-dashed border-border-warning/50">
+        <div className="flex items-center gap-3 py-2 border-b border-dashed border-border-neutral">
           <Checkbox
             id="select-all"
             // indeterminate when some-but-not-all are selected
@@ -272,27 +271,26 @@ export function ArchivedIdeasPage() {
                 : `Select all (${restorableIds.length})`}
           </label>
 
-          {(someSelected || allSelected) && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handleRestore([...prunedSelected])}
-              disabled={restoring}
-              className="ml-auto border-warning/50 text-warning hover:bg-warning-background"
-            >
-              {restoring ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                  Restoring…
-                </>
-              ) : (
-                <>
-                  <ArchiveRestore className="h-3.5 w-3.5 mr-1.5" />
-                  Restore {prunedSelected.size} selected
-                </>
-              )}
-            </Button>
-          )}
+          <Button
+            size="sm"
+            semantic="neutral"
+            variant="outline"
+            onClick={() => handleRestore([...prunedSelected])}
+            disabled={restoring || (!someSelected && !allSelected)}
+            className="ml-auto"
+          >
+            {restoring ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                Restoring…
+              </>
+            ) : (
+              <>
+                <ArchiveRestore className="h-3.5 w-3.5 mr-1.5" />
+                Restore {prunedSelected.size} selected
+              </>
+            )}
+          </Button>
         </div>
       )}
 

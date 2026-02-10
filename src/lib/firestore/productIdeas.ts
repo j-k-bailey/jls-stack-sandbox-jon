@@ -11,6 +11,7 @@ import {
   getDocs,
   query,
   where,
+  onSnapshot,
   orderBy,
   serverTimestamp,
   limit,
@@ -18,6 +19,7 @@ import {
   DocumentSnapshot,
   Query,
   QueryConstraint,
+  type Unsubscribe,
 } from "firebase/firestore";
 import type {
   ProductIdea,
@@ -144,6 +146,109 @@ export async function executeProductIdeasQueryPaginated(
     lastDoc: docs[docs.length - 1] ?? null,
     hasMore,
   };
+}
+
+// ============================================================================
+// SUBSCRIPTION OPERATIONS - PRODUCT IDEAS AND NOTES
+// ============================================================================
+export function subscribeToActiveIdeas(
+  onNext: (ideas: ProductIdea[]) => void,
+  onError?: (err: unknown) => void,
+): Unsubscribe {
+  // Active ideas: archivedAt == null, newest updated first
+  const q = query(
+    productIdeasCol(),
+    where("archivedAt", "==", null),
+    orderBy("updatedAt", "desc"),
+  );
+
+  // onSnapshot gives initial results immediately, then updates on changes :contentReference[oaicite:8]{index=8}
+  return onSnapshot(
+    q,
+    (snap) => {
+      const ideas = snap.docs.map((d) => mapDocToIdea(d));
+      onNext(ideas);
+    },
+    (err) => onError?.(err),
+  );
+}
+
+export function subscribeToIdeaById(
+  id: string,
+  onNext: (idea: ProductIdea | null) => void,
+  onError?: (err: unknown) => void,
+): Unsubscribe {
+  const ref = productIdeaDoc(id);
+
+  return onSnapshot(
+    ref,
+    (snap) => {
+      if (!snap.exists()) {
+        onNext(null);
+        return;
+      }
+      onNext(mapDocToIdea(snap));
+    },
+    (err) => onError?.(err),
+  );
+}
+
+export function subscribeToActiveIdeaNotes(
+  ideaId: string,
+  onNext: (ideaNotes: ProductIdeaNote[]) => void,
+  onError?: (err: unknown) => void,
+): Unsubscribe {
+  // Active ideas: archivedAt == null, newest updated first
+  const q = query(
+    productIdeaNotesCol(ideaId),
+    where("archivedAt", "==", null),
+    orderBy("updatedAt", "desc"),
+  );
+
+  // onSnapshot gives initial results immediately, then updates on changes :contentReference[oaicite:8]{index=8}
+  return onSnapshot(
+    q,
+    (snap) => {
+      const ideaNotes = snap.docs.map((d) => mapDocToNote(d));
+      onNext(ideaNotes);
+    },
+    (err) => onError?.(err),
+  );
+}
+
+export function subscribeToIdeaNoteById(
+  ideaId: string,
+  noteId: string,
+  onNext: (ideaNote: ProductIdeaNote | null) => void,
+  onError?: (err: unknown) => void,
+): Unsubscribe {
+  const ref = productIdeaNoteDoc(ideaId, noteId);
+
+  return onSnapshot(
+    ref,
+    (snap) => {
+      if (!snap.exists()) {
+        onNext(null);
+        return;
+      }
+      onNext(mapDocToNote(snap));
+    },
+    (err) => onError?.(err),
+  );
+}
+
+/**
+ * Optional: "presence" / debug ping — lets you see realtime in action by changing updatedAt.
+ * Useful for testing in two tabs.
+ */
+export async function touchIdea(id: string) {
+  const ref = productIdeaDoc(id);
+  return updateDoc(ref, { updatedAt: serverTimestamp() });
+}
+
+export async function touchIdeaNote(ideaId: string, noteId: string) {
+  const ref = productIdeaNoteDoc(ideaId, noteId);
+  return updateDoc(ref, { updatedAt: serverTimestamp() });
 }
 
 // ============================================================================

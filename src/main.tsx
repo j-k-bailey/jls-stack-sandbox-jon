@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <BrowserRouter>
       <AuthProvider>
         <TooltipProvider>
-          <Toaster />
+          <Toaster position="top-center" />
           <App />
         </TooltipProvider>
       </AuthProvider>
