@@ -190,6 +190,259 @@ export const PRODUCT_IDEA_NOTES: Record<string, ProductIdeaNoteSeed[]> = {
   ],
 };
 
+export const PRODUCT_IDEAS_2 = [
+  {
+    title: "SOP Orchestrator",
+    summary:
+      "Centralized SOP authoring system with version control, role-based visibility, and automated review reminders.",
+    tags: [
+      "sops",
+      "documentation",
+      "workflow",
+      "approvals",
+      "permissions",
+      "knowledge-base",
+    ],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Onboarding Path Builder",
+    summary:
+      "Role-based onboarding journeys that auto-assign training, documentation, and flashcards to new hires.",
+    tags: [
+      "onboarding",
+      "training",
+      "learning",
+      "workflow",
+      "spaced-repetition",
+    ],
+    priority: "now",
+    status: "draft",
+  },
+  {
+    title: "Internal Knowledge Graph",
+    summary:
+      "Searchable wiki that maps relationships between docs, owners, and business concepts.",
+    tags: ["knowledge-management", "wiki", "search", "knowledge-base"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Async Decision Log",
+    summary:
+      "Structured async decision-making tool with approvals, ownership tracking, and rationale history.",
+    tags: ["async", "alignment", "approvals", "documentation", "ownership"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Content Production Pipeline",
+    summary:
+      "Kanban-style workflow for managing content ideation through publishing with SEO validation.",
+    tags: ["content", "workflow", "seo", "approvals", "reporting"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Experiment Tracker",
+    summary:
+      "Centralized experimentation dashboard for hypotheses, metrics, and post-mortems.",
+    tags: ["analytics", "reporting", "dashboards", "strategy"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Permissions Matrix Manager",
+    summary:
+      "Role and system access tracker with audit logging and approval workflows.",
+    tags: ["permissions", "approvals", "workflow", "reporting"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Training Memory Engine",
+    summary:
+      "Spaced repetition tool for institutional knowledge reinforcement across teams.",
+    tags: ["flashcards", "spaced-repetition", "learning", "memory"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Design System Governance Portal",
+    summary:
+      "Token registry and component documentation hub with change approvals.",
+    tags: ["design-systems", "tokens", "frontend", "guidelines", "approvals"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Meeting-to-Task Extractor",
+    summary:
+      "LLM-powered extraction of action items from meeting transcripts into workflow boards.",
+    tags: ["llm", "automation", "workflow", "async"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Quarterly Prioritization Engine",
+    summary:
+      "Structured prioritization scoring tool aligned to strategy and ownership.",
+    tags: ["prioritization", "strategy", "dashboards", "reporting"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Internal SEO Hub",
+    summary:
+      "Workflow and documentation system for semantic SEO processes and audits.",
+    tags: ["seo", "documentation", "analytics", "workflow"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Asset Registry",
+    summary:
+      "Track hardware, software, licenses, and renewals with reminders and ownership.",
+    tags: ["asset-management", "inventory", "reminders", "reporting"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Feedback Capture System",
+    summary:
+      "Unified intake for async feedback across products, content, and processes.",
+    tags: ["feedback", "forms", "async", "notifications"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Approval Workflow Builder",
+    summary:
+      "No-code internal approvals engine for publishing, hiring, spending, and releases.",
+    tags: ["workflow", "automation", "approvals", "forms"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Internal API Catalog",
+    summary:
+      "Documentation hub for internal APIs with search and ownership tracking.",
+    tags: ["api", "documentation", "search", "backend"],
+    priority: "later",
+    status: "draft",
+  },
+  {
+    title: "Performance Snapshot Dashboard",
+    summary:
+      "Unified dashboard pulling analytics from multiple systems into role-specific views.",
+    tags: ["dashboards", "analytics", "integrations", "reporting"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Guideline Compliance Checker",
+    summary:
+      "LLM-assisted review of documents for brand, accessibility, and writing compliance.",
+    tags: ["llm", "guidelines", "accessibility", "writing"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Internal Calendar Sync Hub",
+    summary:
+      "Cross-team visibility into launches, campaigns, and training schedules.",
+    tags: ["calendar", "scheduling", "alignment", "notifications"],
+    priority: "later",
+    status: "draft",
+  },
+  {
+    title: "Strategy Mapping Board",
+    summary:
+      "Visual map connecting initiatives to company strategy and outcomes.",
+    tags: ["strategy", "alignment", "dashboards", "ownership"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Documentation Freshness Monitor",
+    summary: "Tracks stale documentation and auto-assigns review reminders.",
+    tags: ["documentation", "reminders", "automation", "knowledge-base"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Internal Wiki Analytics",
+    summary:
+      "Analytics layer for tracking knowledge usage and gaps across the org.",
+    tags: ["wiki", "analytics", "reporting", "knowledge-management"],
+    priority: "later",
+    status: "draft",
+  },
+  {
+    title: "Remote Team Alignment Board",
+    summary: "Async weekly planning and visibility tool for distributed teams.",
+    tags: ["remote-teams", "async", "alignment", "ownership"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Form-to-Workflow Router",
+    summary:
+      "Intake forms that auto-route submissions into structured workflows.",
+    tags: ["forms", "workflow", "automation", "notifications"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Internal Search Index",
+    summary: "Cross-system search layer indexing docs, boards, and dashboards.",
+    tags: ["search", "integrations", "knowledge-management"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "LLM Prompt Library",
+    summary:
+      "Centralized repository of tested prompts for internal workflows and automation.",
+    tags: ["llm", "documentation", "templates", "ai"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Ownership Directory",
+    summary:
+      "Role-based directory mapping initiatives, systems, and assets to accountable owners.",
+    tags: ["employee-directory", "ownership", "knowledge-management"],
+    priority: "now",
+    status: "active",
+  },
+  {
+    title: "Internal Reporting Automator",
+    summary:
+      "Scheduled automated reporting across systems with executive-ready summaries.",
+    tags: ["reporting", "automation", "integrations", "analytics"],
+    priority: "next",
+    status: "draft",
+  },
+  {
+    title: "Release Approval Gatekeeper",
+    summary:
+      "Pre-release checklist with automated approvals and compliance checks.",
+    tags: ["approvals", "workflow", "backend", "documentation"],
+    priority: "later",
+    status: "draft",
+  },
+  {
+    title: "Knowledge Certification Tracker",
+    summary:
+      "Tracks training completion and knowledge mastery via spaced repetition.",
+    tags: ["training", "learning", "spaced-repetition", "reporting"],
+    priority: "next",
+    status: "draft",
+  },
+];
+
 // Helper to convert idea title to slug for note lookup
 export function getIdeaSlug(title: string): string {
   return title

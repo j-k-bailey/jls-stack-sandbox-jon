@@ -62,7 +62,7 @@ import { Badge } from "@/components/ui/badge";
 const SKELETON_COUNT = 15;
 const MIN_SKELETON_MS = 400;
 const MIN_FILTER_MS = 400;
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 15;
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -579,22 +579,6 @@ export const ProductIdeasPage = () => {
 
         <ProgressBar active={filtering} />
       </Card>
-
-      {/* Results Count */}
-      {!initialLoading && (
-        <div className="flex items-center justify-between pt-2 border-t border-border/60">
-          <span className="text-sm">
-            <span className="font-medium text-foreground">{ideas.length}</span>{" "}
-            result{ideas.length !== 1 ? "s" : ""}
-            {hasActiveFilters && (
-              <span className="text-muted-foreground">
-                {" "}
-                match{ideas.length === 1 ? "es" : ""} your filters
-              </span>
-            )}
-          </span>
-        </div>
-      )}
 
       {/* ─── Ideas List ────────────────────────────────────────────── */}
       <div className="flex flex-col gap-stack">

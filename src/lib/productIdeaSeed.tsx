@@ -4,9 +4,14 @@ import {
 } from "@/lib/firestore/productIdeas";
 import {
   PRODUCT_IDEAS,
+  PRODUCT_IDEAS_2,
   PRODUCT_IDEA_NOTES,
   getIdeaSlug,
 } from "@/constants/productIdeas";
+import type {
+  ProductIdeaPriority,
+  ProductIdeaStatus,
+} from "./types/productIdeas";
 
 export async function seedProductIdeas(
   currentUserId: string,
@@ -21,15 +26,32 @@ export async function seedProductIdeas(
   let ideasCreated = 0;
   let notesCreated = 0;
 
+  for (const idea of PRODUCT_IDEAS_2) {
+    const docRef = await createProductIdea(
+      {
+        title: idea.title,
+        summary: idea.summary,
+        status: idea.status as ProductIdeaStatus,
+        tags: idea.tags,
+        priority: idea.priority as ProductIdeaPriority,
+      },
+      currentUserId,
+    );
+
+    const slug = getIdeaSlug(idea.title);
+    seededIdeas.set(slug, docRef.id);
+    ideasCreated++;
+  }
+
   // Seed Product Ideas
   for (const idea of PRODUCT_IDEAS) {
     const docRef = await createProductIdea(
       {
         title: idea.title,
         summary: idea.summary,
-        status: idea.status,
+        status: idea.status as ProductIdeaStatus,
         tags: idea.tags,
-        priority: idea.priority,
+        priority: idea.priority as ProductIdeaPriority,
       },
       currentUserId,
     );
