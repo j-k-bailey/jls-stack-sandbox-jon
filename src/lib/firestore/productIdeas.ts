@@ -394,17 +394,15 @@ export async function updateProductIdea(
   updates: UpdateProductIdeaInput,
 ) {
   const updateData = {
-    ...updates,
-    updatedAt: serverTimestamp(),
+    ...(updates.title !== undefined && { title: updates.title }),
+    ...(typeof updates.title === "string" && {
+      titleLower: normalizeTitleLower(updates.title),
+    }),
+    ...(updates.summary !== undefined && { summary: updates.summary }),
+    ...(updates.status !== undefined && { status: updates.status }),
+    ...(updates.tags !== undefined && { tags: normalizeTags(updates.tags) }),
+    ...(updates.priority !== undefined && { priority: updates.priority }),
   };
-
-  if (typeof updateData.title === "string") {
-    updateData.titleLower = normalizeTitleLower(updateData.title);
-  }
-
-  if (Array.isArray(updateData.tags)) {
-    updateData.tags = normalizeTags(updateData.tags);
-  }
 
   return await updateDoc(productIdeaDoc(ideaId), updateData);
 }
