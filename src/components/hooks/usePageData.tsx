@@ -1,4 +1,3 @@
-// @/hooks/usePageData.ts
 import { useState, useCallback, useRef } from "react";
 
 interface UsePageDataOptions {

@@ -1,4 +1,3 @@
-// @/components/common/FetchErrorBanner.tsx
 import { AlertTriangle, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

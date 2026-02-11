@@ -1,4 +1,3 @@
-// @/components/ui/sonner.tsx
 import {
   CircleCheckIcon,
   InfoIcon,

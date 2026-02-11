@@ -1,4 +1,3 @@
-// @/components/common/UserProfileButton.tsx
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Popover,

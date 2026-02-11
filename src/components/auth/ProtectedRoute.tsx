@@ -1,4 +1,3 @@
-// @/components/auth/ProtectedRoute.tsx
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import type { UserRole } from "@/lib/types/user";

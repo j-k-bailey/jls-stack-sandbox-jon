@@ -1,4 +1,3 @@
-// @/hooks/useArchivedIdeas.ts
 import { useReducer, useEffect, useRef, useCallback } from "react";
 import {
   subscribeToArchivedIdeas,

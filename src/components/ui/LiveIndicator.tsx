@@ -1,4 +1,3 @@
-// @/components/ui/LiveIndicator.tsx
 import { cn } from "@/lib/utils";
 import { useLiveStatus } from "@/contexts/LiveStatusContext";
 

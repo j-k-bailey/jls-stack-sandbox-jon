@@ -1,4 +1,3 @@
-// @/lib/constants/productIdeas.ts
 import type {
   ProductIdeaStatus,
   ProductIdeaPriority,

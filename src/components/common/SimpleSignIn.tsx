@@ -1,4 +1,3 @@
-// @/components/common/SimpleSignIn.tsx
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/BrandButton";
 

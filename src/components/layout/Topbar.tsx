@@ -1,4 +1,3 @@
-// @/components/layout/Topbar.tsx
 import { Button } from "@/components/ui/BrandButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { FaBars } from "react-icons/fa6";

@@ -1,4 +1,3 @@
-// @/components/common/RefreshingIndicator.tsx
 import { cn } from "@/lib/utils";
 
 interface RefreshingIndicatorProps {

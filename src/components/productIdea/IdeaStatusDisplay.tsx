@@ -1,4 +1,3 @@
-// @/components/productIdea/IdeaStatusDisplay.tsx
 import { cn } from "@/lib/utils";
 import type {
   ProductIdeaStatus,

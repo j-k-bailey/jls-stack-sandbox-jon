@@ -1,4 +1,3 @@
-// @/pages/SeedProductIdeasPage.tsx
 import { useState } from "react";
 import { seedProductIdeas } from "@/lib/productIdeaSeed";
 import { Button } from "@/components/ui/BrandButton";

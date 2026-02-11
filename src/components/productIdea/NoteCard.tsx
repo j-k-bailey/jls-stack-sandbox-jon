@@ -1,4 +1,3 @@
-// @/components/productIdea/NoteCard.tsx
 import type { ProductIdeaNote } from "@/lib/types/productIdeas";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";

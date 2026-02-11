@@ -1,4 +1,3 @@
-// @/pages/ideas/CreateIdeaPage.tsx
 import { useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -1,4 +1,3 @@
-// @/components/productIdea/ArchivedIdeaBanner.tsx
 import { ArchiveX } from "lucide-react";
 
 interface ArchivedIdeaBannerProps {
