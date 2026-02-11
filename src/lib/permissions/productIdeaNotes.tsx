@@ -1,4 +1,3 @@
-// @/lib/permissions/productIdeaNotes.ts
 import type { UserRole } from "@/lib/types/user";
 
 /**

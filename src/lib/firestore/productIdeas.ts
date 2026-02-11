@@ -1,5 +1,3 @@
-// @/lib/db/productIdeas.ts
-
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -19,7 +17,6 @@ import {
   startAt,
   endAt,
   DocumentSnapshot,
-  Query,
   QueryConstraint,
   type Unsubscribe,
   type DocumentData,
@@ -31,9 +28,9 @@ import type {
   CreateProductIdeaInput,
   CreateProductIdeaNoteInput,
   ProductIdeaFilters,
-  ArchiveFilter,
   UpdateProductIdeaInput,
   UpdateProductIdeaNoteInput,
+  ProductIdeasPageResult,
 } from "@/lib/types/productIdeas";
 
 // ============================================================================
@@ -60,6 +57,7 @@ const mapDocToIdea = (snapshot: DocumentSnapshot): ProductIdea => {
   return {
     ideaId: snapshot.id,
     title: data.title ?? "",
+    titleLower: data.titleLower ?? normalizeTitleLower(data.title),
     summary: data.summary ?? "",
     status: (data.status ?? "draft") as ProductIdea["status"],
     ownerId: data.ownerId ?? "",
@@ -98,69 +96,6 @@ function normalizeTags(tags: string[]) {
 
   // de-dupe while preserving order
   return Array.from(new Set(cleaned));
-}
-
-// ============================================================================
-// QUERY BUILDERS
-// ============================================================================
-
-export function buildProductIdeasQuery(
-  filters: ProductIdeaFilters = {},
-  pagination?: { pageSize: number; lastDoc?: DocumentSnapshot },
-): Query {
-  const constraints: QueryConstraint[] = [];
-
-  // Handle archived filter (defaults to 'exclude')
-  const archivedFilter: ArchiveFilter = filters.archived ?? "exclude";
-
-  if (archivedFilter === "exclude") {
-    constraints.push(where("archivedAt", "==", null));
-  } else if (archivedFilter === "only") {
-    constraints.push(where("archivedAt", "!=", null));
-  }
-  // 'include' = no filter, show everything
-
-  // Other filters
-  if (filters.status) constraints.push(where("status", "==", filters.status));
-  if (filters.ownerId)
-    constraints.push(where("ownerId", "==", filters.ownerId));
-  if (filters.tags)
-    constraints.push(where("tags", "array-contains", filters.tags));
-  if (filters.priority)
-    constraints.push(where("priority", "==", filters.priority));
-
-  constraints.push(orderBy("updatedAt", "desc"));
-
-  if (pagination) {
-    // Fetch one extra to determine if there's a next page
-    constraints.push(limit(pagination.pageSize + 1));
-    if (pagination.lastDoc) constraints.push(startAfter(pagination.lastDoc));
-  }
-
-  return query(productIdeasCol(), ...constraints);
-}
-
-// ============================================================================
-// PAGINATED EXECUTOR
-// ============================================================================
-
-export async function executeProductIdeasQueryPaginated(
-  q: Query,
-  pageSize: number,
-): Promise<{
-  ideas: ProductIdea[];
-  lastDoc: DocumentSnapshot | null;
-  hasMore: boolean;
-}> {
-  const snapshot = await getDocs(q);
-  const hasMore = snapshot.docs.length > pageSize;
-  const docs = hasMore ? snapshot.docs.slice(0, pageSize) : snapshot.docs;
-
-  return {
-    ideas: docs.map(mapDocToIdea),
-    lastDoc: docs[docs.length - 1] ?? null,
-    hasMore,
-  };
 }
 
 // ============================================================================
@@ -222,8 +157,8 @@ export function subscribeToActiveFilteredIdeas(
   if (filters.status) constraints.push(where("status", "==", filters.status));
   if (filters.ownerId)
     constraints.push(where("ownerId", "==", filters.ownerId));
-  if (filters.tags)
-    constraints.push(where("tags", "array-contains", filters.tags));
+  if (filters.tag)
+    constraints.push(where("tags", "array-contains", filters.tag));
   if (filters.priority)
     constraints.push(where("priority", "==", filters.priority));
 
@@ -371,72 +306,61 @@ export async function getArchivedProductIdeas(): Promise<ProductIdea[]> {
   return snapshot.docs.map(mapDocToIdea);
 }
 
-export async function getProductIdeasByStatus(
-  status: ProductIdea["status"],
-  includeArchived: boolean = false,
-): Promise<ProductIdea[]> {
-  const constraints: QueryConstraint[] = [where("status", "==", status)];
+export async function fetchIdeasPage(options: {
+  filters: ProductIdeaFilters;
+  pageSize: number;
+  cursor: QueryDocumentSnapshot<DocumentData> | null;
+}): Promise<ProductIdeasPageResult> {
+  const { filters, pageSize, cursor } = options;
 
-  if (!includeArchived) {
-    constraints.push(where("archivedAt", "==", null));
+  const clauses: QueryConstraint[] = [];
+
+  // Archived filter
+  if (filters.archived) {
+    clauses.push(where("archivedAt", "!=", null));
+  } else {
+    clauses.push(where("archivedAt", "==", null));
   }
 
-  constraints.push(orderBy("updatedAt", "desc"));
-
-  const q = query(productIdeasCol(), ...constraints);
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(mapDocToIdea);
-}
-
-export async function getProductIdeasByOwner(
-  ownerId: string,
-  includeArchived: boolean = false,
-): Promise<ProductIdea[]> {
-  const constraints: QueryConstraint[] = [where("ownerId", "==", ownerId)];
-
-  if (!includeArchived) {
-    constraints.push(where("archivedAt", "==", null));
+  // Status filter
+  if (filters.status && filters.status !== "all") {
+    clauses.push(where("status", "==", filters.status));
   }
 
-  constraints.push(orderBy("updatedAt", "desc"));
-
-  const q = query(productIdeasCol(), ...constraints);
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(mapDocToIdea);
-}
-
-export async function getProductIdeasByTag(
-  tag: string,
-  includeArchived: boolean = false,
-): Promise<ProductIdea[]> {
-  const constraints: QueryConstraint[] = [where("tags", "array-contains", tag)];
-
-  if (!includeArchived) {
-    constraints.push(where("archivedAt", "==", null));
+  // Tag filter (single tag)
+  if (filters.tag && filters.tag !== "all") {
+    clauses.push(where("tags", "array-contains", filters.tag.toLowerCase()));
   }
 
-  constraints.push(orderBy("updatedAt", "desc"));
+  const qRaw = (filters.q ?? "").trim().toLowerCase();
+  const hasSearch = qRaw.length > 0;
 
-  const q = query(productIdeasCol(), ...constraints);
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(mapDocToIdea);
-}
+  // Ordering strategy:
+  // - If searching: order by titleLower so we can do prefix search with cursors
+  // - Otherwise: order by updatedAt desc (more "product-like")
+  let qBuilt = hasSearch
+    ? query(productIdeasCol(), ...clauses, orderBy("titleLower", "asc"))
+    : query(productIdeasCol(), ...clauses, orderBy("updatedAt", "desc"));
 
-export async function getFilteredProductIdeas(
-  filters: ProductIdeaFilters,
-): Promise<ProductIdea[]> {
-  const q = buildProductIdeasQuery(filters);
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(mapDocToIdea);
-}
+  // Prefix search (only if searching)
+  // Uses ordered cursors: startAt(q) ... endAt(q + "\uf8ff")
+  // This is a standard Firestore cursor technique. :contentReference[oaicite:13]{index=13}
+  if (hasSearch) {
+    qBuilt = query(qBuilt, startAt(qRaw), endAt(qRaw + "\uf8ff"));
+  }
 
-export async function getProductIdeasPaginated(
-  pageSize: number,
-  lastDoc?: DocumentSnapshot,
-  filters?: ProductIdeaFilters,
-) {
-  const q = buildProductIdeasQuery(filters, { pageSize, lastDoc });
-  return executeProductIdeasQueryPaginated(q, pageSize);
+  // Pagination
+  qBuilt = cursor
+    ? query(qBuilt, startAfter(cursor), limit(pageSize))
+    : query(qBuilt, limit(pageSize));
+
+  const snap = await getDocs(qBuilt);
+  const items = snap.docs.map((d) => mapDocToIdea(d));
+
+  const nextCursor =
+    snap.docs.length === pageSize ? snap.docs[snap.docs.length - 1] : null;
+
+  return { items, nextCursor };
 }
 
 // ============================================================================
@@ -449,11 +373,12 @@ export async function createProductIdea(
 ) {
   const docData = {
     title: input.title,
+    titleLower: normalizeTitleLower(input.title),
     summary: input.summary,
     status: input.status ?? "draft",
     ownerId: userId,
 
-    ...(input.tags && { tags: input.tags }),
+    ...(input.tags && { tags: normalizeTags(input.tags) }),
     ...(input.priority && { priority: input.priority }),
 
     createdAt: serverTimestamp(),
@@ -469,16 +394,19 @@ export async function updateProductIdea(
   updates: UpdateProductIdeaInput,
 ) {
   const updateData = {
-    ...(updates.title !== undefined && { title: updates.title }),
-    ...(updates.summary !== undefined && { summary: updates.summary }),
-    ...(updates.status !== undefined && { status: updates.status }),
-    ...(updates.tags !== undefined && { tags: updates.tags }),
-    ...(updates.priority !== undefined && { priority: updates.priority }),
-
+    ...updates,
     updatedAt: serverTimestamp(),
   };
 
-  await updateDoc(productIdeaDoc(ideaId), updateData);
+  if (typeof updateData.title === "string") {
+    updateData.titleLower = normalizeTitleLower(updateData.title);
+  }
+
+  if (Array.isArray(updateData.tags)) {
+    updateData.tags = normalizeTags(updateData.tags);
+  }
+
+  return await updateDoc(productIdeaDoc(ideaId), updateData);
 }
 
 export async function archiveProductIdea(ideaId: string) {

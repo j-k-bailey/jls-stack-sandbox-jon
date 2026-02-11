@@ -1,16 +1,19 @@
-// @/lib/types/productIdeas.ts
-
-import { Timestamp } from "firebase/firestore";
+import {
+  QueryDocumentSnapshot,
+  Timestamp,
+  type DocumentData,
+} from "firebase/firestore";
 
 export type ProductIdeaStatus = "draft" | "active" | "paused" | "shipped";
 
-export type ProductIdeaPriority = "now" | "next" | "later";
+export type ProductIdeaStatusFilter = ProductIdeaStatus | "all";
 
-export type ArchiveFilter = "exclude" | "include" | "only";
+export type ProductIdeaPriority = "now" | "next" | "later";
 
 export interface ProductIdea {
   ideaId: string;
   title: string;
+  titleLower?: string;
   summary: string;
   status: ProductIdeaStatus;
   ownerId: string;
@@ -57,9 +60,15 @@ export type UpdateProductIdeaNoteInput = Partial<
 >;
 
 export interface ProductIdeaFilters {
-  status?: ProductIdeaStatus;
+  status?: ProductIdeaStatusFilter;
   ownerId?: string;
-  tags?: string;
+  tag?: string;
   priority?: ProductIdeaPriority;
-  archived?: ArchiveFilter;
+  q?: string;
+  archived?: boolean;
 }
+
+export type ProductIdeasPageResult = {
+  items: ProductIdea[];
+  nextCursor: QueryDocumentSnapshot<DocumentData> | null;
+};
