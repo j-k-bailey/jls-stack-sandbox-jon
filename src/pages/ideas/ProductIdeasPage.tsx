@@ -82,12 +82,14 @@ type PageState = {
   filtering: boolean;
   loadingMore: boolean;
   fetchError: string | null;
+  isClearing: boolean;
 };
 
 type PageAction =
   | { type: "FETCH_START_INITIAL" }
   | { type: "FETCH_START_FILTER" }
   | { type: "FETCH_START_MORE" }
+  | { type: "CLEAR_FILTERS_START" }
   | {
       type: "FETCH_SUCCESS";
       ideas: ProductIdea[];
@@ -105,6 +107,7 @@ const initialState: PageState = {
   filtering: false,
   loadingMore: false,
   fetchError: null,
+  isClearing: false,
 };
 
 function pageReducer(state: PageState, action: PageAction): PageState {
@@ -133,6 +136,12 @@ function pageReducer(state: PageState, action: PageAction): PageState {
         loadingMore: true,
         fetchError: null,
       };
+    case "CLEAR_FILTERS_START":
+      return {
+        ...state,
+        isClearing: true,
+        fetchError: null,
+      };
     case "FETCH_SUCCESS":
       return {
         ideas: action.append ? [...state.ideas, ...action.ideas] : action.ideas,
@@ -142,6 +151,7 @@ function pageReducer(state: PageState, action: PageAction): PageState {
         filtering: false,
         loadingMore: false,
         fetchError: null,
+        isClearing: false,
       };
     case "ERROR":
       return {
@@ -188,6 +198,7 @@ export const ProductIdeasPage = () => {
     filtering,
     loadingMore,
     fetchError,
+    isClearing,
   } = state;
 
   const hasLoadedOnce = useRef(false);
@@ -235,32 +246,41 @@ export const ProductIdeasPage = () => {
 
   const displayState = applyDevStateOverrides(
     devState,
-    { initialLoading, filtering, fetchError, ideas },
+    { initialLoading, filtering, fetchError, ideas, isClearing }, // ADD isClearing
     {
       loading: {
         initialLoading: true,
         filtering: false,
         fetchError: null,
         ideas: [],
+        isClearing: false,
       },
-      filtering: { initialLoading: false, filtering: true, fetchError: null },
+      filtering: {
+        initialLoading: false,
+        filtering: true,
+        fetchError: null,
+        isClearing: false,
+      },
       error: {
         initialLoading: false,
         filtering: false,
         fetchError: "Failed to load ideas. Please try again.",
         ideas: [],
+        isClearing: false,
       },
       empty: {
         initialLoading: false,
         filtering: false,
         fetchError: null,
         ideas: [],
+        isClearing: false,
       },
       "empty-filtered": {
         initialLoading: false,
         filtering: false,
         fetchError: null,
         ideas: [],
+        isClearing: false,
       },
     },
   );
@@ -400,6 +420,7 @@ export const ProductIdeasPage = () => {
   };
 
   const clearFilters = () => {
+    dispatch({ type: "CLEAR_FILTERS_START" });
     setSearchParams({});
     setSearchInput("");
   };
@@ -681,7 +702,7 @@ export const ProductIdeasPage = () => {
           />
         )}
 
-        {displayState.initialLoading ? (
+        {displayState.initialLoading || displayState.isClearing ? (
           <IdeasListSkeleton />
         ) : displayState.ideas.length === 0 && !displayState.fetchError ? (
           displayHasActiveFilters ? (
