@@ -12,9 +12,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { EmptyState } from "@/components/productIdea/EmptyState";
-import { IdeaCard, IdeaCardSkeleton } from "@/components/productIdea/IdeaCard";
-import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
+import { IdeaCard } from "@/components/productIdea/IdeaCard";
 import {
   Select,
   SelectContent,
@@ -54,12 +52,19 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { IdeasListSkeleton } from "@/components/states/IdeasListSkeleton";
+import { ErrorState } from "@/components/states/ErrorState";
+import { EmptyState } from "@/components/states/EmptyState";
+import {
+  useDevState,
+  DevStateControls,
+  applyDevStateOverrides,
+} from "@/hooks/useDevState";
 
 // ============================================================================
 // CONSTANTS
 // ============================================================================
 
-const SKELETON_COUNT = 15;
 const MIN_SKELETON_MS = 400;
 const MIN_FILTER_MS = 400;
 const PAGE_SIZE = 15;
@@ -164,6 +169,8 @@ function pageReducer(state: PageState, action: PageAction): PageState {
 
 export const ProductIdeasPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [devState, setDevState] = useDevState();
+
   const { user, userProfile } = useAuth();
 
   const isSignedIn = !!user;
@@ -225,6 +232,41 @@ export const ProductIdeasPage = () => {
   }, [searchInput, setSearchParams]);
 
   // ─── Data Fetching ────────────────────────────────────────────────────────
+
+  const displayState = applyDevStateOverrides(
+    devState,
+    { initialLoading, filtering, fetchError, ideas },
+    {
+      loading: {
+        initialLoading: true,
+        filtering: false,
+        fetchError: null,
+        ideas: [],
+      },
+      filtering: { initialLoading: false, filtering: true, fetchError: null },
+      error: {
+        initialLoading: false,
+        filtering: false,
+        fetchError: "Failed to load ideas. Please try again.",
+        ideas: [],
+      },
+      empty: {
+        initialLoading: false,
+        filtering: false,
+        fetchError: null,
+        ideas: [],
+      },
+      "empty-filtered": {
+        initialLoading: false,
+        filtering: false,
+        fetchError: null,
+        ideas: [],
+      },
+    },
+  );
+
+  const displayHasActiveFilters =
+    devState === "empty-filtered" ? true : hasActiveFilters;
 
   const fetchIdeas = useCallback(
     async (loadMore = false) => {
@@ -291,9 +333,18 @@ export const ProductIdeasPage = () => {
   );
 
   useEffect(() => {
-    fetchIdeas(false);
+    if (devState === "normal") {
+      fetchIdeas(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, tagFilter, myIdeasFilter, archivedFilter, searchQuery]);
+  }, [
+    statusFilter,
+    tagFilter,
+    myIdeasFilter,
+    archivedFilter,
+    searchQuery,
+    devState,
+  ]);
 
   // ─── Infinite Scroll ──────────────────────────────────────────────────────
 
@@ -394,6 +445,8 @@ export const ProductIdeasPage = () => {
           ) : undefined
         }
       />
+
+      <DevStateControls currentState={devState} onStateChange={setDevState} />
 
       {/* ─── Search & Filters Card ─────────────────────────────────── */}
       <Card className="relative overflow-hidden">
@@ -616,52 +669,54 @@ export const ProductIdeasPage = () => {
           )}
         </CardContent>
 
-        <ProgressBar active={filtering} />
+        <ProgressBar active={displayState.filtering} />
       </Card>
 
       {/* ─── Ideas List ────────────────────────────────────────────── */}
       <div className="flex flex-col gap-stack">
-        {fetchError && !initialLoading && (
-          <FetchErrorBanner message={fetchError} />
+        {displayState.fetchError && !displayState.initialLoading && (
+          <ErrorState
+            message={displayState.fetchError}
+            onRetry={() => fetchIdeas(false)}
+          />
         )}
 
-        {initialLoading ? (
-          <div className="flex flex-col gap-stack">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <IdeaCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : ideas.length === 0 && !fetchError ? (
-          <EmptyState
-            icon={<Lightbulb className="h-12 w-12" />}
-            title={hasActiveFilters ? "No ideas match filters" : "No ideas yet"}
-            description={
-              hasActiveFilters
-                ? "Try adjusting your filters or search to see more ideas"
-                : canCreateIdeas
+        {displayState.initialLoading ? (
+          <IdeasListSkeleton />
+        ) : displayState.ideas.length === 0 && !displayState.fetchError ? (
+          displayHasActiveFilters ? (
+            <EmptyState
+              icon={<Lightbulb className="h-12 w-12" />}
+              title="No ideas match filters"
+              description="Try adjusting your filters or search to see more ideas"
+              actionLabel="Clear filters"
+              onAction={clearFilters}
+            />
+          ) : (
+            <EmptyState
+              icon={<Lightbulb className="h-12 w-12" />}
+              title="No ideas yet"
+              description={
+                canCreateIdeas
                   ? "Create your first product idea to get started"
                   : "You don't have permission to create product ideas"
-            }
-            action={
-              hasActiveFilters
-                ? {
-                    label: "Clear filters",
-                    onClick: clearFilters,
-                    variant: "neutral",
-                  }
-                : canCreateIdeas
-                  ? {
-                      label: "Create Idea",
-                      variant: "primary",
-                      to: "/ideas/new",
-                    }
-                  : undefined
-            }
-          />
+              }
+              customAction={
+                canCreateIdeas ? (
+                  <Button asChild>
+                    <Link to="/ideas/new">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Idea
+                    </Link>
+                  </Button>
+                ) : undefined
+              }
+            />
+          )
         ) : (
           <>
             <div className="flex flex-col gap-stack">
-              {ideas.map((idea) => (
+              {displayState.ideas.map((idea) => (
                 <IdeaCard
                   key={idea.ideaId}
                   idea={idea}

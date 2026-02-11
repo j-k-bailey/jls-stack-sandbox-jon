@@ -13,16 +13,14 @@ export function ErrorState({
   onRetry,
 }: Props) {
   return (
-    <Card className="p-5 border border-warning/40">
+    <Card className="p-5 border border-warning/40 bg-warning-background/40">
       <div className="space-y-2">
-        <div className="text-sm font-semibold">{title}</div>
+        <div className="text-sm font-bold">{title}</div>
         <div className="text-sm text-foreground">{message}</div>
 
         {onRetry ? (
           <div className="pt-2">
-            <Button variant="outline" onClick={onRetry}>
-              Retry
-            </Button>
+            <Button onClick={onRetry}>Retry</Button>
           </div>
         ) : null}
       </div>

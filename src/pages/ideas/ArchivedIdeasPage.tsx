@@ -17,7 +17,7 @@ import {
 } from "@/components/productIdea/IdeaBadges";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { useArchivedIdeas } from "@/components/hooks/useArchivedIdeas";
+import { useArchivedIdeas } from "@/hooks/useArchivedIdeas";
 import {
   canReadProductIdeas,
   canDeleteProductIdea as canRestoreIdea,

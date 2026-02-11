@@ -8,6 +8,7 @@ type Props = {
   onAction?: () => void;
   secondaryActionLabel?: string;
   onSecondaryAction?: () => void;
+  customAction?: ReactNode;
   icon?: ReactNode;
   variant?: "default" | "compact" | "bordered";
   className?: string;
@@ -20,6 +21,7 @@ export function EmptyState({
   onAction,
   secondaryActionLabel,
   onSecondaryAction,
+  customAction,
   icon,
   variant = "default",
   className = "",
@@ -28,42 +30,47 @@ export function EmptyState({
     "rounded-xl bg-surface-1 text-center transition-colors duration-200";
 
   const variantStyles = {
-    default: "border border-border p-8",
-    compact: "border border-border p-6",
-    bordered:
-      "border-2 border-border-primary/40 p-8 hover:border-border-primary",
+    default: "border border-surface-1 p-8",
+    compact: "border border-surface-1 p-6",
+    bordered: "border-2 border-surface-2/50 p-8 hover:border-border-primary/50",
   };
 
   return (
     <div className={`${baseStyles} ${variantStyles[variant]} ${className}`}>
       <div className="mx-auto flex max-w-md flex-col items-center gap-3">
-        {icon ? <div className="text-foreground opacity-80">{icon}</div> : null}
+        {icon ? <div className="text-slate-300 opacity-80">{icon}</div> : null}
 
-        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+        <h2 className="text-lg font-semibold text-slate-100">{title}</h2>
 
         {description ? (
-          <p className="text-sm leading-relaxed text-muted-foreground">
+          <p className="text-sm leading-relaxed text-slate-400">
             {description}
           </p>
         ) : null}
 
-        {actionLabel || secondaryActionLabel ? (
+        {actionLabel || secondaryActionLabel || customAction ? (
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            {actionLabel && onAction ? (
-              <Button onClick={onAction} size="default">
-                {actionLabel}
-              </Button>
-            ) : null}
+            {customAction ? (
+              customAction
+            ) : (
+              <>
+                {actionLabel && onAction ? (
+                  <Button onClick={onAction} size="default">
+                    {actionLabel}
+                  </Button>
+                ) : null}
 
-            {secondaryActionLabel && onSecondaryAction ? (
-              <Button
-                variant="outline"
-                onClick={onSecondaryAction}
-                size="default"
-              >
-                {secondaryActionLabel}
-              </Button>
-            ) : null}
+                {secondaryActionLabel && onSecondaryAction ? (
+                  <Button
+                    variant="outline"
+                    onClick={onSecondaryAction}
+                    size="default"
+                  >
+                    {secondaryActionLabel}
+                  </Button>
+                ) : null}
+              </>
+            )}
           </div>
         ) : null}
       </div>

@@ -305,6 +305,7 @@ export function IdeaDetailPage() {
       toast.success("Idea updated");
       setIsEditMode(false);
     } catch (err) {
+      console.log(data);
       setEditError("root", {
         type: "server",
         message:
