@@ -11,6 +11,8 @@ interface EmptyStateProps {
     label: string;
     onClick?: () => void;
     href?: string;
+    to?: string;
+    asChild?: boolean;
     variant?: "primary" | "accent" | "neutral";
   };
   layout?: FeatureCardProps["layout"];

@@ -29,7 +29,7 @@ export interface ProductIdeaNote {
   body: string;
   authorId: string;
   authorDisplayName: string;
-  authorPhotoURL: string | null;
+  authorPhotoURL?: string | null;
   createdAt: Timestamp;
   updatedAt: Timestamp;
   archivedAt?: Timestamp | null;

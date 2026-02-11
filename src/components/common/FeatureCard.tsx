@@ -2,6 +2,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { FilledButton } from "@/components/ui/BrandButtonVariants";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const featureCardVariants = cva("relative", {
   variants: {
@@ -52,13 +54,35 @@ export interface FeatureCardProps extends VariantProps<
   description: string | React.ReactNode;
   cta?: {
     label: string;
-    href?: string;
+    href?: string; // External link (uses <a>)
+    to?: string; // React Router link (uses <Link>)
     onClick?: () => void;
+    asChild?: boolean; // If true, renders children instead of button
     variant?: "primary" | "accent" | "neutral";
   };
   badges?: Array<{
     text: string;
-    variant?: "primary" | "accent";
+    variant?:
+      | "default"
+      | "accent"
+      | "success"
+      | "warning"
+      | "neutral"
+      | "muted"
+      | "primary-subtle"
+      | "accent-subtle"
+      | "success-subtle"
+      | "warning-subtle"
+      | "neutral-subtle"
+      | "muted-subtle"
+      | "primary-outline"
+      | "accent-outline"
+      | "success-outline"
+      | "warning-outline"
+      | "neutral-outline"
+      | "outline"
+      | "ghost"
+      | "link";
   }>;
   className?: string;
   onClick?: () => void;
@@ -89,22 +113,13 @@ export const FeatureCard = ({
       )}
       onClick={onClick}
     >
-      {/* Badges 
-      TODO: clean up and replace with actual badge*/}
+      {/* Badges */}
       {badges && badges.length > 0 && (
         <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
           {badges.map((badge, index) => (
-            <span
-              key={index}
-              className={cn(
-                "inline-block px-3 py-1 text-xs font-bold rounded-full",
-                badge.variant === "accent"
-                  ? "bg-accent text-accent-foreground"
-                  : "bg-primary text-primary-foreground",
-              )}
-            >
+            <Badge key={index} variant={badge.variant || "default"}>
               {badge.text}
-            </span>
+            </Badge>
           ))}
         </div>
       )}
@@ -147,11 +162,18 @@ export const FeatureCard = ({
         {/* CTA */}
         {cta && (
           <div className="mt-stack">
-            {cta.href ? (
+            {/* React Router Link */}
+            {cta.to ? (
+              <FilledButton asChild semantic={cta.variant || "primary"}>
+                <Link to={cta.to}>{cta.label}</Link>
+              </FilledButton>
+            ) : /* External Link */
+            cta.href ? (
               <FilledButton asChild semantic={cta.variant || "primary"}>
                 <a href={cta.href}>{cta.label}</a>
               </FilledButton>
             ) : (
+              /* Button with onClick */
               <FilledButton
                 onClick={cta.onClick}
                 semantic={cta.variant || "primary"}
