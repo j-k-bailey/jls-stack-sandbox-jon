@@ -6,17 +6,20 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import App from "./App";
 import "./index.css";
 import { LiveStatusProvider } from "@/contexts/LiveStatusContext";
+import { AppErrorBoundary } from "@/components/states/AppErrorBoundary";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <LiveStatusProvider>
-          <TooltipProvider>
-            <App />
-          </TooltipProvider>
-        </LiveStatusProvider>
-      </AuthProvider>
+      <AppErrorBoundary>
+        <AuthProvider>
+          <LiveStatusProvider>
+            <TooltipProvider>
+              <App />
+            </TooltipProvider>
+          </LiveStatusProvider>
+        </AuthProvider>
+      </AppErrorBoundary>
     </BrowserRouter>
   </React.StrictMode>,
 );

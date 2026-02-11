@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
+import { IdeaDetailSkeleton } from "@/components/states/skeletons/IdeaDetailSkeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,7 +29,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
 import { ArchivedIdeaBanner } from "@/components/productIdea/ArchivedIdeaBanner";
 import { InlineAlert } from "@/components/common/InlineAlert";
 import { ProgressBar } from "@/components/common/ProgressBar";
@@ -64,6 +63,7 @@ import {
   canDeleteProductIdea as canArchiveOrRestoreIdea,
 } from "@/lib/permissions/productIdeas";
 import { useLiveStatus } from "@/contexts/LiveStatusContext";
+import { ErrorState } from "@/components/states/ErrorState";
 
 const MIN_SKELETON_MS = 300;
 
@@ -116,36 +116,6 @@ function ideaReducer(state: IdeaState, action: IdeaAction): IdeaState {
         error: action.message,
       };
   }
-}
-
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
-
-function IdeaDetailSkeleton() {
-  return (
-    <div className="p-inset-2xl space-y-section container max-w-4xl">
-      <div className="flex items-center gap-stack">
-        <Skeleton className="h-10 w-32" />
-      </div>
-      <Card>
-        <CardContent className="space-y-stack p-inset-xl">
-          <Skeleton className="h-8 w-3/4" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-2/3" />
-        </CardContent>
-      </Card>
-      <div className="space-y-stack">
-        <Skeleton className="h-6 w-32" />
-        <Card>
-          <CardContent className="p-inset-xl space-y-stack">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-4/5" />
-            <Skeleton className="h-4 w-3/5" />
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -375,7 +345,10 @@ export function IdeaDetailPage() {
             </Button>
           }
         />
-        <FetchErrorBanner message={error || "Idea not found."} />
+        <ErrorState
+          message={error || "Idea not found."}
+          onRetry={error ? () => window.location.reload() : undefined}
+        />
       </div>
     );
   }

@@ -8,7 +8,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/BrandButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InlineAlert } from "@/components/common/InlineAlert";
-import { FetchErrorBanner } from "@/components/common/FetchErrorBanner";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { NoteCard } from "@/components/productIdea/NoteCard";
 import { FormTextarea } from "@/components/form/FormField";
@@ -34,6 +33,7 @@ import {
   canEditProductIdeaNote,
 } from "@/lib/permissions/productIdeaNotes";
 import { useLiveStatus } from "@/contexts/LiveStatusContext";
+import { ErrorState } from "@/components/states/ErrorState";
 
 const MIN_SKELETON_MS = 300;
 
@@ -254,95 +254,101 @@ export function IdeaNotesSection({
         <h2 className="headline-4">Notes ({loading ? "…" : notes.length})</h2>
       </div>
 
-      {error && <FetchErrorBanner message={error} />}
-
-      {/* Add note form */}
-      {showForm && (
-        <Card>
-          <CardContent className="p-inset-xl">
-            <form
-              onSubmit={handleSubmit(onSubmitNote)}
-              className="space-y-stack"
-            >
-              {errors.root?.message && (
-                <InlineAlert variant="warning" dismissible>
-                  {errors.root.message}
-                </InlineAlert>
-              )}
-
-              <FormTextarea
-                control={control}
-                name="body"
-                label="Add a note"
-                placeholder="Add a note..."
-                error={errors.body}
-                maxLength={2000}
-                rows={3}
-              />
-
-              <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  variant="filled"
-                  semantic="primary"
-                  size="sm"
-                  aria-label="Submit note"
-                  disabled={isSubmitting || !isDirty}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      Adding…
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-3 w-3" />
-                      Add Note
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+      {error && (
+        <ErrorState message={error} onRetry={() => window.location.reload()} />
       )}
 
-      {/* Notes list */}
-      <Card className="overflow-hidden">
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="p-inset-xl space-y-stack">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-4/5" />
-              <Skeleton className="h-4 w-3/5" />
-            </div>
-          ) : !error && notes.length === 0 ? (
-            <p className="body-2 text-center text-muted-foreground p-inset-xl py-inset-lg">
-              No notes yet.{showForm && " Add the first one above."}
-            </p>
-          ) : (
-            <div className="divide-y space-y-stack">
-              {notes.map((note) => (
-                <NoteCard
-                  key={note.noteId}
-                  note={note}
-                  canEdit={canEditProductIdeaNote(
-                    user?.uid === note.authorId,
-                    userProfile?.role,
+      {/* Add note form */}
+      {!error && (
+        <>
+          {showForm && (
+            <Card>
+              <CardContent className="p-inset-xl">
+                <form
+                  onSubmit={handleSubmit(onSubmitNote)}
+                  className="space-y-stack"
+                >
+                  {errors.root?.message && (
+                    <InlineAlert variant="warning" dismissible>
+                      {errors.root.message}
+                    </InlineAlert>
                   )}
-                  canArchive={canDeleteProductIdeaNote(
-                    user?.uid === note.authorId,
-                  )}
-                  onUpdate={handleUpdateNote}
-                  onArchive={handleArchiveNote}
-                  className="bg-surface-2"
-                />
-              ))}
-            </div>
+
+                  <FormTextarea
+                    control={control}
+                    name="body"
+                    label="Add a note"
+                    placeholder="Add a note..."
+                    error={errors.body}
+                    maxLength={2000}
+                    rows={3}
+                  />
+
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      variant="filled"
+                      semantic="primary"
+                      size="sm"
+                      aria-label="Submit note"
+                      disabled={isSubmitting || !isDirty}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Adding…
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-3 w-3" />
+                          Add Note
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-        <ProgressBar active={refreshing} />
-      </Card>
+
+          {/* Notes list */}
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="p-inset-xl space-y-stack">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-4/5" />
+                  <Skeleton className="h-4 w-3/5" />
+                </div>
+              ) : !error && notes.length === 0 ? (
+                <p className="body-2 text-center text-muted-foreground p-inset-xl py-inset-lg">
+                  No notes yet.{showForm && " Add the first one above."}
+                </p>
+              ) : (
+                <div className="divide-y space-y-stack">
+                  {notes.map((note) => (
+                    <NoteCard
+                      key={note.noteId}
+                      note={note}
+                      canEdit={canEditProductIdeaNote(
+                        user?.uid === note.authorId,
+                        userProfile?.role,
+                      )}
+                      canArchive={canDeleteProductIdeaNote(
+                        user?.uid === note.authorId,
+                      )}
+                      onUpdate={handleUpdateNote}
+                      onArchive={handleArchiveNote}
+                      className="bg-surface-2"
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+            <ProgressBar active={refreshing} />
+          </Card>
+        </>
+      )}
     </div>
   );
 }

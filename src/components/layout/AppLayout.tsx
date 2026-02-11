@@ -35,7 +35,7 @@ export function AppLayout() {
           <Outlet context={{ setBackground } satisfies LayoutContext} />
         </MainContent>
 
-        <Toaster position="top-center" />
+        <Toaster position="top-center" richColors />
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { IdeasListSkeleton } from "@/components/states/IdeasListSkeleton";
+import { IdeasListSkeleton } from "@/components/states/skeletons/IdeasListSkeleton";
 import { ErrorState } from "@/components/states/ErrorState";
 import { EmptyState } from "@/components/states/EmptyState";
 import {
@@ -60,6 +60,7 @@ import {
   DevStateControls,
   applyDevStateOverrides,
 } from "@/hooks/useDevState";
+// import { ErrorBoundaryTester } from "@/components/dev/ErrorBoundaryTester";
 
 // ============================================================================
 // CONSTANTS
@@ -246,7 +247,7 @@ export const ProductIdeasPage = () => {
 
   const displayState = applyDevStateOverrides(
     devState,
-    { initialLoading, filtering, fetchError, ideas, isClearing }, // ADD isClearing
+    { initialLoading, filtering, fetchError, ideas, isClearing },
     {
       loading: {
         initialLoading: true,
@@ -466,6 +467,8 @@ export const ProductIdeasPage = () => {
           ) : undefined
         }
       />
+      {/* 
+      <ErrorBoundaryTester /> */}
 
       <DevStateControls currentState={devState} onStateChange={setDevState} />
 
