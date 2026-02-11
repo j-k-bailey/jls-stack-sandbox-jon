@@ -63,6 +63,7 @@ const SKELETON_COUNT = 15;
 const MIN_SKELETON_MS = 400;
 const MIN_FILTER_MS = 400;
 const PAGE_SIZE = 15;
+const SCROLL_THRESHOLD = 400; // px from bottom to trigger load
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -294,6 +295,45 @@ export const ProductIdeasPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, tagFilter, myIdeasFilter, archivedFilter, searchQuery]);
 
+  // ─── Infinite Scroll ──────────────────────────────────────────────────────
+
+  const isLoadingRef = useRef(false);
+
+  useEffect(() => {
+    isLoadingRef.current = loadingMore;
+  }, [loadingMore]);
+
+  useEffect(() => {
+    // Don't attach scroll listener if we can't load more or still loading initial data
+    if (!hasMore || initialLoading || filtering) {
+      return;
+    }
+
+    const handleScroll = () => {
+      // Don't trigger if already loading
+      if (isLoadingRef.current) {
+        return;
+      }
+
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+
+      const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+
+      // Trigger load when within threshold of bottom
+      if (distanceFromBottom < SCROLL_THRESHOLD) {
+        fetchIdeas(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [hasMore, initialLoading, filtering, fetchIdeas]);
+
   const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
 
   // ─── Filter Helpers ───────────────────────────────────────────────────────
@@ -362,7 +402,7 @@ export const ProductIdeasPage = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
-              placeholder="Search ideas..."
+              placeholder="Search product idea name (starts with…)"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="pl-10 h-10"
@@ -531,7 +571,6 @@ export const ProductIdeasPage = () => {
           </div>
 
           {/* Active Filter Badges */}
-          {/* Active Filter Badges */}
           {(searchQuery || statusFilter || tagFilter) && (
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <span className="text-xs text-muted-foreground">
@@ -633,23 +672,22 @@ export const ProductIdeasPage = () => {
               ))}
             </div>
 
-            {hasMore && (
-              <div className="flex justify-center pt-stack">
-                <Button
-                  variant="outline"
-                  onClick={() => fetchIdeas(true)}
-                  disabled={loadingMore}
-                  className="min-w-50"
-                >
-                  {loadingMore ? (
-                    <>
-                      <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      Loading...
-                    </>
-                  ) : (
-                    "Load More"
-                  )}
-                </Button>
+            {/* Loading indicator when fetching more */}
+            {loadingMore && (
+              <div className="flex justify-center py-stack">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  <span className="caption">Loading more ideas...</span>
+                </div>
+              </div>
+            )}
+
+            {/* End of list indicator */}
+            {!hasMore && ideas.length > 0 && (
+              <div className="flex justify-center py-stack">
+                <span className="caption text-muted-foreground">
+                  You've reached the end of the list
+                </span>
               </div>
             )}
           </>
@@ -667,17 +705,6 @@ export const ProductIdeasPage = () => {
           </Button>
         ) : (
           <span />
-        )}
-
-        {!archivedFilter && (
-          <Button asChild variant="link" className="ml-auto mr-0 p-0">
-            <Link
-              to="/ideas/archived"
-              className="caption text-muted-foreground"
-            >
-              View archived ideas →
-            </Link>
-          </Button>
         )}
       </div>
     </div>

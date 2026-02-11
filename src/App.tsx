@@ -48,6 +48,7 @@ function App() {
 
           <Route path="/ideas/:ideaId" element={<IdeaDetailPage />} />
           <Route path="/ideas/:ideaId/notes" element={<IdeaNotesPage />} />
+          {/* TODO: Refactor idea page to show not have redirect when toggling between archived or not */}
           <Route path="/ideas/archived" element={<ArchivedIdeasPage />} />
           <Route path="/ideas/archived/:ideaId" element={<IdeaDetailPage />} />
         </Route>
