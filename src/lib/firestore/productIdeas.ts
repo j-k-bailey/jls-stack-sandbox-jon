@@ -16,10 +16,14 @@ import {
   serverTimestamp,
   limit,
   startAfter,
+  startAt,
+  endAt,
   DocumentSnapshot,
   Query,
   QueryConstraint,
   type Unsubscribe,
+  type DocumentData,
+  type QueryDocumentSnapshot,
 } from "firebase/firestore";
 import type {
   ProductIdea,
@@ -84,6 +88,17 @@ const mapDocToNote = (snapshot: DocumentSnapshot): ProductIdeaNote => {
     archivedAt: data.archivedAt ?? null,
   } as ProductIdeaNote;
 };
+
+function normalizeTitleLower(title: string) {
+  return title.trim().toLowerCase();
+}
+
+function normalizeTags(tags: string[]) {
+  const cleaned = tags.map((t) => t.trim().toLowerCase()).filter(Boolean);
+
+  // de-dupe while preserving order
+  return Array.from(new Set(cleaned));
+}
 
 // ============================================================================
 // QUERY BUILDERS
