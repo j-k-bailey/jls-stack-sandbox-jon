@@ -4,6 +4,7 @@ import { Topbar } from "@/components/layout/Topbar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MainContent } from "@/components/layout/MainContent";
 import { NAVIGATION_CONFIG } from "@/constants/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 type LayoutContext = {
   setBackground: (bg: string) => void;
@@ -33,6 +34,8 @@ export function AppLayout() {
         <MainContent background={background}>
           <Outlet context={{ setBackground } satisfies LayoutContext} />
         </MainContent>
+
+        <Toaster position="top-center" />
       </div>
     </div>
   );
