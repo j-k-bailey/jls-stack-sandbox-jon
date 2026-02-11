@@ -1,5 +1,7 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import {
+  createProductIdea,
+  createProductIdeaNote,
+} from "@/lib/firestore/productIdeas";
 import {
   PRODUCT_IDEAS,
   PRODUCT_IDEA_NOTES,
@@ -14,7 +16,6 @@ export async function seedProductIdeas(
   ideasCreated: number;
   notesCreated: number;
 }> {
-  const colRef = collection(db, "productIdeas");
   const seededIdeas = new Map<string, string>(); // slug -> ideaId
 
   let ideasCreated = 0;
@@ -22,19 +23,17 @@ export async function seedProductIdeas(
 
   // Seed Product Ideas
   for (const idea of PRODUCT_IDEAS) {
-    const docData = {
-      title: idea.title,
-      summary: idea.summary,
-      status: idea.status,
-      tags: idea.tags || [],
-      priority: idea.priority,
-      ownerId: currentUserId,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      archivedAt: null,
-    };
+    const docRef = await createProductIdea(
+      {
+        title: idea.title,
+        summary: idea.summary,
+        status: idea.status,
+        tags: idea.tags,
+        priority: idea.priority,
+      },
+      currentUserId,
+    );
 
-    const docRef = await addDoc(colRef, docData);
     const slug = getIdeaSlug(idea.title);
     seededIdeas.set(slug, docRef.id);
     ideasCreated++;
@@ -48,18 +47,16 @@ export async function seedProductIdeas(
       continue;
     }
 
-    const notesColRef = collection(db, "productIdeas", ideaId, "notes");
-
     for (const note of notes) {
-      await addDoc(notesColRef, {
-        body: note.body,
-        authorId: currentUserId,
-        authorDisplayName,
-        authorPhotoURL,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        archivedAt: null,
-      });
+      await createProductIdeaNote(
+        ideaId,
+        {
+          body: note.body,
+          authorDisplayName,
+          ...(authorPhotoURL && { authorPhotoURL }),
+        },
+        currentUserId,
+      );
       notesCreated++;
     }
   }

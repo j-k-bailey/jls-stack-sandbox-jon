@@ -45,6 +45,20 @@ export const PRODUCT_IDEAS: ProductIdeaSeed[] = [
     priority: "now",
   },
   {
+    title: "Interval",
+    summary:
+      "A spaced-repetition flashcard app designed for serious learners who want to build deep, durable knowledge. Interval uses evidence-based scheduling algorithms to optimize retention while keeping the interface clean, fast, and distraction-free.",
+    status: "active",
+    tags: [
+      "learning",
+      "spaced-repetition",
+      "flashcards",
+      "education",
+      "memory",
+    ],
+    priority: "now",
+  },
+  {
     title: "Lorebook (SOP Wiki & Training Hub)",
     summary:
       "A living knowledge system that turns SOPs into a navigable, interconnected wiki. Lorebook makes institutional knowledge legible, searchable, and easier to learn through structured modules and progress tracking.",
@@ -124,6 +138,24 @@ export const PRODUCT_IDEA_NOTES: Record<string, ProductIdeaNoteSeed[]> = {
     },
     {
       body: "This tool is especially useful for repeatable writing contexts: product copy, documentation, marketing content, and internal communications.",
+    },
+  ],
+
+  interval: [
+    {
+      body: "Interval is built on spaced-repetition principles (SM-2 algorithm or similar) to maximize long-term retention with minimal daily review time.",
+    },
+    {
+      body: "The core UX philosophy is speed and focus: cards should be reviewable in seconds, not minutes. No clutter, no gamification, no distractions.",
+    },
+    {
+      body: "Unlike Anki (powerful but clunky) or Quizlet (accessible but shallow), Interval aims to be both scientifically rigorous and beautiful to use daily.",
+    },
+    {
+      body: "Key features: markdown support for cards, deck organization, scheduling transparency (users can see why a card is due), offline-first architecture, and clean mobile experience.",
+    },
+    {
+      body: "Target users: students, professionals, language learners, and anyone building knowledge that compounds over years, not weeks.",
     },
   ],
 
