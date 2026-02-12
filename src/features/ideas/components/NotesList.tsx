@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProgressBar } from "@/components/common/ProgressBar";
-import { NoteCard } from "@/components/productIdea/NoteCard";
+import { NoteCard } from "@/features/ideas/components/NoteCard";
 import type { ProductIdeaNote } from "@/lib/types/productIdeas";
 
 // ============================================================================
