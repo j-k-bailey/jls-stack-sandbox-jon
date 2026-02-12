@@ -6,44 +6,60 @@ export function HelpPage() {
     <div className="space-y-section container p-inset-2xl">
       <PageHeader
         pageTitle="Help & Documentation"
-        pageDescription="Find resources and guidance to help you succeed in the JLS Academy
-          program."
+        pageDescription="Learn how to use the Product Ideas Tracker to capture, organize, and develop your ideas."
       />
 
       <div className="grid gap-6 md:grid-cols-1">
         <SectionCard
-          title="Week 1 Documentation"
-          description="Getting started with the fundamentals"
+          title="Getting Started"
+          description="Create and manage your first product idea"
         >
           <p className="text-sm">
-            Access Week 1 materials covering the basics of React, TypeScript,
-            and modern web development practices. These foundational docs will
-            guide you through setting up your development environment and
-            understanding core concepts.
+            Start by creating a new idea from the Ideas page. Give it a clear
+            title, write a detailed summary, and assign a status (Idea,
+            Research, Planning, In Progress, or Done). Use tags to categorize
+            ideas and set priorities (Now, Next, Later) to organize your
+            workflow. Ideas are automatically saved and can be edited at any
+            time.
           </p>
         </SectionCard>
 
         <SectionCard
-          title="Week 2 UI/UX Documentation"
-          description="Design principles and component libraries"
+          title="Using Notes"
+          description="Track progress and collaborate with your team"
         >
           <p className="text-sm">
-            Explore Week 2 resources focused on user interface design, user
-            experience principles, Tailwind CSS, and component-based
-            architecture. Learn how to build accessible and responsive
-            interfaces using modern design patterns.
+            Add notes to any idea to document research findings, meeting
+            outcomes, decisions, or progress updates. Notes appear in
+            chronological order and can be edited or removed as needed. Use
+            notes to maintain a timeline of your idea's evolution and keep
+            stakeholders informed.
           </p>
         </SectionCard>
 
         <SectionCard
-          title="Ask for Help from Mentors"
-          description="Get support when you need it"
+          title="Organizing Ideas"
+          description="Filter, search, and archive effectively"
         >
           <p className="text-sm">
-            Our mentors are here to support your learning journey. Reach out
-            through the dedicated Slack channels, schedule office hours, or
-            submit questions through the support portal. Don't hesitate to ask
-            questions—we're here to help you succeed!
+            Use the filtering system to find ideas by status, priority, tags, or
+            search by name. Filter between "All Ideas" and "My Ideas" to focus
+            on your work. Archive completed or abandoned ideas to keep your
+            active list focused—archived ideas remain searchable and can be
+            restored anytime.
+          </p>
+        </SectionCard>
+
+        <SectionCard
+          title="Best Practices"
+          description="Tips for effective idea management"
+        >
+          <p className="text-sm">
+            Write clear, specific titles and detailed summaries. Update status
+            regularly to reflect current progress. Use consistent tags across
+            similar ideas for better filtering. Add notes frequently to capture
+            insights while they're fresh. Review and archive old ideas
+            periodically to maintain a clean workspace.
           </p>
         </SectionCard>
       </div>
