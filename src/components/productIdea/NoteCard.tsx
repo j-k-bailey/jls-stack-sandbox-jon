@@ -131,7 +131,7 @@ export function NoteCard({
           "group",
           isParentArchived
             ? "bg-neutral-background border-border-neutral"
-            : "bg-surface-2 border-border",
+            : "bg-surface-1 border-border",
           className,
         )}
       >
