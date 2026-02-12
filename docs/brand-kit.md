@@ -316,7 +316,7 @@ Built from primitives using `clamp()` for fluid scaling:
 
 ### Decision Tree
 
-```
+```txt
 Q: What am I spacing?
 
 FLOW (gaps between elements):
@@ -407,9 +407,9 @@ The `hit-target` utility ensures all clickable/tappable elements are at least 24
 | `icon`        | `--sandbox-primitive-radius-1` (2px)  | Icon backgrounds                   |
 | `full`        | `--sandbox-primitive-radius-full`     | Pills, badges, tags                |
 
-### Decision Tree
+### Decision Tree for Rounding
 
-```
+```txt
 Q: What am I rounding?
 
 ├─ Button, input, small badge?
@@ -459,7 +459,7 @@ Q: What am I rounding?
 **Component-Level Utilities:**
 All typography is defined as `@utility` declarations that can be overridden with Tailwind classes via `cn()`.
 
-**Critical Principle: Semantic Structure ≠ Visual Style**
+**Critical Principle:** Semantic Structure ≠ Visual Style
 
 - HTML headings (`<h1>`–`<h6>`) define **document structure and accessibility**
 - Typography utilities (`headline-1`–`headline-6`, `body-1`, etc.) define **visual emphasis**

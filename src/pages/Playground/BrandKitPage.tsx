@@ -195,7 +195,7 @@ export function BrandKitPage() {
 
         <ResponsiveGrid maxColumns="two">
           {/* Primary Cyan */}
-          <div className="bg-gradient-to-br from-primary via-primary to-primary-hover text-primary-foreground p-inset-lg rounded-large border-2 border-border-primary shadow-glow-primary">
+          <div className="bg-linear-to-br from-primary via-primary to-primary-hover text-primary-foreground p-inset-lg rounded-large border-2 border-border-primary shadow-glow-primary">
             <div className="space-y-stack">
               <div className="inline-block bg-primary-foreground/10 backdrop-blur-sm px-inset py-inline rounded-full">
                 <p className="overline-text text-primary-foreground text-[10px]">
@@ -244,7 +244,7 @@ export function BrandKitPage() {
           </div>
 
           {/* Accent Fuchsia */}
-          <div className="bg-gradient-to-br from-accent via-accent to-accent-hover text-accent-foreground p-inset-lg rounded-large border-2 border-border-accent shadow-glow-accent">
+          <div className="bg-linear-to-br from-accent via-accent to-accent-hover text-accent-foreground p-inset-lg rounded-large border-2 border-border-accent shadow-glow-accent">
             <div className="space-y-stack">
               <div className="inline-block bg-accent-foreground/10 backdrop-blur-sm px-inset py-inline rounded-full">
                 <p className="overline-text text-[10px] text-accent-foreground">
