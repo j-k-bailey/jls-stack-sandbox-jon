@@ -21,7 +21,6 @@ import {
 import { useIdeasFilters } from "@/features/ideas/hooks/useIdeasFilters";
 import { useIdeasList } from "@/features/ideas/hooks/useIdeasList";
 import { IdeasFiltersBar } from "@/features/ideas/components/IdeasFiltersBar";
-// import { ErrorBoundaryTester } from "@/components/dev/ErrorBoundaryTester";
 
 // ============================================================================
 // CONSTANTS
@@ -139,8 +138,6 @@ export const ProductIdeasPage = () => {
           ) : undefined
         }
       />
-
-      {/* <ErrorBoundaryTester /> */}
 
       <DevStateControls currentState={devState} onStateChange={setDevState} />
 
