@@ -32,6 +32,7 @@ interface NoteCardProps {
   onUpdate: (noteId: string, body: string) => Promise<void>;
   onArchive: (noteId: string) => Promise<void>;
   className?: string;
+  isParentArchived?: boolean;
 }
 
 export function NoteCard({
@@ -41,6 +42,7 @@ export function NoteCard({
   onUpdate,
   onArchive,
   className,
+  isParentArchived = false,
 }: NoteCardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
@@ -124,8 +126,16 @@ export function NoteCard({
 
   return (
     <>
-      <Card className={cn("group", className)}>
-        <CardContent className="space-y-stack">
+      <Card
+        className={cn(
+          "group",
+          isParentArchived
+            ? "bg-neutral-background border-border-neutral"
+            : "bg-surface-2 border-border",
+          className,
+        )}
+      >
+        <CardContent className={"space-y-stack"}>
           {/* Author Header */}
           <div className="flex items-center justify-between gap-inline">
             <div className="flex items-center gap-inline min-w-0">

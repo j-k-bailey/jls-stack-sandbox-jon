@@ -96,6 +96,7 @@ export function IdeaDetailPage() {
       toast.success("Idea archived");
       setArchiveDialogOpen(false);
     } catch (err) {
+      // Error already toasted by hook
       setArchiveDialogOpen(false);
       throw err;
     }
@@ -139,80 +140,87 @@ export function IdeaDetailPage() {
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-inset-2xl space-y-section container max-w-4xl">
-      {/* Header */}
-      <PageHeader
-        pageTitle={idea.title}
-        actions={
-          <Button variant="ghost" onClick={() => navigate("/ideas")}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Ideas
-          </Button>
-        }
-      />
-
-      {/* Archive Banner */}
-      {isArchived && (
-        <ArchivedIdeaBanner
-          message={
-            idea.archivedAt
-              ? `This idea was archived on ${format(idea.archivedAt.toDate(), "MMMM d, yyyy")}. It is read-only until restored.`
-              : "This idea is archived and read-only until restored."
+    <>
+      <div className="p-inset-2xl space-y-section container max-w-4xl">
+        {/* Header */}
+        <PageHeader
+          pageTitle={idea.title}
+          actions={
+            <Button variant="ghost" onClick={() => navigate("/ideas")}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Ideas
+            </Button>
           }
         />
-      )}
 
-      {/* Status & Priority */}
-      <div
-        className={
-          isArchived
-            ? "flex items-start gap-x-6 opacity-70"
-            : "flex items-start gap-x-6"
-        }
-      >
-        <IdeaStatusDisplay status={idea.status} />
-        {idea.priority && <IdeaPriorityDisplay priority={idea.priority} />}
+        {/* Archive Banner */}
+        {isArchived && (
+          <ArchivedIdeaBanner
+            message={
+              idea.archivedAt
+                ? `This idea was archived on ${format(idea.archivedAt.toDate(), "MMMM d, yyyy")}. It is read-only until restored.`
+                : "This idea is archived and read-only until restored."
+            }
+          />
+        )}
+
+        {/* Status & Priority */}
+        <div
+          className={
+            isArchived
+              ? "flex items-start gap-x-6 opacity-70"
+              : "flex items-start gap-x-6"
+          }
+        >
+          <IdeaStatusDisplay status={idea.status} />
+          {idea.priority && <IdeaPriorityDisplay priority={idea.priority} />}
+        </div>
+
+        {/* Main Card */}
+        <Card
+          className={
+            isArchived
+              ? "overflow-hidden border-border-neutral bg-neutral-background"
+              : "overflow-hidden"
+          }
+        >
+          <CardContent className="space-y-section p-inset-xl">
+            {isEditMode ? (
+              <IdeaEditForm
+                control={control}
+                errors={errors}
+                idea={idea}
+                isSubmitting={isSubmitting}
+                isDirty={isDirty}
+                onSubmit={handleSubmit(onSubmit)}
+                onCancel={cancelEdit}
+              />
+            ) : (
+              <IdeaViewMode
+                idea={idea}
+                isArchived={isArchived}
+                canEdit={canEdit}
+                canArchive={canArchive}
+                canRestore={canRestore}
+                onEdit={enterEditMode}
+                onArchive={() => setArchiveDialogOpen(true)}
+                onRestore={() => setRestoreDialogOpen(true)}
+              />
+            )}
+          </CardContent>
+          <ProgressBar active={refreshing} />
+        </Card>
+
+        <Separator />
+
+        {/* Notes Section */}
+        <IdeaNotesSection
+          ideaId={ideaId}
+          hideForm={isEditMode}
+          isParentArchived={isArchived}
+          ownerId={idea.ownerId}
+        />
       </div>
-
-      {/* Main Card */}
-      <Card
-        className={
-          isArchived
-            ? "overflow-hidden border-border-neutral bg-neutral-background"
-            : "overflow-hidden"
-        }
-      >
-        <CardContent className="space-y-section p-inset-xl">
-          {isEditMode ? (
-            <IdeaEditForm
-              control={control}
-              errors={errors}
-              idea={idea}
-              isSubmitting={isSubmitting}
-              isDirty={isDirty}
-              onSubmit={handleSubmit(onSubmit)}
-              onCancel={cancelEdit}
-            />
-          ) : (
-            <IdeaViewMode
-              idea={idea}
-              isArchived={isArchived}
-              canEdit={canEdit}
-              canArchive={canArchive}
-              canRestore={canRestore}
-              onEdit={enterEditMode}
-              onArchive={() => setArchiveDialogOpen(true)}
-              onRestore={() => setRestoreDialogOpen(true)}
-            />
-          )}
-        </CardContent>
-        <ProgressBar active={refreshing} />
-      </Card>
-
-      <Separator />
-
-      {/* Notes Section */}
-      <IdeaNotesSection ideaId={ideaId} hideForm={isArchived || isEditMode} />
 
       {/* Dialogs */}
       <CancelEditDialog
@@ -234,6 +242,6 @@ export function IdeaDetailPage() {
         restoring={restoring}
         canRestore={canRestore}
       />
-    </div>
+    </>
   );
 }
