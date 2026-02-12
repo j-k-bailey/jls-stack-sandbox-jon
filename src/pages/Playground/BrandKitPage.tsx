@@ -2,7 +2,14 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/BrandButton";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import { FeatureCard } from "@/components/common/FeatureCard";
-import { FaPalette, FaShapes, FaFont, FaRulerCombined } from "react-icons/fa6";
+import {
+  FaPalette,
+  FaShapes,
+  FaFont,
+  FaRulerCombined,
+  FaLayerGroup,
+  FaCubes,
+} from "react-icons/fa6";
 
 export function BrandKitPage() {
   return (
@@ -10,35 +17,106 @@ export function BrandKitPage() {
       <PageHeader
         pageTitle="JLS Stack Sandbox Design System"
         level="h2"
-        pageDescription="Electric cyan and hot fuchsia create a cohesive color story with progressive surface elevation and comprehensive token sets."
+        pageDescription="A three-layer design system following Tailwind 4 best practices: primitives define raw values, semantics map design decisions, and components provide reusable patterns."
         hr
       />
 
+      {/* THREE-LAYER ARCHITECTURE */}
+      <section className="space-y-stack">
+        <div className="space-y-inline">
+          <h3>Three-Layer Architecture</h3>
+          <p className="body-1 text-muted-foreground">
+            Our design system follows Tailwind 4 best practices with clear
+            separation between foundation, semantics, and implementation.
+          </p>
+        </div>
+
+        <ResponsiveGrid maxColumns="three">
+          <FeatureCard
+            icon={<FaCubes />}
+            heading="Layer 1: Primitives"
+            description="Raw foundational values that never change. Full color palettes (50-950), spacing scale (1-24), radius values, font families."
+            emphasis="subtle"
+          />
+          <FeatureCard
+            icon={<FaLayerGroup />}
+            heading="Layer 2: Semantics"
+            description="Design decisions mapped to primitives. Color semantics, spacing tokens (inline, stack, inset-*), radius tokens (interactive, container)."
+            emphasis="subtle"
+          />
+          <FeatureCard
+            icon={<FaShapes />}
+            heading="Layer 3: Components"
+            description="Composite utilities built with @utility. Typography (headline-1-6), grid patterns (grid-basic), interactive utilities (hit-target)."
+            emphasis="subtle"
+          />
+        </ResponsiveGrid>
+
+        <div className="bg-surface-1 p-inset-lg rounded-container border border-border shadow-low">
+          <h4 className="headline-5 mb-stack">System Flow</h4>
+          <div className="flex flex-col md:flex-row gap-stack items-center">
+            <div className="flex-1 bg-surface-2 p-inset rounded-nested border border-border">
+              <p className="overline-text text-primary mb-inline">PRIMITIVES</p>
+              <code className="caption monospace text-accent block mb-inline">
+                --sandbox-primitive-color-cyan-700
+              </code>
+              <code className="caption monospace text-accent block">
+                oklch(42% 0.19 195)
+              </code>
+            </div>
+            <div className="text-muted-foreground">→</div>
+            <div className="flex-1 bg-surface-2 p-inset rounded-nested border border-border">
+              <p className="overline-text text-primary mb-inline">SEMANTICS</p>
+              <code className="caption monospace text-accent block mb-inline">
+                --primary
+              </code>
+              <code className="caption monospace text-muted-foreground block">
+                var(--sandbox-primitive-color-cyan-700)
+              </code>
+            </div>
+            <div className="text-muted-foreground">→</div>
+            <div className="flex-1 bg-surface-2 p-inset rounded-nested border border-border">
+              <p className="overline-text text-primary mb-inline">COMPONENTS</p>
+              <code className="caption monospace text-accent block">
+                bg-primary
+              </code>
+            </div>
+          </div>
+          <p className="caption text-muted-foreground mt-stack">
+            <strong>Change primitives</strong> → semantics automatically update
+            → components inherit changes. Maintainable by design.
+          </p>
+        </div>
+      </section>
+
+      <hr className="border-border" />
+
+      {/* DESIGN SYSTEM OVERVIEW */}
       <section>
         <h3 className="mb-stack">Design System Overview</h3>
         <ResponsiveGrid maxColumns="two">
           <FeatureCard
-            icon={<FaShapes />}
-            heading="Surface Elevation"
-            description="Four distinct levels create clear hierarchy with progressive cyan tinting"
-            emphasis="subtle"
-          />
-          <FeatureCard
             icon={<FaPalette />}
-            heading="Brand Colors"
-            description="Electric cyan and hot fuchsia anchor all interactive moments"
-            emphasis="subtle"
-          />
-          <FeatureCard
-            icon={<FaFont />}
-            heading="Typography"
-            description="Comprehensive scale from headlines to captions with optimal readability"
+            heading="Full Color Palettes"
+            description="Complete 50-950 scales for cyan, fuchsia, teal, coral, steel, slate, and gray using OKLCH color space"
             emphasis="subtle"
           />
           <FeatureCard
             icon={<FaRulerCombined />}
-            heading="Spacing System"
-            description="Content-based tokens for consistent rhythm across all components"
+            heading="Unified Spacing Scale"
+            description="Base unit (0.25rem) with percentage-based scale. Everything uses the same foundational rhythm"
+            emphasis="subtle"
+          />
+          <FeatureCard
+            icon={<FaFont />}
+            heading="Component Typography"
+            description="13 utilities (headline-1-6, body-1/2, caption) defined with @utility, overridable via cn()"
+            emphasis="subtle"
+          />
+          <FeatureCard
+            icon={<FaShapes />}
+            heading="Surface Elevation"
+            description="Four distinct levels with progressive cyan tinting create clear visual hierarchy"
             emphasis="subtle"
           />
         </ResponsiveGrid>
@@ -58,25 +136,48 @@ export function BrandKitPage() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-stack">
           <div className="text-center space-y-inline">
-            <div className="h-16 rounded-container border-2 border-border bg-background" />
+            <div className="h-16 rounded-container border-2 border-border bg-background shadow-low" />
             <p className="caption">Level 0</p>
+            <code className="caption monospace text-muted-foreground">
+              background
+            </code>
           </div>
           <div className="text-center space-y-inline">
-            <div className="h-16 rounded-container border-2 border-border bg-surface-1" />
+            <div className="h-16 rounded-container border-2 border-border bg-surface-1 shadow-low" />
             <p className="caption">Level 1</p>
+            <code className="caption monospace text-muted-foreground">
+              surface-1
+            </code>
           </div>
           <div className="text-center space-y-inline">
-            <div className="h-16 rounded-container border-2 border-border bg-surface-2" />
+            <div className="h-16 rounded-container border-2 border-border bg-surface-2 shadow-low" />
             <p className="caption">Level 2</p>
+            <code className="caption monospace text-muted-foreground">
+              surface-2
+            </code>
           </div>
           <div className="text-center space-y-inline">
-            <div className="h-16 rounded-container border-2 border-border bg-surface-3" />
+            <div className="h-16 rounded-container border-2 border-border bg-surface-3 shadow-low" />
             <p className="caption">Level 3</p>
+            <code className="caption monospace text-muted-foreground">
+              surface-3
+            </code>
           </div>
           <div className="text-center space-y-inline">
-            <div className="h-16 rounded-container border-2 border-border bg-surface-4" />
+            <div className="h-16 rounded-container border-2 border-border bg-surface-4 shadow-low" />
             <p className="caption">Level 4</p>
+            <code className="caption monospace text-muted-foreground">
+              surface-4
+            </code>
           </div>
+        </div>
+
+        <div className="bg-surface-1 p-inset rounded-container border border-border">
+          <p className="caption text-muted-foreground">
+            <strong>Prefer surface elevation over shadows</strong> for
+            hierarchy. Shadows reserved for floating elements (modals,
+            dropdowns).
+          </p>
         </div>
       </section>
 
@@ -87,7 +188,8 @@ export function BrandKitPage() {
         <div className="space-y-inline">
           <h3>Brand Identity</h3>
           <p className="body-1 text-muted-foreground">
-            Electric cyan and hot fuchsia anchor all interactive moments.
+            Electric cyan and hot fuchsia anchor all interactive moments. Built
+            from complete primitive palettes for maximum flexibility.
           </p>
         </div>
 
@@ -123,12 +225,20 @@ export function BrandKitPage() {
                 </div>
                 <div className="flex-1 bg-primary-foreground/10 backdrop-blur-sm rounded-nested p-inset-sm">
                   <p className="caption opacity-70 mb-inline text-primary-foreground">
-                    LIGHT
+                    PALETTE
                   </p>
                   <code className="caption monospace text-primary-foreground">
-                    42%
+                    50-950
                   </code>
                 </div>
+              </div>
+              <div className="pt-inline">
+                <p className="caption text-primary-foreground/70 mb-inline">
+                  Semantic token built from:
+                </p>
+                <code className="caption monospace text-primary-foreground bg-primary-foreground/10 px-inset-sm py-inline rounded-interactive inline-block">
+                  --sandbox-primitive-color-cyan-700
+                </code>
               </div>
             </div>
           </div>
@@ -164,35 +274,69 @@ export function BrandKitPage() {
                 </div>
                 <div className="flex-1 bg-accent-foreground/10 backdrop-blur-sm rounded-nested p-inset-sm">
                   <p className="caption opacity-70 mb-inline text-accent-foreground">
-                    LIGHT
+                    PALETTE
                   </p>
                   <code className="caption monospace text-accent-foreground">
-                    48%
+                    50-950
                   </code>
                 </div>
+              </div>
+              <div className="pt-inline">
+                <p className="caption text-accent-foreground/70 mb-inline">
+                  Semantic token built from:
+                </p>
+                <code className="caption monospace text-accent-foreground bg-accent-foreground/10 px-inset-sm py-inline rounded-interactive inline-block">
+                  --sandbox-primitive-color-fuchsia-700
+                </code>
               </div>
             </div>
           </div>
         </ResponsiveGrid>
 
-        <ResponsiveGrid>
-          <div className="space-y-inline">
-            <div className="h-20 rounded-container border-2 border-border-primary bg-primary shadow-low" />
-            <p className="caption text-center">Primary</p>
-          </div>
-          <div className="space-y-inline">
-            <div className="h-20 rounded-container border-2 border-border-primary bg-primary-hover shadow-low" />
-            <p className="caption text-center">Primary Hover</p>
-          </div>
-          <div className="space-y-inline">
-            <div className="h-20 rounded-container border-2 border-border-accent bg-accent shadow-low" />
-            <p className="caption text-center">Accent</p>
-          </div>
-          <div className="space-y-inline">
-            <div className="h-20 rounded-container border-2 border-border-accent bg-accent-hover shadow-low" />
-            <p className="caption text-center">Accent Hover</p>
-          </div>
-        </ResponsiveGrid>
+        {/* Color Swatches */}
+        <div className="bg-surface-1 p-inset-lg rounded-container border border-border shadow-low">
+          <p className="overline-text text-primary mb-stack">
+            6-TOKEN SEMANTIC PATTERN
+          </p>
+          <ResponsiveGrid>
+            <div className="space-y-inline">
+              <div className="h-20 rounded-container border-2 border-border-primary bg-primary shadow-low" />
+              <p className="caption text-center font-semibold">Base</p>
+              <code className="caption monospace text-center block text-muted-foreground">
+                primary
+              </code>
+            </div>
+            <div className="space-y-inline">
+              <div className="h-20 rounded-container border-2 border-border-primary bg-primary-hover shadow-low" />
+              <p className="caption text-center font-semibold">Hover</p>
+              <code className="caption monospace text-center block text-muted-foreground">
+                primary-hover
+              </code>
+            </div>
+            <div className="space-y-inline">
+              <div className="h-20 rounded-container border-2 border-border-primary bg-primary-background shadow-low flex items-center justify-center">
+                <span className="caption text-primary-on-background font-semibold">
+                  Text
+                </span>
+              </div>
+              <p className="caption text-center font-semibold">Background</p>
+              <code className="caption monospace text-center block text-muted-foreground">
+                primary-background
+              </code>
+            </div>
+            <div className="space-y-inline">
+              <div className="h-20 rounded-container border-2 border-border-primary bg-background shadow-low flex items-center justify-center">
+                <span className="caption text-primary-on-background font-semibold">
+                  Text
+                </span>
+              </div>
+              <p className="caption text-center font-semibold">On Background</p>
+              <code className="caption monospace text-center block text-muted-foreground">
+                on-background
+              </code>
+            </div>
+          </ResponsiveGrid>
+        </div>
       </section>
 
       <hr className="border-border" />
@@ -202,7 +346,8 @@ export function BrandKitPage() {
         <div className="space-y-inline">
           <h3>Semantic Palette</h3>
           <p className="body-1 text-muted-foreground">
-            Complete token sets for every semantic need.
+            Complete token sets for every semantic need, all built from full
+            primitive palettes.
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-stack">
@@ -213,7 +358,10 @@ export function BrandKitPage() {
             </div>
             <div className="p-inset">
               <p className="button-text text-[10px] mb-inline">SUCCESS</p>
-              <p className="caption">Matrix green</p>
+              <p className="caption">Matrix teal</p>
+              <code className="caption monospace text-muted-foreground block mt-inline">
+                teal-700
+              </code>
             </div>
           </div>
 
@@ -225,6 +373,9 @@ export function BrandKitPage() {
             <div className="p-inset">
               <p className="button-text text-[10px] mb-inline">WARNING</p>
               <p className="caption">Hot coral</p>
+              <code className="caption monospace text-muted-foreground block mt-inline">
+                coral-700
+              </code>
             </div>
           </div>
 
@@ -236,6 +387,9 @@ export function BrandKitPage() {
             <div className="p-inset">
               <p className="button-text text-[10px] mb-inline">NEUTRAL</p>
               <p className="caption">Cool steel</p>
+              <code className="caption monospace text-muted-foreground block mt-inline">
+                steel-300
+              </code>
             </div>
           </div>
 
@@ -247,6 +401,9 @@ export function BrandKitPage() {
             <div className="p-inset">
               <p className="button-text text-[10px] mb-inline">MUTED</p>
               <p className="caption">Blue-gray</p>
+              <code className="caption monospace text-muted-foreground block mt-inline">
+                slate-200
+              </code>
             </div>
           </div>
 
@@ -258,6 +415,9 @@ export function BrandKitPage() {
             <div className="p-inset">
               <p className="button-text text-[10px] mb-inline">DISABLED</p>
               <p className="caption">Ghosted</p>
+              <code className="caption monospace text-muted-foreground block mt-inline">
+                gray-200
+              </code>
             </div>
           </div>
         </div>
@@ -296,7 +456,7 @@ export function BrandKitPage() {
 
           {/* Badges */}
           <div className="space-y-stack">
-            <p className="overline-text text-primary">BADGES</p>
+            <p className="overline-text text-primary">SOLID BADGES</p>
             <div className="flex flex-wrap gap-inline">
               <span className="bg-primary text-primary-foreground border-2 border-border-primary px-inset py-inline rounded-full caption font-semibold shadow-low">
                 Primary
@@ -344,7 +504,13 @@ export function BrandKitPage() {
 
       {/* TYPOGRAPHY SCALE */}
       <section className="space-y-stack">
-        <h3>Typography System</h3>
+        <div className="space-y-inline">
+          <h3>Typography System</h3>
+          <p className="body-1 text-muted-foreground">
+            Component-level utilities defined with @utility, fully overridable
+            via cn() with standard Tailwind classes.
+          </p>
+        </div>
 
         <div className="bg-surface-1 p-inset-lg rounded-container border border-border space-y-section shadow-low">
           {/* Overline */}
@@ -355,71 +521,33 @@ export function BrandKitPage() {
             <p className="caption">
               12px • Semibold • 0.15em letter spacing • Uppercase
             </p>
+            <code className="caption monospace text-muted-foreground block">
+              @utility overline-text
+            </code>
           </div>
 
-          {/* All Headings */}
+          {/* Headings */}
           <div className="space-y-stack">
             <div className="space-y-inline">
               <span className="headline-1">
                 Heading 1 — Hero sections and main page titles
               </span>
               <p className="caption">48px • Light • -0.02em letter spacing</p>
+              <code className="caption monospace text-muted-foreground">
+                @utility headline-1
+              </code>
             </div>
 
             <div className="space-y-inline">
               <span className="headline-2">
-                Heading 2 — Major page sections and divisions
+                Heading 2 — Major page sections
               </span>
               <p className="caption">36px • Light • -0.015em letter spacing</p>
             </div>
 
             <div className="space-y-inline">
-              <span className="headline-3">
-                Heading 3 — Subsections and card group headers
-              </span>
+              <span className="headline-3">Heading 3 — Subsections</span>
               <p className="caption">28px • Regular • -0.01em letter spacing</p>
-            </div>
-
-            <div className="space-y-inline">
-              <span className="headline-4">
-                Heading 4 — Component titles and sidebar headers
-              </span>
-              <p className="caption">
-                22px • Regular • -0.005em letter spacing
-              </p>
-            </div>
-
-            <div className="space-y-inline">
-              <span className="headline-5">
-                Heading 5 — Small component headers and labels
-              </span>
-              <p className="caption">18px • Medium • Normal letter spacing</p>
-            </div>
-
-            <div className="space-y-inline">
-              <span className="headline-6">
-                Heading 6 — Compact headers and nested component titles
-              </span>
-              <p className="caption">16px • Medium • 0.005em letter spacing</p>
-            </div>
-          </div>
-
-          {/* Subtitles */}
-          <div className="space-y-stack">
-            <div className="space-y-inline">
-              <p className="subtitle-1">
-                Subtitle 1 — Prominent secondary text for page subtitles and
-                emphasized content
-              </p>
-              <p className="caption">16px • Medium • 0.01em letter spacing</p>
-            </div>
-
-            <div className="space-y-inline">
-              <p className="subtitle-2">
-                Subtitle 2 — Standard secondary text for component subtitles and
-                helper text
-              </p>
-              <p className="caption">14px • Medium • 0.015em letter spacing</p>
             </div>
           </div>
 
@@ -428,9 +556,7 @@ export function BrandKitPage() {
             <div className="space-y-inline">
               <p className="body-1">
                 Body 1 — Primary content text optimized for long-form reading.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               </p>
               <p className="caption">16px • Regular • 1.6 line height</p>
             </div>
@@ -438,25 +564,10 @@ export function BrandKitPage() {
             <div className="space-y-inline">
               <p className="body-2 text-muted-foreground">
                 Body 2 — Dense content and descriptions. Lorem ipsum dolor sit
-                amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua.
+                amet, consectetur adipiscing elit.
               </p>
               <p className="caption">14px • Regular • 1.5 line height</p>
             </div>
-          </div>
-
-          {/* UI Elements */}
-          <div className="space-y-inline">
-            <div className="flex items-center gap-stack flex-wrap">
-              <Button semantic="primary">Button Text</Button>
-              <span className="caption">
-                Caption text for metadata and footnotes
-              </span>
-            </div>
-            <p className="caption">
-              Button: 14px • Semibold • 0.05em | Caption: 12px • Regular •
-              0.02em
-            </p>
           </div>
         </div>
       </section>
@@ -465,19 +576,56 @@ export function BrandKitPage() {
 
       {/* SPACING SCALE */}
       <section className="space-y-stack">
-        <h3>Spacing System</h3>
+        <div className="space-y-inline">
+          <h3>Spacing System</h3>
+          <p className="body-1 text-muted-foreground">
+            Built from primitive scale (base = 0.25rem, numbers = percentages)
+            with fluid semantic tokens using clamp().
+          </p>
+        </div>
 
         <div className="bg-surface-1 p-inset-lg rounded-container border border-border space-y-section shadow-low">
+          {/* Primitive Scale */}
+          <div className="space-y-stack">
+            <div className="space-y-inline">
+              <h4 className="headline-5">Primitive Scale</h4>
+              <p className="body-2 text-muted-foreground">
+                Base unit: 0.25rem (4px) • Scale: Numbers = percentages
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-stack">
+              {[
+                { num: "1", value: "4px", pct: "100%" },
+                { num: "2", value: "8px", pct: "200%" },
+                { num: "4", value: "16px", pct: "400%" },
+                { num: "6", value: "24px", pct: "600%" },
+                { num: "8", value: "32px", pct: "800%" },
+                { num: "12", value: "48px", pct: "1200%" },
+                { num: "16", value: "64px", pct: "1600%" },
+                { num: "24", value: "96px", pct: "2400%" },
+              ].map((s) => (
+                <div
+                  key={s.num}
+                  className="bg-surface-2 p-inset-sm rounded-nested border border-border text-center"
+                >
+                  <code className="caption monospace text-primary font-semibold block mb-inline">
+                    space-{s.num}
+                  </code>
+                  <p className="caption text-muted-foreground">{s.value}</p>
+                  <p className="caption text-muted-foreground">({s.pct})</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <hr className="border-border" />
+
           {/* Flow Spacing */}
           <div className="space-y-stack">
             <div className="space-y-inline">
-              <h4 className="headline-5">Flow Spacing</h4>
+              <h4 className="headline-5">Flow Spacing (Semantic)</h4>
               <p className="body-2 text-muted-foreground">
-                Gaps between elements — use with{" "}
-                <code className="caption monospace text-primary">gap-*</code> or{" "}
-                <code className="caption monospace text-primary">
-                  space-y-*
-                </code>
+                Gaps between elements — fluid clamp() using primitives
               </p>
             </div>
 
@@ -488,76 +636,41 @@ export function BrandKitPage() {
                   token: "gap-inline",
                   size: "4px → 6px",
                   desc: "Related items",
-                  example: "Buttons in group, icon+text",
+                  example: "Buttons, icon+text",
+                  formula: "clamp(space-1, 0.2rem + 0.25vw, space-2)",
                 },
                 {
                   name: "stack",
                   token: "gap-stack",
                   size: "8px → 12px",
                   desc: "Vertical flow",
-                  example: "Label→input, paragraphs",
-                },
-                {
-                  name: "section",
-                  token: "gap-section",
-                  size: "24px → 40px",
-                  desc: "Content blocks",
-                  example: "Between cards, major sections",
-                },
-                {
-                  name: "layout",
-                  token: "gap-layout",
-                  size: "32px → 48px",
-                  desc: "Page structure",
-                  example: "Header, main, footer",
+                  example: "Label→input",
+                  formula: "clamp(space-2, 0.375rem + 0.5vw, space-3)",
                 },
               ].map((s) => (
                 <div
                   key={s.name}
                   className="bg-surface-2 p-inset rounded-nested border border-border"
                 >
-                  <div className="flex items-start justify-between mb-stack">
-                    <div className="flex-1">
-                      <p className="button-text text-primary mb-inline">
-                        {s.name}
-                      </p>
-                      <p className="subtitle-2">{s.desc}</p>
-                      <p className="caption text-muted-foreground">
-                        {s.example}
-                      </p>
-                    </div>
-                    <code className="caption monospace text-accent tabular-nums whitespace-nowrap bg-accent-background px-inset-sm py-inline rounded-interactive">
-                      {s.size}
-                    </code>
-                  </div>
+                  <p className="button-text text-primary mb-inline">{s.name}</p>
+                  <p className="subtitle-2 mb-inline">{s.desc}</p>
+                  <code className="caption monospace text-accent block mb-stack bg-accent-background px-inset-sm py-inline rounded-interactive">
+                    {s.formula}
+                  </code>
 
-                  {/* Visual demonstration */}
-                  <div className="mt-stack">
-                    <p className="caption text-muted-foreground mb-inline">
-                      Visual example:
-                    </p>
-                    <div
-                      className={`flex flex-col ${s.token} bg-background p-inset-sm rounded-interactive border border-border-muted`}
-                    >
-                      <div className="h-8 bg-primary/30 rounded-icon flex items-center justify-center">
+                  <div
+                    className={`flex flex-col ${s.token} bg-background p-inset-sm rounded-interactive border border-border-muted`}
+                  >
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="h-8 bg-primary/30 rounded-icon flex items-center justify-center"
+                      >
                         <span className="caption text-primary-on-background">
-                          Item 1
+                          Item {i}
                         </span>
                       </div>
-                      <div className="h-8 bg-primary/30 rounded-icon flex items-center justify-center">
-                        <span className="caption text-primary-on-background">
-                          Item 2
-                        </span>
-                      </div>
-                      <div className="h-8 bg-primary/30 rounded-icon flex items-center justify-center">
-                        <span className="caption text-primary-on-background">
-                          Item 3
-                        </span>
-                      </div>
-                    </div>
-                    <p className="caption text-center text-muted-foreground mt-inline">
-                      <code className="monospace text-primary">{s.token}</code>
-                    </p>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -569,104 +682,123 @@ export function BrandKitPage() {
           {/* Inset Spacing */}
           <div className="space-y-stack">
             <div className="space-y-inline">
-              <h4 className="headline-5">Inset Spacing</h4>
+              <h4 className="headline-5">Inset Spacing (Semantic)</h4>
               <p className="body-2 text-muted-foreground">
-                Padding inside containers — use with{" "}
-                <code className="caption monospace text-primary">p-*</code>,{" "}
-                <code className="caption monospace text-primary">px-*</code>, or{" "}
-                <code className="caption monospace text-primary">py-*</code>
+                Padding inside containers — fluid clamp() using primitives
               </p>
             </div>
 
             <div className="space-y-stack">
               {[
                 {
-                  name: "inset-xs",
-                  token: "p-inset-xs",
-                  size: "6px → 8px",
-                  desc: "Minimal padding",
-                  example: "Compact badges, tight table cells",
-                },
-                {
-                  name: "inset-sm",
-                  token: "p-inset-sm",
-                  size: "8px → 12px",
-                  desc: "Small containers",
-                  example: "Buttons, small cards, tags",
-                },
-                {
                   name: "inset",
                   token: "p-inset",
                   size: "16px → 24px",
                   desc: "Standard containers",
-                  example: "Cards, dialogs, panels (default)",
                   default: true,
+                  formula: "clamp(space-4, 0.75rem + 1vw, space-6)",
                 },
                 {
                   name: "inset-lg",
                   token: "p-inset-lg",
                   size: "24px → 32px",
-                  desc: "Generous padding",
-                  example: "Hero sections, feature cards",
-                },
-                {
-                  name: "inset-xl",
-                  token: "p-inset-xl",
-                  size: "32px → 48px",
-                  desc: "Large containers",
-                  example: "Large immersive containers",
-                },
-                {
-                  name: "inset-2xl",
-                  token: "p-inset-2xl",
-                  size: "48px → 64px",
-                  desc: "Maximum padding",
-                  example: "Full-page containers, landing pages",
+                  desc: "Cards, panels (default)",
+                  default: false,
+                  formula: "clamp(space-6, 1.25rem + 1vw, space-8)",
                 },
               ].map((s) => (
                 <div
                   key={s.name}
                   className="bg-surface-2 p-inset rounded-nested border border-border"
                 >
-                  <div className="flex items-start justify-between mb-stack">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-inline mb-inline">
-                        <p className="button-text text-primary">{s.name}</p>
-                        {s.default && (
-                          <span className="bg-accent-background text-accent-on-background px-inset-sm py-inline rounded-full caption font-medium">
-                            Default
-                          </span>
-                        )}
-                      </div>
-                      <p className="subtitle-2">{s.desc}</p>
-                      <p className="caption text-muted-foreground">
-                        {s.example}
-                      </p>
-                    </div>
-                    <code className="caption monospace text-accent tabular-nums whitespace-nowrap bg-accent-background px-inset-sm py-inline rounded-interactive">
-                      {s.size}
-                    </code>
+                  <div className="flex items-center gap-inline mb-stack">
+                    <p className="button-text text-primary">{s.name}</p>
+                    {s.default && (
+                      <span className="bg-accent-background text-accent-on-background px-inset-sm py-inline rounded-full caption font-medium">
+                        Default
+                      </span>
+                    )}
                   </div>
+                  <code className="caption monospace text-accent block mb-stack bg-accent-background px-inset-sm py-inline rounded-interactive">
+                    {s.formula}
+                  </code>
 
-                  {/* Visual demonstration */}
-                  <div className="mt-stack">
-                    <p className="caption text-muted-foreground mb-inline">
-                      Visual example:
-                    </p>
-                    <div className="bg-background rounded-interactive border border-border-muted">
-                      <div
-                        className={`${s.token} bg-primary/20 border-2 border-dashed border-primary/40 rounded-interactive`}
-                      >
-                        <div className="bg-primary/30 rounded-icon flex items-center justify-center min-h-12">
-                          <span className="caption text-primary-on-background">
-                            Content with {s.token}
-                          </span>
-                        </div>
+                  <div className="bg-background rounded-interactive border border-border-muted">
+                    <div
+                      className={`${s.token} bg-primary/20 border-2 border-dashed border-primary/40 rounded-interactive`}
+                    >
+                      <div className="bg-primary/30 rounded-icon flex items-center justify-center min-h-12">
+                        <span className="caption text-primary-on-background">
+                          {s.token}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr className="border-border" />
+
+      {/* TAILWIND MERGE COMPATIBILITY */}
+      <section className="space-y-stack">
+        <div className="space-y-inline">
+          <h3>Tailwind Merge Compatibility</h3>
+          <p className="body-1 text-muted-foreground">
+            All component utilities properly conflict with standard Tailwind
+            classes via extended twMerge configuration.
+          </p>
+        </div>
+
+        <div className="bg-surface-1 p-inset-lg rounded-container border border-border shadow-low">
+          <div className="space-y-section">
+            <div className="space-y-inline">
+              <p className="overline-text text-primary">CONFLICT RESOLUTION</p>
+              <p className="body-2 text-muted-foreground">
+                Component utilities can be overridden with standard Tailwind
+                classes using cn()
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-stack">
+              <div className="bg-surface-2 p-inset rounded-nested border border-border">
+                <code className="caption monospace text-accent block mb-inline">
+                  cn("headline-1", "text-sm")
+                </code>
+                <p className="caption text-muted-foreground">
+                  text-sm wins (overrides font-size)
+                </p>
+              </div>
+
+              <div className="bg-surface-2 p-inset rounded-nested border border-border">
+                <code className="caption monospace text-accent block mb-inline">
+                  cn("grid-wide", "px-12")
+                </code>
+                <p className="caption text-muted-foreground">
+                  px-12 overrides grid padding
+                </p>
+              </div>
+
+              <div className="bg-surface-2 p-inset rounded-nested border border-border">
+                <code className="caption monospace text-accent block mb-inline">
+                  cn("p-inset-lg", "pt-2")
+                </code>
+                <p className="caption text-muted-foreground">
+                  pt-2 overrides top padding only
+                </p>
+              </div>
+
+              <div className="bg-surface-2 p-inset rounded-nested border border-border">
+                <code className="caption monospace text-accent block mb-inline">
+                  cn("rounded-interactive", "rounded-full")
+                </code>
+                <p className="caption text-muted-foreground">
+                  rounded-full wins
+                </p>
+              </div>
             </div>
           </div>
         </div>

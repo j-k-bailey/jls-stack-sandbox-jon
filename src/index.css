@@ -3,20 +3,306 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* ============================================================================
+   DESIGN SYSTEM ARCHITECTURE
+   
+   Layer 1: PRIMITIVES (Foundation)
+   - Raw values: colors, spacing units, typography scales
+   - Named with --sandbox-primitive-{category}-{name}
+   - Never used directly in components
+   
+   Layer 2: SEMANTICS (Purpose)
+   - Design decisions mapped to primitives
+   - Named with --sandbox-{category}-{element}-{variant}-{state}
+   - OR simplified --{semantic-name} for Tailwind compatibility
+   - Used throughout the codebase
+   
+   Layer 3: COMPONENTS (Patterns)
+   - Composite utilities for common patterns
+   - Defined as @utility for Tailwind integration
+   - Can be overridden with standard Tailwind classes
+   ============================================================================ */
+
 @theme inline {
-  /* ================================
-     FONT FAMILIES
-     ================================ */
-  --font-heading:
+  /* ==========================================================================
+     LAYER 1: PRIMITIVE TOKENS
+     ========================================================================== */
+
+  /* ──────────────────────────────────────────────────────────────────────
+     PRIMITIVE: FONT FAMILIES
+     ────────────────────────────────────────────────────────────────────── */
+  --sandbox-primitive-font-heading:
     "Josefin Sans", system-ui, -apple-system, "BlinkMacSystemFont", "Segoe UI",
     sans-serif;
-  --font-body:
+  --sandbox-primitive-font-body:
     "Inter", system-ui, -apple-system, "BlinkMacSystemFont", "Segoe UI",
     "Roboto", sans-serif;
+  --sandbox-primitive-font-mono:
+    ui-monospace, "SF Mono", "Cascadia Code", "Consolas", monospace;
 
-  /* ================================
-     PROGRESS BAR
-     ================================ */
+  /* ──────────────────────────────────────────────────────────────────────
+     PRIMITIVE: SPACING SCALE
+     Base unit: 0.25rem (4px)
+     Scale: Each number = percentage of base (2 = 200% = 0.5rem)
+     ────────────────────────────────────────────────────────────────────── */
+  --sandbox-primitive-space-0: 0;
+  --sandbox-primitive-space-1: 0.25rem; /* 4px */
+  --sandbox-primitive-space-2: 0.5rem; /* 8px */
+  --sandbox-primitive-space-3: 0.75rem; /* 12px */
+  --sandbox-primitive-space-4: 1rem; /* 16px */
+  --sandbox-primitive-space-5: 1.25rem; /* 20px */
+  --sandbox-primitive-space-6: 1.5rem; /* 24px */
+  --sandbox-primitive-space-7: 1.75rem; /* 28px */
+  --sandbox-primitive-space-8: 2rem; /* 32px */
+  --sandbox-primitive-space-10: 2.5rem; /* 40px */
+  --sandbox-primitive-space-12: 3rem; /* 48px */
+  --sandbox-primitive-space-14: 3.5rem; /* 56px */
+  --sandbox-primitive-space-16: 4rem; /* 64px */
+  --sandbox-primitive-space-20: 5rem; /* 80px */
+  --sandbox-primitive-space-24: 6rem; /* 96px */
+
+  /* ──────────────────────────────────────────────────────────────────────
+     PRIMITIVE: BORDER RADIUS SCALE
+     ────────────────────────────────────────────────────────────────────── */
+  --sandbox-primitive-radius-0: 0;
+  --sandbox-primitive-radius-1: 2px;
+  --sandbox-primitive-radius-2: 4px;
+  --sandbox-primitive-radius-3: 6px;
+  --sandbox-primitive-radius-4: 8px;
+  --sandbox-primitive-radius-6: 12px;
+  --sandbox-primitive-radius-full: 9999px;
+
+  /* ──────────────────────────────────────────────────────────────────────
+     PRIMITIVE: COLOR PALETTES (OKLCH)
+     Using your existing colors as basis for full palettes
+     ────────────────────────────────────────────────────────────────────── */
+
+  /* Cyan (Primary) - Electric Cyan */
+  --sandbox-primitive-color-cyan-50: oklch(98% 0.015 195);
+  --sandbox-primitive-color-cyan-100: oklch(95% 0.045 195);
+  --sandbox-primitive-color-cyan-200: oklch(92% 0.08 195);
+  --sandbox-primitive-color-cyan-300: oklch(85% 0.15 195);
+  --sandbox-primitive-color-cyan-400: oklch(75% 0.18 195);
+  --sandbox-primitive-color-cyan-500: oklch(65% 0.19 195);
+  --sandbox-primitive-color-cyan-600: oklch(55% 0.21 195);
+  --sandbox-primitive-color-cyan-700: oklch(42% 0.19 195);
+  --sandbox-primitive-color-cyan-800: oklch(35% 0.2 195);
+  --sandbox-primitive-color-cyan-900: oklch(25% 0.21 195);
+  --sandbox-primitive-color-cyan-950: oklch(15% 0.15 195);
+
+  /* Fuchsia (Accent) - Vaporwave Fuchsia */
+  --sandbox-primitive-color-fuchsia-50: oklch(98% 0.02 325);
+  --sandbox-primitive-color-fuchsia-100: oklch(95% 0.048 325);
+  --sandbox-primitive-color-fuchsia-200: oklch(92% 0.08 325);
+  --sandbox-primitive-color-fuchsia-300: oklch(85% 0.15 325);
+  --sandbox-primitive-color-fuchsia-400: oklch(72% 0.25 325);
+  --sandbox-primitive-color-fuchsia-500: oklch(63% 0.26 325);
+  --sandbox-primitive-color-fuchsia-600: oklch(55% 0.27 325);
+  --sandbox-primitive-color-fuchsia-700: oklch(48% 0.23 325);
+  --sandbox-primitive-color-fuchsia-800: oklch(40% 0.24 325);
+  --sandbox-primitive-color-fuchsia-900: oklch(30% 0.25 325);
+  --sandbox-primitive-color-fuchsia-950: oklch(18% 0.1 325);
+
+  /* Teal (Success) - Matrix Teal */
+  --sandbox-primitive-color-teal-50: oklch(98% 0.015 160);
+  --sandbox-primitive-color-teal-100: oklch(95% 0.04 160);
+  --sandbox-primitive-color-teal-200: oklch(92% 0.07 160);
+  --sandbox-primitive-color-teal-300: oklch(85% 0.14 160);
+  --sandbox-primitive-color-teal-400: oklch(72% 0.19 160);
+  --sandbox-primitive-color-teal-500: oklch(60% 0.2 160);
+  --sandbox-primitive-color-teal-600: oklch(52% 0.21 160);
+  --sandbox-primitive-color-teal-700: oklch(45% 0.17 160);
+  --sandbox-primitive-color-teal-800: oklch(37% 0.18 160);
+  --sandbox-primitive-color-teal-900: oklch(28% 0.19 160);
+  --sandbox-primitive-color-teal-950: oklch(18% 0.08 160);
+
+  /* Coral (Warning) - Hot Coral */
+  --sandbox-primitive-color-coral-50: oklch(98% 0.02 10);
+  --sandbox-primitive-color-coral-100: oklch(95% 0.045 10);
+  --sandbox-primitive-color-coral-200: oklch(92% 0.08 10);
+  --sandbox-primitive-color-coral-300: oklch(85% 0.15 10);
+  --sandbox-primitive-color-coral-400: oklch(68% 0.23 10);
+  --sandbox-primitive-color-coral-500: oklch(63% 0.24 10);
+  --sandbox-primitive-color-coral-600: oklch(56% 0.25 10);
+  --sandbox-primitive-color-coral-700: oklch(48% 0.21 10);
+  --sandbox-primitive-color-coral-800: oklch(39% 0.22 10);
+  --sandbox-primitive-color-coral-900: oklch(32% 0.23 10);
+  --sandbox-primitive-color-coral-950: oklch(18% 0.1 10);
+
+  /* Steel (Neutral) - Steel-Fuchsia */
+  --sandbox-primitive-color-steel-50: oklch(98% 0.005 315);
+  --sandbox-primitive-color-steel-100: oklch(95% 0.01 315);
+  --sandbox-primitive-color-steel-200: oklch(92% 0.022 315);
+  --sandbox-primitive-color-steel-300: oklch(87% 0.018 315);
+  --sandbox-primitive-color-steel-400: oklch(70% 0.022 315);
+  --sandbox-primitive-color-steel-500: oklch(55% 0.024 315);
+  --sandbox-primitive-color-steel-600: oklch(42% 0.028 315);
+  --sandbox-primitive-color-steel-700: oklch(38% 0.028 315);
+  --sandbox-primitive-color-steel-800: oklch(28% 0.022 315);
+  --sandbox-primitive-color-steel-900: oklch(24% 0.018 315);
+  --sandbox-primitive-color-steel-950: oklch(16% 0.018 315);
+
+  /* Slate (Muted) - Blue-Gray */
+  --sandbox-primitive-color-slate-50: oklch(98% 0.004 240);
+  --sandbox-primitive-color-slate-100: oklch(95% 0.008 240);
+  --sandbox-primitive-color-slate-200: oklch(94% 0.015 240);
+  --sandbox-primitive-color-slate-300: oklch(89% 0.012 240);
+  --sandbox-primitive-color-slate-400: oklch(70% 0.018 240);
+  --sandbox-primitive-color-slate-500: oklch(55% 0.02 240);
+  --sandbox-primitive-color-slate-600: oklch(45% 0.018 240);
+  --sandbox-primitive-color-slate-700: oklch(35% 0.025 240);
+  --sandbox-primitive-color-slate-800: oklch(28% 0.022 240);
+  --sandbox-primitive-color-slate-900: oklch(26% 0.02 240);
+  --sandbox-primitive-color-slate-950: oklch(16% 0.015 240);
+
+  /* Neutral Gray (Base surfaces) */
+  --sandbox-primitive-color-gray-50: oklch(98% 0.003 220);
+  --sandbox-primitive-color-gray-100: oklch(95% 0.003 220);
+  --sandbox-primitive-color-gray-200: oklch(91% 0.004 220);
+  --sandbox-primitive-color-gray-300: oklch(87% 0.004 220);
+  --sandbox-primitive-color-gray-400: oklch(70% 0.005 220);
+  --sandbox-primitive-color-gray-500: oklch(55% 0.005 220);
+  --sandbox-primitive-color-gray-600: oklch(50% 0.005 220);
+  --sandbox-primitive-color-gray-700: oklch(35% 0.004 220);
+  --sandbox-primitive-color-gray-800: oklch(26% 0.004 220);
+  --sandbox-primitive-color-gray-900: oklch(20% 0.004 220);
+  --sandbox-primitive-color-gray-950: oklch(14% 0.003 220);
+
+  /* Base Colors (Foundation) */
+  --sandbox-primitive-color-white: oklch(100% 0 0);
+  --sandbox-primitive-color-black: oklch(0% 0 0);
+
+  /* ==========================================================================
+     LAYER 2: SEMANTIC TOKENS
+     ========================================================================== */
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: FONTS
+     ────────────────────────────────────────────────────────────────────── */
+  --font-heading: var(--sandbox-primitive-font-heading);
+  --font-body: var(--sandbox-primitive-font-body);
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: SPACING (Content-Based, Fluid)
+     
+     Philosophy: Name tokens after WHAT they separate
+     
+     FLOW SPACING (gaps between elements):
+     inline (4-6px)       → Related items (buttons, icon+text)
+     stack (8-12px)       → Vertical content flow (label→input)
+     section (24-40px)    → Content blocks (between cards)
+     layout (32-48px)     → Page structure (header, main, footer)
+     
+     INSET SPACING (padding inside containers):
+     inset-xs (3-8px)     → Minimal badges, compact chips
+     inset-sm (6-12px)    → Compact badges, tight table cells
+     inset (8-12px)       → Buttons, small cards, tags
+     inset-lg (16-24px)   → Cards, dialogs, panels (default)
+     inset-xl (24-32px)   → Hero sections, feature cards
+     inset-2xl (32-48px)  → Large immersive containers
+     ────────────────────────────────────────────────────────────────────── */
+
+  /* Flow Spacing - Using clamp for fluid scaling */
+  --spacing-inline: clamp(
+    var(--sandbox-primitive-space-1),
+    0.2rem + 0.25vw,
+    var(--sandbox-primitive-space-2)
+  );
+  --spacing-stack: clamp(
+    var(--sandbox-primitive-space-2),
+    0.375rem + 0.5vw,
+    var(--sandbox-primitive-space-3)
+  );
+  --spacing-section: clamp(
+    var(--sandbox-primitive-space-6),
+    1rem + 2vw,
+    var(--sandbox-primitive-space-10)
+  );
+  --spacing-layout: clamp(
+    var(--sandbox-primitive-space-8),
+    1.5rem + 2.5vw,
+    var(--sandbox-primitive-space-12)
+  );
+
+  /* Inset Spacing - Using clamp for fluid scaling */
+  --spacing-inset-xs: clamp(
+    var(--sandbox-primitive-space-1),
+    0.3125rem + 0.25vw,
+    var(--sandbox-primitive-space-2)
+  );
+  --spacing-inset-sm: clamp(
+    var(--sandbox-primitive-space-2),
+    0.375rem + 0.5vw,
+    var(--sandbox-primitive-space-3)
+  );
+  --spacing-inset: clamp(
+    var(--sandbox-primitive-space-4),
+    0.75rem + 1vw,
+    var(--sandbox-primitive-space-6)
+  );
+  --spacing-inset-lg: clamp(
+    var(--sandbox-primitive-space-6),
+    1.25rem + 1vw,
+    var(--sandbox-primitive-space-8)
+  );
+  --spacing-inset-xl: clamp(
+    var(--sandbox-primitive-space-8),
+    1.5rem + 2vw,
+    var(--sandbox-primitive-space-12)
+  );
+  --spacing-inset-2xl: clamp(
+    var(--sandbox-primitive-space-12),
+    2.5rem + 2vw,
+    var(--sandbox-primitive-space-16)
+  );
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: HITBOX (WCAG Compliance)
+     ────────────────────────────────────────────────────────────────────── */
+  --spacing-hit-target: var(--sandbox-primitive-space-6); /* 24px */
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: BORDER RADIUS (Usage-Based)
+     
+     interactive (4px)  → Buttons, inputs, small badges
+     nested (6px)       → Elements inside rounded containers
+     container (8px)    → Cards, panels, dialogs (default)
+     large (12px)       → Hero cards, feature sections
+     icon (2px)         → Icon backgrounds
+     full (9999px)      → Pills, badges
+     ────────────────────────────────────────────────────────────────────── */
+  --radius-interactive: var(--sandbox-primitive-radius-2); /* 4px */
+  --radius-nested: var(--sandbox-primitive-radius-3); /* 6px */
+  --radius-container: var(--sandbox-primitive-radius-4); /* 8px */
+  --radius-large: var(--sandbox-primitive-radius-6); /* 12px */
+  --radius-icon: var(--sandbox-primitive-radius-1); /* 2px */
+  --radius-full: var(--sandbox-primitive-radius-full); /* 9999px */
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: SHADOWS (Minimal Use Preferred)
+     ────────────────────────────────────────────────────────────────────── */
+  --shadow-none: none;
+  --shadow-low: 0 1px 2px 0
+    color-mix(in oklch, var(--foreground) 5%, transparent);
+  --shadow-medium:
+    0 4px 6px -1px color-mix(in oklch, var(--foreground) 10%, transparent),
+    0 2px 4px -2px color-mix(in oklch, var(--foreground) 10%, transparent);
+  --shadow-high:
+    0 20px 25px -5px color-mix(in oklch, var(--foreground) 10%, transparent),
+    0 8px 10px -6px color-mix(in oklch, var(--foreground) 10%, transparent);
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: GRID SYSTEM
+     ────────────────────────────────────────────────────────────────────── */
+  --grid-basic-columns: 12;
+  --grid-extended-columns: 14;
+  --grid-wide-columns: 16;
+  --grid-gap: var(--spacing-section);
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: ANIMATIONS
+     ────────────────────────────────────────────────────────────────────── */
   --animate-scan: effect-scan 800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   @keyframes effect-scan {
@@ -28,104 +314,10 @@
     }
   }
 
-  /* ==========================================
-     SPACING SYSTEM - Semantic, Content-Based
-     
-     Philosophy: Name tokens after WHAT they separate
-     
-     FLOW SPACING (gaps between elements):
-     inline (4-6px)       → Related items (buttons, icon+text)
-     stack (8-12px)       → Vertical content flow (label→input)
-     section (24-40px)    → Content blocks (between cards)
-     layout (32-48px)     → Page structure (header, main, footer)
-     
-     INSET SPACING (padding inside containers):
-     inset-sm (6-8px)     → Compact badges, tight table cells
-     inset (8-12px)       → Buttons, small cards, tags
-     inset-lg (16-24px)   → Cards, dialogs, panels (default)
-     inset-xl (24-32px)   → Hero sections, feature cards
-     inset-2xl (32-48px)  → Large immersive containers
-     inset-3xl (48-64px)  → Full-page containers, landing pages
-     ========================================== */
-
-  /* Flow Spacing */
-  --spacing-inline: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
-  --spacing-stack: clamp(0.5rem, 0.375rem + 0.5vw, 0.75rem);
-  --spacing-section: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-  --spacing-layout: clamp(2rem, 1.5rem + 2.5vw, 3rem);
-
-  /* Inset Spacing */
-
-  --spacing-inset-xs: clamp(0.375rem, 0.3125rem + 0.25vw, 0.5rem);
-  --spacing-inset-sm: clamp(0.5rem, 0.375rem + 0.5vw, 0.75rem);
-  --spacing-inset: clamp(1rem, 0.75rem + 1vw, 1.5rem);
-  --spacing-inset-lg: clamp(1.5rem, 1.25rem + 1vw, 2rem);
-  --spacing-inset-xl: clamp(2rem, 1.5rem + 2vw, 3rem);
-  --spacing-inset-2xl: clamp(3rem, 2.5rem + 2vw, 4rem);
-
-  /* ==========================================
-     HITBOX SYSTEM - Ensures minimum WCAG hitbox size for interactables
-     
-     Philosophy: THE smallest visual (24px) and an industry-comfort 44px for the hitbox
-     
-     ========================================== */
-  --spacing-hit-target: 24px;
-
-  /* ==========================================
-     BORDER RADIUS - Semantic Usage-Based
-     
-     interactive (4px)  → Buttons, inputs, small badges
-     nested (6px)       → Elements inside rounded containers
-     container (8px)    → Cards, panels, dialogs (default)
-     large (12px)       → Hero cards, feature sections
-     icon (2px)         → Icon backgrounds
-     full (9999px)      → Pills, badges
-     ========================================== */
-  --radius-interactive: 4px;
-  --radius-nested: 6px;
-  --radius-container: 8px;
-  --radius-large: 12px;
-  --radius-icon: 2px;
-  --radius-full: 9999px;
-
-  /* ==========================================
-     SHADOWS - Minimal Use Preferred
-     
-     none → Default (use surface colors instead)
-     low → Subtle lift for cards
-     medium → Dropdowns, sticky elements
-     high → Modals, high priority overlays
-     glow-{semantic} → Hero moments, primary CTAs
-     ========================================== */
-  --shadow-none: none;
-
-  --shadow-low: 0 1px 2px 0
-    color-mix(in oklch, var(--foreground) 5%, transparent);
-
-  --shadow-medium:
-    0 4px 6px -1px color-mix(in oklch, var(--foreground) 10%, transparent),
-    0 2px 4px -2px color-mix(in oklch, var(--foreground) 10%, transparent);
-
-  --shadow-high:
-    0 20px 25px -5px color-mix(in oklch, var(--foreground) 10%, transparent),
-    0 8px 10px -6px color-mix(in oklch, var(--foreground) 10%, transparent);
-
-  /* ==========================================
-     GRID SYSTEM
-     
-     basic (12 col) → Main content (default)
-     extended (14 col) → Stretched containers
-     wide (16 col) → With persistent sidebar
-     Gap aligns with spacing-section
-     ========================================== */
-  --grid-basic-columns: 12;
-  --grid-extended-columns: 14;
-  --grid-wide-columns: 16;
-  --grid-gap: var(--spacing-section);
-
-  /* ==========================================
-     COLOR MAPPINGS (for Tailwind utilities)
-     ========================================== */
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC: COLOR MAPPINGS (For Tailwind Utilities)
+     Maps semantic color tokens to Tailwind's expected names
+     ────────────────────────────────────────────────────────────────────── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-border: var(--border);
@@ -222,254 +414,300 @@
   --color-secondary-foreground: var(--secondary-foreground);
 }
 
+/* ============================================================================
+   THEME: LIGHT MODE
+   ============================================================================ */
 :root {
-  /* ==========================================
-   ACCESSIBLE FOCUS RING (DUAL LAYER)
-   ========================================== */
+  /* ──────────────────────────────────────────────────────────────────────
+     ACCESSIBLE FOCUS RING (DUAL LAYER)
+     ────────────────────────────────────────────────────────────────────── */
   --focus-ring-outer-width: 1px;
   --focus-ring-inner-width: 1px;
   --focus-ring-offset: 1px;
 
-  /* === Foundation === */
-  --background: oklch(97% 0.008 200);
+  /* ──────────────────────────────────────────────────────────────────────
+     FOUNDATION
+     ────────────────────────────────────────────────────────────────────── */
+  --background: var(--sandbox-primitive-color-gray-50);
   --foreground: oklch(18% 0.015 200);
   --border: oklch(82% 0.018 200);
   --overlay: oklch(18% 0.015 200 / 0.5);
-
   --focus-ring-inner: var(--background);
 
-  /* === Surface Elevation (4 levels with cyan tint) === */
+  /* ──────────────────────────────────────────────────────────────────────
+     SURFACE ELEVATION (4 levels with cyan tint)
+     ────────────────────────────────────────────────────────────────────── */
   --surface-1: oklch(94% 0.015 198);
   --surface-2: oklch(91% 0.018 197);
   --surface-3: oklch(88% 0.021 196);
   --surface-4: oklch(85% 0.024 195);
 
-  /* === Links === */
-  --link: oklch(35% 0.21 195); /* 3:1 contrast with foreground (18%) */
-  --link-hover: oklch(28% 0.23 195); /* Darker on hover for emphasis */
-  --link-visited: oklch(38% 0.2 310); /* 3:1 contrast with foreground */
+  /* ──────────────────────────────────────────────────────────────────────
+     LINKS
+     ────────────────────────────────────────────────────────────────────── */
+  --link: var(--sandbox-primitive-color-cyan-800);
+  --link-hover: var(--sandbox-primitive-color-cyan-900);
+  --link-visited: oklch(38% 0.2 310);
 
-  /* === Shadcn/UI === */
-  --card: oklch(96% 0.004 218);
+  /* ──────────────────────────────────────────────────────────────────────
+     SHADCN/UI COMPATIBILITY
+     ────────────────────────────────────────────────────────────────────── */
+  --card: var(--sandbox-primitive-color-gray-100);
   --card-foreground: oklch(15% 0.01 220);
-  --popover: oklch(98% 0.003 220);
+  --popover: var(--sandbox-primitive-color-gray-50);
   --popover-foreground: oklch(15% 0.01 220);
-  --secondary: oklch(48% 0.23 325);
-  --secondary-foreground: oklch(98% 0.005 325);
-  --destructive: oklch(48% 0.21 10);
-  --destructive-foreground: oklch(98% 0.005 10);
+  --secondary: var(--sandbox-primitive-color-fuchsia-700);
+  --secondary-foreground: var(--sandbox-primitive-color-fuchsia-50);
+  --destructive: var(--sandbox-primitive-color-coral-700);
+  --destructive-foreground: var(--sandbox-primitive-color-coral-50);
   --input: oklch(85% 0.008 220);
-  --ring: oklch(75% 0.19 195);
+  --ring: var(--sandbox-primitive-color-cyan-400);
 
-  /* === Charts === */
-  --chart-1: oklch(42% 0.19 195);
-  --chart-2: oklch(48% 0.23 325);
+  /* ──────────────────────────────────────────────────────────────────────
+     CHARTS
+     ────────────────────────────────────────────────────────────────────── */
+  --chart-1: var(--sandbox-primitive-color-cyan-700);
+  --chart-2: var(--sandbox-primitive-color-fuchsia-700);
   --chart-3: oklch(45% 0.19 280);
-  --chart-4: oklch(45% 0.17 160);
-  --chart-5: oklch(48% 0.21 10);
+  --chart-4: var(--sandbox-primitive-color-teal-700);
+  --chart-5: var(--sandbox-primitive-color-coral-700);
 
-  /* === Sidebar === */
-  --sidebar: oklch(96% 0.004 218);
+  /* ──────────────────────────────────────────────────────────────────────
+     SIDEBAR
+     ────────────────────────────────────────────────────────────────────── */
+  --sidebar: var(--sandbox-primitive-color-gray-100);
   --sidebar-foreground: oklch(18% 0.01 220);
-  --sidebar-primary: oklch(42% 0.19 195);
-  --sidebar-primary-foreground: oklch(98% 0.005 195);
+  --sidebar-primary: var(--sandbox-primitive-color-cyan-700);
+  --sidebar-primary-foreground: var(--sandbox-primitive-color-cyan-50);
   --sidebar-accent: oklch(92% 0.006 216);
   --sidebar-accent-foreground: oklch(18% 0.012 195);
   --sidebar-border: oklch(85% 0.008 220);
-  --sidebar-ring: oklch(75% 0.19 195);
+  --sidebar-ring: var(--sandbox-primitive-color-cyan-400);
 
-  /* === Semantic Colors (6-token pattern) === */
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC COLORS (6-token pattern)
+     Built from primitive palettes
+     ────────────────────────────────────────────────────────────────────── */
 
   /* Primary (Electric Cyan) */
-  --primary: oklch(42% 0.19 195);
-  --primary-foreground: oklch(98% 0.005 195);
-  --primary-on-background: oklch(25% 0.21 195);
-  --border-primary: oklch(35% 0.2 195);
-  --primary-background: oklch(95% 0.045 195);
-  --primary-hover: oklch(55% 0.21 195);
+  --primary: var(--sandbox-primitive-color-cyan-700);
+  --primary-foreground: var(--sandbox-primitive-color-cyan-50);
+  --primary-on-background: var(--sandbox-primitive-color-cyan-900);
+  --border-primary: var(--sandbox-primitive-color-cyan-800);
+  --primary-background: var(--sandbox-primitive-color-cyan-100);
+  --primary-hover: var(--sandbox-primitive-color-cyan-500);
 
   /* Accent (Vaporwave Fuchsia) */
-  --accent: oklch(48% 0.23 325);
-  --accent-foreground: oklch(98% 0.005 325);
-  --accent-on-background: oklch(30% 0.25 325);
-  --border-accent: oklch(40% 0.24 325);
-  --accent-background: oklch(95% 0.048 325);
-  --accent-hover: oklch(63% 0.26 325);
+  --accent: var(--sandbox-primitive-color-fuchsia-700);
+  --accent-foreground: var(--sandbox-primitive-color-fuchsia-50);
+  --accent-on-background: var(--sandbox-primitive-color-fuchsia-900);
+  --border-accent: var(--sandbox-primitive-color-fuchsia-800);
+  --accent-background: var(--sandbox-primitive-color-fuchsia-100);
+  --accent-hover: var(--sandbox-primitive-color-fuchsia-400);
 
   /* Success (Matrix Teal) */
-  --success: oklch(45% 0.17 160);
-  --success-foreground: oklch(98% 0.005 160);
-  --success-on-background: oklch(28% 0.19 160);
-  --border-success: oklch(37% 0.18 160);
-  --success-background: oklch(95% 0.04 160);
-  --success-hover: oklch(60% 0.2 160);
+  --success: var(--sandbox-primitive-color-teal-700);
+  --success-foreground: var(--sandbox-primitive-color-teal-50);
+  --success-on-background: var(--sandbox-primitive-color-teal-900);
+  --border-success: var(--sandbox-primitive-color-teal-800);
+  --success-background: var(--sandbox-primitive-color-teal-100);
+  --success-hover: var(--sandbox-primitive-color-teal-400);
 
   /* Warning (Hot Coral) */
-  --warning: oklch(48% 0.21 10);
-  --warning-foreground: oklch(98% 0.005 10);
-  --warning-on-background: oklch(32% 0.23 10);
-  --border-warning: oklch(39% 0.22 10);
-  --warning-background: oklch(95% 0.045 10);
-  --warning-hover: oklch(63% 0.24 10);
+  --warning: var(--sandbox-primitive-color-coral-700);
+  --warning-foreground: var(--sandbox-primitive-color-coral-50);
+  --warning-on-background: var(--sandbox-primitive-color-coral-900);
+  --border-warning: var(--sandbox-primitive-color-coral-800);
+  --warning-background: var(--sandbox-primitive-color-coral-100);
+  --warning-hover: var(--sandbox-primitive-color-coral-400);
 
   /* Neutral (Steel-Fuchsia) */
-  --neutral: oklch(87% 0.018 315);
+  --neutral: var(--sandbox-primitive-color-steel-300);
   --neutral-foreground: oklch(18% 0.012 315);
-  --neutral-on-background: oklch(24% 0.018 315);
-  --border-neutral: oklch(70% 0.022 315);
-  --neutral-background: oklch(95% 0.01 315);
-  --neutral-hover: oklch(92% 0.022 315);
+  --neutral-on-background: var(--sandbox-primitive-color-steel-900);
+  --border-neutral: var(--sandbox-primitive-color-steel-400);
+  --neutral-background: var(--sandbox-primitive-color-steel-100);
+  --neutral-hover: var(--sandbox-primitive-color-steel-200);
 
   /* Muted (Blue-Gray) */
-  --muted: oklch(89% 0.012 240);
-  --muted-foreground: oklch(45% 0.018 240);
-  --muted-on-background: oklch(28% 0.022 240);
-  --border-muted: oklch(82% 0.015 240);
-  --muted-background: oklch(95% 0.008 240);
-  --muted-hover: oklch(94% 0.015 240);
+  --muted: var(--sandbox-primitive-color-slate-200);
+  --muted-foreground: var(--sandbox-primitive-color-slate-600);
+  --muted-on-background: var(--sandbox-primitive-color-slate-800);
+  --border-muted: var(--sandbox-primitive-color-slate-300);
+  --muted-background: var(--sandbox-primitive-color-slate-100);
+  --muted-hover: var(--sandbox-primitive-color-slate-200);
 
   /* Disabled */
-  --disabled: oklch(91% 0.004 220);
-  --disabled-foreground: oklch(55% 0.005 220);
-  --disabled-on-background: oklch(55% 0.005 220);
-  --border-disabled: oklch(87% 0.004 220);
-  --disabled-background: oklch(95% 0.003 220);
-  --disabled-hover: oklch(91% 0.004 220);
+  --disabled: var(--sandbox-primitive-color-gray-200);
+  --disabled-foreground: var(--sandbox-primitive-color-gray-500);
+  --disabled-on-background: var(--sandbox-primitive-color-gray-500);
+  --border-disabled: var(--sandbox-primitive-color-gray-300);
+  --disabled-background: var(--sandbox-primitive-color-gray-100);
+  --disabled-hover: var(--sandbox-primitive-color-gray-200);
 
-  /* === Semantic Glow Shadows === */
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC GLOW SHADOWS
+     ────────────────────────────────────────────────────────────────────── */
   --shadow-glow-primary:
-    0 0 20px 0 oklch(42% 0.19 195 / 0.3), 0 0 40px 0 oklch(42% 0.19 195 / 0.15);
+    0 0 20px 0 var(--sandbox-primitive-color-cyan-700 / 0.3),
+    0 0 40px 0 var(--sandbox-primitive-color-cyan-700 / 0.15);
 
   --shadow-glow-accent:
-    0 0 20px 0 oklch(48% 0.23 325 / 0.3), 0 0 40px 0 oklch(48% 0.23 325 / 0.15);
+    0 0 20px 0 var(--sandbox-primitive-color-fuchsia-700 / 0.3),
+    0 0 40px 0 var(--sandbox-primitive-color-fuchsia-700 / 0.15);
 
-  --shadow-glow-success: 0 0 20px 0 oklch(45% 0.17 160 / 0.25);
+  --shadow-glow-success: 0 0 20px 0
+    var(--sandbox-primitive-color-teal-700 / 0.25);
 
-  --shadow-glow-warning: 0 0 20px 0 oklch(48% 0.21 10 / 0.3);
+  --shadow-glow-warning: 0 0 20px 0
+    var(--sandbox-primitive-color-coral-700 / 0.3);
 }
 
+/* ============================================================================
+   THEME: DARK MODE
+   ============================================================================ */
 .dark {
-  /* === Foundation === */
+  /* ──────────────────────────────────────────────────────────────────────
+     FOUNDATION
+     ────────────────────────────────────────────────────────────────────── */
   --background: oklch(12% 0.015 200);
-  --foreground: oklch(95% 0.01 200);
+  --foreground: var(--sandbox-primitive-color-gray-50);
   --border: oklch(35% 0.03 200);
   --overlay: oklch(10% 0.015 200 / 0.8);
-
   --focus-ring-inner: var(--background);
 
-  /* === Surface Elevation (increasing cyan glow) === */
+  /* ──────────────────────────────────────────────────────────────────────
+     SURFACE ELEVATION (increasing cyan glow)
+     ────────────────────────────────────────────────────────────────────── */
   --surface-1: oklch(16% 0.025 198);
   --surface-2: oklch(20% 0.035 196);
   --surface-3: oklch(24% 0.045 194);
   --surface-4: oklch(28% 0.055 192);
 
-  /* === Links === */
-  --link: oklch(85% 0.21 195); /* 3:1 contrast with foreground (95%) */
-  --link-hover: oklch(92% 0.23 195); /* Lighter on hover with glow */
-  --link-visited: oklch(82% 0.2 310); /* 3:1 contrast with foreground */
+  /* ──────────────────────────────────────────────────────────────────────
+     LINKS
+     ────────────────────────────────────────────────────────────────────── */
+  --link: var(--sandbox-primitive-color-cyan-300);
+  --link-hover: var(--sandbox-primitive-color-cyan-200);
+  --link-visited: oklch(82% 0.2 310);
 
-  /* === Shadcn/UI === */
-  --card: oklch(14% 0.02 210);
-  --card-foreground: oklch(96% 0.008 220);
+  /* ──────────────────────────────────────────────────────────────────────
+     SHADCN/UI COMPATIBILITY
+     ────────────────────────────────────────────────────────────────────── */
+  --card: var(--sandbox-primitive-color-gray-950);
+  --card-foreground: var(--sandbox-primitive-color-gray-100);
   --popover: oklch(10% 0.012 220);
-  --popover-foreground: oklch(96% 0.008 220);
-  --secondary: oklch(70% 0.25 325);
+  --popover-foreground: var(--sandbox-primitive-color-gray-100);
+  --secondary: var(--sandbox-primitive-color-fuchsia-400);
   --secondary-foreground: oklch(8% 0.012 325);
-  --destructive: oklch(68% 0.23 10);
+  --destructive: var(--sandbox-primitive-color-coral-400);
   --destructive-foreground: oklch(8% 0.012 10);
   --input: oklch(28% 0.025 220);
-  --ring: oklch(88% 0.22 195);
+  --ring: var(--sandbox-primitive-color-cyan-300);
 
-  /* === Charts (Neon) === */
-  --chart-1: oklch(78% 0.19 195);
-  --chart-2: oklch(74% 0.25 325);
+  /* ──────────────────────────────────────────────────────────────────────
+     CHARTS (Neon)
+     ────────────────────────────────────────────────────────────────────── */
+  --chart-1: var(--sandbox-primitive-color-cyan-400);
+  --chart-2: var(--sandbox-primitive-color-fuchsia-400);
   --chart-3: oklch(72% 0.21 280);
-  --chart-4: oklch(74% 0.19 160);
-  --chart-5: oklch(72% 0.23 10);
+  --chart-4: var(--sandbox-primitive-color-teal-400);
+  --chart-5: var(--sandbox-primitive-color-coral-400);
 
-  /* === Sidebar === */
-  --sidebar: oklch(14% 0.02 210);
-  --sidebar-foreground: oklch(94% 0.008 220);
-  --sidebar-primary: oklch(78% 0.19 195);
+  /* ──────────────────────────────────────────────────────────────────────
+     SIDEBAR
+     ────────────────────────────────────────────────────────────────────── */
+  --sidebar: var(--sandbox-primitive-color-gray-950);
+  --sidebar-foreground: var(--sandbox-primitive-color-gray-100);
+  --sidebar-primary: var(--sandbox-primitive-color-cyan-400);
   --sidebar-primary-foreground: oklch(8% 0.012 195);
   --sidebar-accent: oklch(20% 0.028 205);
-  --sidebar-accent-foreground: oklch(94% 0.012 195);
+  --sidebar-accent-foreground: var(--sandbox-primitive-color-gray-100);
   --sidebar-border: oklch(28% 0.025 220);
-  --sidebar-ring: oklch(88% 0.22 195);
+  --sidebar-ring: var(--sandbox-primitive-color-cyan-300);
 
-  /* === Semantic Colors (6-token pattern) === */
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC COLORS (6-token pattern)
+     Built from primitive palettes
+     ────────────────────────────────────────────────────────────────────── */
 
   /* Primary (Electric Cyan Glow) */
-  --primary: oklch(75% 0.18 195);
+  --primary: var(--sandbox-primitive-color-cyan-400);
   --primary-foreground: oklch(8% 0.012 195);
-  --primary-on-background: oklch(88% 0.21 195);
-  --border-primary: oklch(88% 0.21 195);
+  --primary-on-background: var(--sandbox-primitive-color-cyan-300);
+  --border-primary: var(--sandbox-primitive-color-cyan-300);
   --primary-background: oklch(18% 0.08 195);
-  --primary-hover: oklch(92% 0.23 195);
+  --primary-hover: var(--sandbox-primitive-color-cyan-200);
 
   /* Accent (Hot Fuchsia Neon) */
-  --accent: oklch(72% 0.25 325);
+  --accent: var(--sandbox-primitive-color-fuchsia-400);
   --accent-foreground: oklch(8% 0.012 325);
-  --accent-on-background: oklch(90% 0.27 325);
-  --border-accent: oklch(86% 0.27 325);
+  --accent-on-background: var(--sandbox-primitive-color-fuchsia-300);
+  --border-accent: var(--sandbox-primitive-color-fuchsia-400);
   --accent-background: oklch(18% 0.1 325);
-  --accent-hover: oklch(88% 0.29 325);
+  --accent-hover: var(--sandbox-primitive-color-fuchsia-300);
 
   /* Success (Matrix Green Digital) */
-  --success: oklch(72% 0.19 160);
+  --success: var(--sandbox-primitive-color-teal-400);
   --success-foreground: oklch(8% 0.012 160);
-  --success-on-background: oklch(88% 0.21 160);
-  --border-success: oklch(86% 0.21 160);
+  --success-on-background: var(--sandbox-primitive-color-teal-300);
+  --border-success: var(--sandbox-primitive-color-teal-400);
   --success-background: oklch(18% 0.08 160);
-  --success-hover: oklch(88% 0.23 160);
+  --success-hover: var(--sandbox-primitive-color-teal-300);
 
   /* Warning (Hot Coral Danger) */
-  --warning: oklch(68% 0.23 10);
+  --warning: var(--sandbox-primitive-color-coral-400);
   --warning-foreground: oklch(8% 0.012 10);
-  --warning-on-background: oklch(86% 0.25 10);
-  --border-warning: oklch(82% 0.25 10);
+  --warning-on-background: var(--sandbox-primitive-color-coral-300);
+  --border-warning: var(--sandbox-primitive-color-coral-400);
   --warning-background: oklch(18% 0.1 10);
-  --warning-hover: oklch(84% 0.27 10);
+  --warning-hover: var(--sandbox-primitive-color-coral-300);
 
   /* Neutral (Steel-Fuchsia Glow) */
-  --neutral: oklch(28% 0.022 315);
-  --neutral-foreground: oklch(94% 0.012 315);
-  --neutral-on-background: oklch(88% 0.022 315);
-  --border-neutral: oklch(42% 0.028 315);
-  --neutral-background: oklch(16% 0.018 315);
-  --neutral-hover: oklch(38% 0.028 315);
+  --neutral: var(--sandbox-primitive-color-steel-800);
+  --neutral-foreground: var(--sandbox-primitive-color-gray-100);
+  --neutral-on-background: var(--sandbox-primitive-color-steel-300);
+  --border-neutral: var(--sandbox-primitive-color-steel-600);
+  --neutral-background: var(--sandbox-primitive-color-steel-950);
+  --neutral-hover: var(--sandbox-primitive-color-steel-700);
 
   /* Muted (Blue-Gray) */
-  --muted: oklch(26% 0.02 240);
-  --muted-foreground: oklch(70% 0.018 240);
-  --muted-on-background: oklch(80% 0.02 240);
-  --border-muted: oklch(35% 0.025 240);
-  --muted-background: oklch(16% 0.015 240);
-  --muted-hover: oklch(36% 0.025 240);
+  --muted: var(--sandbox-primitive-color-slate-900);
+  --muted-foreground: var(--sandbox-primitive-color-slate-400);
+  --muted-on-background: var(--sandbox-primitive-color-slate-300);
+  --border-muted: var(--sandbox-primitive-color-slate-700);
+  --muted-background: var(--sandbox-primitive-color-slate-950);
+  --muted-hover: var(--sandbox-primitive-color-slate-700);
 
   /* Disabled */
-  --disabled: oklch(20% 0.004 220);
-  --disabled-foreground: oklch(50% 0.005 220);
-  --disabled-on-background: oklch(50% 0.005 220);
-  --border-disabled: oklch(26% 0.004 220);
-  --disabled-background: oklch(14% 0.003 220);
-  --disabled-hover: oklch(20% 0.004 220);
+  --disabled: var(--sandbox-primitive-color-gray-900);
+  --disabled-foreground: var(--sandbox-primitive-color-gray-500);
+  --disabled-on-background: var(--sandbox-primitive-color-gray-500);
+  --border-disabled: var(--sandbox-primitive-color-gray-800);
+  --disabled-background: var(--sandbox-primitive-color-gray-950);
+  --disabled-hover: var(--sandbox-primitive-color-gray-900);
 
-  /* === Semantic Glow Shadows (Brighter in dark) === */
+  /* ──────────────────────────────────────────────────────────────────────
+     SEMANTIC GLOW SHADOWS (Brighter in dark)
+     ────────────────────────────────────────────────────────────────────── */
   --shadow-glow-primary:
-    0 0 20px 0 oklch(75% 0.18 195 / 0.4), 0 0 40px 0 oklch(75% 0.18 195 / 0.2);
+    0 0 20px 0 var(--sandbox-primitive-color-cyan-400 / 0.4),
+    0 0 40px 0 var(--sandbox-primitive-color-cyan-400 / 0.2);
 
   --shadow-glow-accent:
-    0 0 20px 0 oklch(72% 0.25 325 / 0.4), 0 0 40px 0 oklch(72% 0.25 325 / 0.2);
+    0 0 20px 0 var(--sandbox-primitive-color-fuchsia-400 / 0.4),
+    0 0 40px 0 var(--sandbox-primitive-color-fuchsia-400 / 0.2);
 
-  --shadow-glow-success: 0 0 20px 0 oklch(72% 0.19 160 / 0.35);
+  --shadow-glow-success: 0 0 20px 0
+    var(--sandbox-primitive-color-teal-400 / 0.35);
 
-  --shadow-glow-warning: 0 0 20px 0 oklch(68% 0.23 10 / 0.4);
+  --shadow-glow-warning: 0 0 20px 0
+    var(--sandbox-primitive-color-coral-400 / 0.4);
 }
 
-/* ==========================================
+/* ============================================================================
    BASE STYLES
-   ========================================== */
+   ============================================================================ */
 @layer base {
   :where(
     a,
@@ -487,7 +725,7 @@
 
     /* Dual-ring focus indicator */
     box-shadow:
-  /* Inner ring */
+      /* Inner ring */
       0 0 0 var(--focus-ring-inner-width) var(--focus-ring-inner),
       /* Outer ring, pushed out by inner + gap */ 0 0 0
         calc(
@@ -650,9 +888,16 @@
   }
 }
 
-/* ==========================================
+/* ============================================================================
+   LAYER 3: COMPONENT TOKENS (Tailwind v4 Compliant)
+   
+   These utilities are built using CSS variables and @utility
+   They can be overridden with standard Tailwind classes via cn()
+   ============================================================================ */
+
+/* ──────────────────────────────────────────────────────────────────────
    TYPOGRAPHY UTILITIES
-   ========================================== */
+   ────────────────────────────────────────────────────────────────────── */
 
 @utility headline-1 {
   font-family: var(--font-heading);
@@ -763,7 +1008,7 @@
 }
 
 @utility monospace {
-  font-family: ui-monospace, "SF Mono", "Cascadia Code", "Consolas", monospace;
+  font-family: var(--sandbox-primitive-font-mono);
   font-variant-numeric: tabular-nums;
 }
 
@@ -775,13 +1020,13 @@
   text-wrap: balance;
 }
 
-/* ==========================================
+/* ──────────────────────────────────────────────────────────────────────
    GRID UTILITIES
-   ========================================== */
+   ────────────────────────────────────────────────────────────────────── */
 
 @utility grid-basic {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(var(--grid-basic-columns), 1fr);
   gap: var(--grid-gap);
   max-width: 1440px;
   margin-inline: auto;
@@ -790,7 +1035,7 @@
 
 @utility grid-extended {
   display: grid;
-  grid-template-columns: repeat(14, 1fr);
+  grid-template-columns: repeat(var(--grid-extended-columns), 1fr);
   gap: var(--grid-gap);
   max-width: 1600px;
   margin-inline: auto;
@@ -799,7 +1044,7 @@
 
 @utility grid-wide {
   display: grid;
-  grid-template-columns: repeat(16, 1fr);
+  grid-template-columns: repeat(var(--grid-wide-columns), 1fr);
   gap: var(--grid-gap);
   max-width: 1920px;
   margin-inline: auto;
@@ -820,9 +1065,9 @@
   }
 }
 
-/* ==========================================
+/* ──────────────────────────────────────────────────────────────────────
    INTERACTIVE UTILITIES
-   ========================================== */
+   ────────────────────────────────────────────────────────────────────── */
 
 @utility hit-target {
   min-width: var(--spacing-hit-target);

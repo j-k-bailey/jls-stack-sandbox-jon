@@ -1,9 +1,72 @@
 # JLS Stack Sandbox Design System
 
 **Name**: JLS Stack Sandbox  
-**Purpose**: Training playground for building stack-aligned apps quickly and correctly
+**Purpose**: Training playground for building stack-aligned apps quickly and correctly  
 **Vibe**: Experimental, disciplined, modern, accessible  
 **Color Story**: Electric cyan (195°) and hot fuchsia (325°) with OKLCH precision, inspired by cyberpunk
+
+---
+
+## Design System Architecture
+
+This design system follows Tailwind 4 best practices with three distinct layers:
+
+### **Layer 1: Primitives** (`--sandbox-primitive-{category}-{name}`)
+
+Raw foundational values that never change:
+
+- Color palettes (50-950 scales for all semantic colors)
+- Spacing units (base = 0.25rem, scale = percentages)
+- Border radius values (0, 1, 2, 3, 4, 6, full)
+- Font families (heading, body, mono)
+
+**Example:**
+
+```css
+--sandbox-primitive-color-cyan-500: oklch(65% 0.19 195);
+--sandbox-primitive-space-4: 1rem; /* 400% of 0.25rem base */
+--sandbox-primitive-radius-2: 4px;
+```
+
+### **Layer 2: Semantics** (`--{semantic-name}`)
+
+Design decisions mapped to primitives:
+
+- Color semantics (primary, accent, success, warning, etc.)
+- Spacing tokens (inline, stack, section, layout, inset-\*)
+- Radius tokens (interactive, nested, container, large, icon, full)
+- Shadow levels, focus rings, surface elevation
+
+**Example:**
+
+```css
+--primary: var(--sandbox-primitive-color-cyan-700);
+--spacing-inset-lg: clamp(
+  var(--sandbox-primitive-space-6),
+  1.25rem + 1vw,
+  var(--sandbox-primitive-space-8)
+);
+--radius-interactive: var(--sandbox-primitive-radius-2);
+```
+
+### **Layer 3: Components** (`@utility` declarations)
+
+Composite utilities for common patterns:
+
+- Typography utilities (headline-1 through -6, body-1/2, caption)
+- Grid utilities (grid-basic, grid-extended, grid-wide)
+- Interactive utilities (hit-target)
+
+**Example:**
+
+```css
+@utility headline-1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  font-weight: 300;
+  line-height: 1.1;
+}
+```
 
 ---
 
@@ -14,59 +77,90 @@
 3. **Minimal** — Only what's needed, nothing more
 4. **Consistent** — Same patterns everywhere
 5. **Fluid** — Scales smoothly, respects user preferences
+6. **Maintainable** — Change primitives → semantics update → components inherit
 
 ---
 
 ## Color Foundations
 
-### Brand Colors
+### Primitive Color Palettes
+
+All semantic colors are built from complete 50-950 primitive palettes using OKLCH:
+
+| Palette     | Hue | Usage Base                         |
+| ----------- | --- | ---------------------------------- |
+| **Cyan**    | 195 | Primary brand color, main CTAs     |
+| **Fuchsia** | 325 | Accent brand color, highlights     |
+| **Teal**    | 160 | Success states, confirmations      |
+| **Coral**   | 10  | Warnings, errors, destructive      |
+| **Steel**   | 315 | Neutral interactions, generic UI   |
+| **Slate**   | 240 | Muted content, de-emphasized text  |
+| **Gray**    | 220 | Base surfaces, foundation neutrals |
+
+**Example Primitive Scale (Cyan):**
+
+```css
+--sandbox-primitive-color-cyan-50: oklch(98% 0.015 195); /* Lightest */
+--sandbox-primitive-color-cyan-100: oklch(95% 0.045 195);
+--sandbox-primitive-color-cyan-200: oklch(92% 0.08 195);
+--sandbox-primitive-color-cyan-300: oklch(85% 0.15 195);
+--sandbox-primitive-color-cyan-400: oklch(75% 0.18 195);
+--sandbox-primitive-color-cyan-500: oklch(65% 0.19 195); /* Mid-tone */
+--sandbox-primitive-color-cyan-600: oklch(55% 0.21 195);
+--sandbox-primitive-color-cyan-700: oklch(42% 0.19 195); /* Dark mode base */
+--sandbox-primitive-color-cyan-800: oklch(35% 0.2 195);
+--sandbox-primitive-color-cyan-900: oklch(25% 0.21 195);
+--sandbox-primitive-color-cyan-950: oklch(15% 0.15 195); /* Darkest */
+```
+
+### Brand Colors (Semantic Layer)
 
 - **Primary — Electric Cyan (195°)**
-  - Light: `oklch(42% 0.19 195)`
-  - Dark: `oklch(75% 0.18 195)`
+  - Light: Built from `--sandbox-primitive-color-cyan-700`
+  - Dark: Built from `--sandbox-primitive-color-cyan-400`
   - Usage: Main CTAs, key interactions, active states, primary links
 
 - **Accent — Vaporwave Fuchsia (325°)**
-  - Light: `oklch(48% 0.23 325)`
-  - Dark: `oklch(72% 0.25 325)`
+  - Light: Built from `--sandbox-primitive-color-fuchsia-700`
+  - Dark: Built from `--sandbox-primitive-color-fuchsia-400`
   - Usage: Badges, highlights, secondary CTAs, alternative emphasis
 
 ### Semantic Colors
 
 - **Success — Matrix Teal (160°)**
-  - Light: `oklch(45% 0.17 160)`
-  - Dark: `oklch(72% 0.19 160)`
+  - Light: Built from `--sandbox-primitive-color-teal-700`
+  - Dark: Built from `--sandbox-primitive-color-teal-400`
   - Usage: Confirmations, positive states, completed operations
 
 - **Warning — Hot Coral (10°)**
-  - Light: `oklch(48% 0.21 10)`
-  - Dark: `oklch(68% 0.23 10)`
+  - Light: Built from `--sandbox-primitive-color-coral-700`
+  - Dark: Built from `--sandbox-primitive-color-coral-400`
   - Usage: Errors, destructive actions, critical alerts
 
 - **Neutral — Steel-Fuchsia (315°)**
-  - Light: `oklch(87% 0.018 315)`
-  - Dark: `oklch(28% 0.022 315)`
+  - Light: Built from `--sandbox-primitive-color-steel-300`
+  - Dark: Built from `--sandbox-primitive-color-steel-800`
   - Usage: Generic interactive elements without semantic meaning
 
 - **Muted — Blue-Gray (240°)**
-  - Light: `oklch(89% 0.012 240)`
-  - Dark: `oklch(26% 0.02 240)`
+  - Light: Built from `--sandbox-primitive-color-slate-200`
+  - Dark: Built from `--sandbox-primitive-color-slate-900`
   - Usage: De-emphasized content, helper text, timestamps
 
 - **Disabled — Ghosted (220°)**
-  - Light: `oklch(91% 0.004 220)`
-  - Dark: `oklch(20% 0.004 220)`
+  - Light: Built from `--sandbox-primitive-color-gray-200`
+  - Dark: Built from `--sandbox-primitive-color-gray-900`
   - Usage: Inactive states, disabled components
 
 ### Neutrals
 
 - **Background**: Main canvas
-  - Light: `oklch(97% 0.008 200)`
+  - Light: `--sandbox-primitive-color-gray-50`
   - Dark: `oklch(12% 0.015 200)`
 
 - **Foreground**: Primary text
   - Light: `oklch(18% 0.015 200)`
-  - Dark: `oklch(95% 0.01 200)`
+  - Dark: `--sandbox-primitive-color-gray-50`
 
 - **Border**: Standard dividers
   - Light: `oklch(82% 0.018 200)`
@@ -110,19 +204,23 @@ Each semantic color has **6 tokens** for flexible, accessible usage:
 
 **Dark Mode:**
 
-- Primary, Accent, Success, Warning: **+15-17% lightness** (with glow)
+- Primary, Accent, Success, Warning: **+15-20% lightness** (with glow)
 - Neutral, Muted: **+10% lightness**
 
-**Example — Primary Cyan:**
+**Example — Primary Cyan (Built from Primitives):**
 
 ```css
 /* Light mode */
---primary: oklch(42% 0.19 195);
---primary-hover: oklch(55% 0.21 195);
+--primary: var(--sandbox-primitive-color-cyan-700); /* oklch(42% 0.19 195) */
+--primary-hover: var(
+  --sandbox-primitive-color-cyan-500
+); /* oklch(65% 0.19 195) */
 
 /* Dark mode */
---primary: oklch(75% 0.18 195);
---primary-hover: oklch(92% 0.23 195);
+--primary: var(--sandbox-primitive-color-cyan-400); /* oklch(75% 0.18 195) */
+--primary-hover: var(
+  --sandbox-primitive-color-cyan-200
+); /* oklch(92% 0.08 195) */
 ```
 
 **DO:**
@@ -130,12 +228,14 @@ Each semantic color has **6 tokens** for flexible, accessible usage:
 - Use `hover:bg-*-hover` for all interactive backgrounds
 - Ensure hover states are immediately obvious
 - Test hover visibility in both light and dark modes
+- Trust the primitive palettes for consistent contrast
 
 **DON'T:**
 
 - Create custom hover states with manual color adjustments
 - Use subtle hover changes (under 10% lightness difference)
 - Forget to test hover states in both themes
+- Bypass primitives when defining new semantic colors
 
 ---
 
@@ -169,123 +269,50 @@ Four levels with progressive cyan tint (hue shifts from 200° → 192°):
 
 ---
 
-## Z-Index System
-
-**Philosophy:** Z-index values align with surface elevation levels. Higher surfaces get higher z-index values to maintain consistent layering.
-
-### The Six-Level System
-
-| Level | Z-Index | Surface    | Usage                                |
-| ----- | ------- | ---------- | ------------------------------------ |
-| `0`   | `0`     | background | Default page content, main canvas    |
-| `1`   | `10`    | surface-1  | Cards, primary containers            |
-| `2`   | `20`    | surface-2  | Nested panels, elevated cards        |
-| `3`   | `30`    | surface-3  | Dropdowns, popovers, tooltips        |
-| `4`   | `40`    | surface-4  | Modals, dialogs, command palettes    |
-| `5`   | `50`    | —          | Toast notifications, critical alerts |
-
-**DO:**
-
-- Match z-index to surface level (surface-3 → z-surface-3)
-- Use next higher level for elements nested inside (popover uses surface-3, input inside uses surface-4 background)
-- Keep z-index jumps consistent (increments of 10)
-- Reserve z-toast (50) for temporary, critical overlays only
-
-**DON'T:**
-
-- Use arbitrary z-index values (e.g., `z-[999]`)
-- Skip z-index levels (e.g., base → surface-3)
-- Use z-index without corresponding surface elevation
-- Create z-index values above 50 (toast is the ceiling)
-
----
-
-## Typography
-
-### Design Philosophy
-
-**Dual Font Strategy:**
-
-- **Josefin Sans** (headings): Geometric sans-serif, modern aesthetic
-- **Inter** (body, UI): Optimized for readability, excellent at all sizes
-
-**Fluid Typography:**
-All type sizes use `clamp()` to scale smoothly between mobile and desktop—no breakpoints needed.
-
-**Critical Principle: Semantic Structure ≠ Visual Style**
-
-- HTML headings (`<h1>`–`<h6>`) define **document structure and accessibility**
-- Typography utilities (`headline-1`–`headline-6`, `body-1`, etc.) define **visual emphasis**
-- The two systems are coordinated by context, not forced to match
-
-**Golden Rules:**
-
-1. Never pick a heading level for how it looks
-2. Never pick a font size for what it means
-3. Heading elements define document structure
-4. Typography tokens define visual emphasis
-5. Use utilities to override default heading styles when needed
-
-### Fluid Typography Scale
-
-| Utility         | Min (Mobile) | Max (Desktop) | Weight | Usage                      |
-| --------------- | ------------ | ------------- | ------ | -------------------------- |
-| `headline-1`    | 32px (2rem)  | 48px (3rem)   | 300    | Hero text, page titles     |
-| `headline-2`    | 24px         | 36px          | 300    | Major sections             |
-| `headline-3`    | 20px         | 28px          | 400    | Subsections                |
-| `headline-4`    | 18px         | 22px          | 400    | Component titles           |
-| `headline-5`    | 16px         | 18px          | 500    | Small headers              |
-| `headline-6`    | 14px         | 16px          | 500    | Compact headers            |
-| `subtitle-1`    | 14px         | 16px          | 500    | Emphasized metadata        |
-| `subtitle-2`    | 13px         | 14px          | 500    | Component subtitles        |
-| `body-1`        | 14px         | 16px          | 400    | Primary content            |
-| `body-2`        | 13px         | 14px          | 400    | Secondary content          |
-| `button-text`   | 13px         | 14px          | 600    | Buttons, CTAs (uppercase)  |
-| `caption`       | 12px         | 13px          | 400    | Help text, footnotes       |
-| `overline-text` | 12px         | 13px          | 500    | Section labels (uppercase) |
-
-**DO:**
-
-- Use semantic HTML headings for document structure
-- Use typography utilities for visual styling
-- Override heading styles with utilities when needed
-- Use `whitespace-nowrap` for values that shouldn't wrap (stats, numbers)
-- Let fluid typography scale naturally—no manual breakpoints
-
-**DON'T:**
-
-- Choose `<h3>` because you want that visual size
-- Add manual responsive classes to typography
-- Create custom font sizes outside the system
-- Use fixed pixel values for type
-
----
-
 ## Spacing System
 
 **Philosophy:** Name tokens after WHAT they separate, not HOW BIG they are.
 
-### The Ten-Token System
+### Primitive Spacing Scale
+
+Base unit: `0.25rem` (4px)  
+Scale: Each number represents a percentage of the base unit
+
+```css
+--sandbox-primitive-space-0: 0;
+--sandbox-primitive-space-1: 0.25rem; /* 100% = 4px */
+--sandbox-primitive-space-2: 0.5rem; /* 200% = 8px */
+--sandbox-primitive-space-3: 0.75rem; /* 300% = 12px */
+--sandbox-primitive-space-4: 1rem; /* 400% = 16px */
+--sandbox-primitive-space-6: 1.5rem; /* 600% = 24px */
+--sandbox-primitive-space-8: 2rem; /* 800% = 32px */
+--sandbox-primitive-space-12: 3rem; /* 1200% = 48px */
+--sandbox-primitive-space-16: 4rem; /* 1600% = 64px */
+```
+
+### Semantic Spacing Tokens
+
+Built from primitives using `clamp()` for fluid scaling:
 
 **Flow Spacing** (gaps between elements):
 
-| Token     | Size (Mobile → Desktop) | Purpose               | When to Use                               |
-| --------- | ----------------------- | --------------------- | ----------------------------------------- |
-| `inline`  | 4px → 6px               | Related inline items  | Buttons in group, icon + text, tags       |
-| `stack`   | 8px → 12px              | Vertical content flow | Label → input, heading → body, paragraphs |
-| `section` | 24px → 40px             | Content blocks        | Between cards, major sections             |
-| `layout`  | 32px → 48px             | Page structure        | Header, main, footer                      |
+| Token     | Formula                                              | Purpose               |
+| --------- | ---------------------------------------------------- | --------------------- |
+| `inline`  | `clamp(space-1, 0.2rem + 0.25vw, space-2)` → 4-6px   | Related inline items  |
+| `stack`   | `clamp(space-2, 0.375rem + 0.5vw, space-3)` → 8-12px | Vertical content flow |
+| `section` | `clamp(space-6, 1rem + 2vw, space-10)` → 24-40px     | Content blocks        |
+| `layout`  | `clamp(space-8, 1.5rem + 2.5vw, space-12)` → 32-48px | Page structure        |
 
 **Inset Spacing** (padding inside containers):
 
-| Token       | Size (Mobile → Desktop) | Purpose                       | When to Use                       |
-| ----------- | ----------------------- | ----------------------------- | --------------------------------- |
-| `inset-xs`  | 6px → 8px               | Minimal container padding     | Compact badges, tight table cells |
-| `inset-sm`  | 8px → 12px              | Small container padding       | Buttons, small cards, tags        |
-| `inset`     | 16px → 24px             | Standard container padding    | Cards, dialogs, panels (default)  |
-| `inset-lg`  | 24px → 32px             | Generous container padding    | Hero sections, feature cards      |
-| `inset-xl`  | 32px → 48px             | Maximum container padding     | Large immersive containers        |
-| `inset-2xl` | 48px → 64px             | Exceptional container padding | Full-page containers, landing     |
+| Token       | Formula                                               | Purpose             |
+| ----------- | ----------------------------------------------------- | ------------------- |
+| `inset-xs`  | `clamp(space-1, 0.3125rem + 0.25vw, space-2)` → 6-8px | Minimal padding     |
+| `inset-sm`  | `clamp(space-2, 0.375rem + 0.5vw, space-3)` → 8-12px  | Small containers    |
+| `inset`     | `clamp(space-4, 0.75rem + 1vw, space-6)` → 16-24px    | Standard containers |
+| `inset-lg`  | `clamp(space-6, 1.25rem + 1vw, space-8)` → 24-32px    | Generous padding    |
+| `inset-xl`  | `clamp(space-8, 1.5rem + 2vw, space-12)` → 32-48px    | Large containers    |
+| `inset-2xl` | `clamp(space-12, 2.5rem + 2vw, space-16)` → 48-64px   | Maximum padding     |
 
 ### Decision Tree
 
@@ -318,31 +345,21 @@ INSET (padding inside containers):
 ├─ Hero section, feature card?
 │  └─ Use: p-inset-xl
 │
-├─ Large immersive container?
-│  └─ Use: p-inset-2xl
-│
 └─ Full-page container, landing page?
-   └─ Use: p-inset-3xl
+   └─ Use: p-inset-2xl
 ```
 
 ### Accessibility: Hit Targets
 
 **Philosophy:** All interactive elements must meet WCAG minimum touch/click target size.
 
-| Token        | Value | Purpose                  |
-| ------------ | ----- | ------------------------ |
-| `hit-target` | 24px  | Minimum interactive area |
+| Token        | Value                                | Purpose                  |
+| ------------ | ------------------------------------ | ------------------------ |
+| `hit-target` | `--sandbox-primitive-space-6` (24px) | Minimum interactive area |
 
 **Usage:**
 
-The `hit-target` utility ensures all clickable/tappable elements are at least 24×24px, meeting WCAG 2.5.8 Level AA standards for target size. This is particularly important for:
-
-- Icon-only buttons
-- Close buttons (×)
-- Toggle switches
-- Checkbox/radio controls
-- Small interactive badges
-- Mobile touch interfaces
+The `hit-target` utility ensures all clickable/tappable elements are at least 24×24px, meeting WCAG 2.5.8 Level AA standards.
 
 **DO:**
 
@@ -350,18 +367,16 @@ The `hit-target` utility ensures all clickable/tappable elements are at least 24
 - Use `space-y-stack` for form fields
 - Use `p-inset` for button padding
 - Use `p-inset-lg` for card padding (default)
-- Use `gap-section` for grid of cards
-- Use `py-layout` for page-level spacing
-- Use `hit-target` for all interactive elements to ensure minimum of 24 x 24px
+- Use `hit-target` for all interactive elements
+- Trust the fluid scaling — no manual breakpoints needed
 
 **DON'T:**
 
 - Use `stack` for padding (it's for flow, not inset)
 - Use `inset` for gaps between cards (use `section`)
-- Use flow tokens (`inline`, `stack`) as inset padding
-- Use inset tokens (`inset-*`) as gaps/margins
 - Mix spacing tokens randomly
-- Create custom spacing values outside the system
+- Create custom spacing values outside the primitive scale
+- Override clamp() values manually
 
 ---
 
@@ -369,16 +384,28 @@ The `hit-target` utility ensures all clickable/tappable elements are at least 24
 
 **Philosophy:** Semantic naming based on usage context, not arbitrary sizes.
 
-### The Six-Token System
+### Primitive Radius Scale
 
-| Token         | Size   | Usage                              | Examples                         |
-| ------------- | ------ | ---------------------------------- | -------------------------------- |
-| `interactive` | 4px    | Small interactive elements         | Buttons, inputs, small badges    |
-| `nested`      | 6px    | Elements inside rounded containers | Buttons inside cards             |
-| `container`   | 8px    | Standard containers                | Cards, panels, dialogs (default) |
-| `large`       | 12px   | Large feature areas                | Hero cards, feature sections     |
-| `icon`        | 2px    | Icon backgrounds                   | Icon buttons (when feasible)     |
-| `full`        | 9999px | Pill shapes                        | Pills, badges, tags              |
+```css
+--sandbox-primitive-radius-0: 0;
+--sandbox-primitive-radius-1: 2px;
+--sandbox-primitive-radius-2: 4px;
+--sandbox-primitive-radius-3: 6px;
+--sandbox-primitive-radius-4: 8px;
+--sandbox-primitive-radius-6: 12px;
+--sandbox-primitive-radius-full: 9999px;
+```
+
+### Semantic Radius Tokens
+
+| Token         | Primitive                             | Usage                              |
+| ------------- | ------------------------------------- | ---------------------------------- |
+| `interactive` | `--sandbox-primitive-radius-2` (4px)  | Buttons, inputs, small badges      |
+| `nested`      | `--sandbox-primitive-radius-3` (6px)  | Elements inside rounded containers |
+| `container`   | `--sandbox-primitive-radius-4` (8px)  | Cards, panels, dialogs (default)   |
+| `large`       | `--sandbox-primitive-radius-6` (12px) | Hero cards, feature sections       |
+| `icon`        | `--sandbox-primitive-radius-1` (2px)  | Icon backgrounds                   |
+| `full`        | `--sandbox-primitive-radius-full`     | Pills, badges, tags                |
 
 ### Decision Tree
 
@@ -406,52 +433,84 @@ Q: What am I rounding?
 
 **DO:**
 
-- Use `rounded-interactive` for all buttons and inputs
-- Use `rounded-nested` for elements inside cards
-- Use `rounded-container` as default for cards
+- Use semantic tokens (rounded-interactive, rounded-container)
 - Use smaller radius inside larger (8px card → 6px button)
 - Use consistent radius for same element types
+- Reference primitives when creating new semantic tokens
 
 **DON'T:**
 
 - Use radius when element touches parent edge
-- Use radius when element touches viewport edge
 - Mix different radius sizes for similar elements
 - Use arbitrary radius values (e.g., `rounded-[10px]`)
+- Bypass semantic layer — use rounded-interactive, not rounded-[4px]
 
 ---
 
-## Border Width
+## Typography
 
-**Philosophy:** Two widths only—standard and emphasis.
+### Design Philosophy
 
-| Token      | Size | Tailwind Utility | Usage                                       |
-| ---------- | ---- | ---------------- | ------------------------------------------- |
-| `default`  | 1px  | `border`         | Standard borders, dividers, inputs          |
-| `emphasis` | 2px  | `border-2`       | Featured cards, active states, primary CTAs |
+**Dual Font Strategy:**
 
-**Pragmatic Note:** While we define semantic tokens (`--border-width-default`, `--border-width-emphasis`), we use Tailwind's standard utilities (`border`, `border-2`) to avoid class naming conflicts. This is more maintainable than custom utilities.
+- **Josefin Sans** (headings): Geometric sans-serif, modern aesthetic
+- **Inter** (body, UI): Optimized for readability, excellent at all sizes
+
+**Component-Level Utilities:**
+All typography is defined as `@utility` declarations that can be overridden with Tailwind classes via `cn()`.
+
+**Critical Principle: Semantic Structure ≠ Visual Style**
+
+- HTML headings (`<h1>`–`<h6>`) define **document structure and accessibility**
+- Typography utilities (`headline-1`–`headline-6`, `body-1`, etc.) define **visual emphasis**
+- The two systems are coordinated by context, not forced to match
+
+**Golden Rules:**
+
+1. Never pick a heading level for how it looks
+2. Never pick a font size for what it means
+3. Heading elements define document structure
+4. Typography tokens define visual emphasis
+5. Use utilities to override default heading styles when needed
+
+### Fluid Typography Scale
+
+| Utility         | Min (Mobile) | Max (Desktop) | Weight | Line Height | Letter Spacing |
+| --------------- | ------------ | ------------- | ------ | ----------- | -------------- |
+| `headline-1`    | 32px (2rem)  | 48px (3rem)   | 300    | 1.1         | -0.02em        |
+| `headline-2`    | 24px         | 36px          | 300    | 1.15        | -0.015em       |
+| `headline-3`    | 20px         | 28px          | 400    | 1.2         | -0.01em        |
+| `headline-4`    | 18px         | 22px          | 400    | 1.25        | -0.005em       |
+| `headline-5`    | 16px         | 18px          | 500    | 1.3         | 0              |
+| `headline-6`    | 14px         | 16px          | 500    | 1.35        | 0.005em        |
+| `subtitle-1`    | 14px         | 16px          | 500    | 1.5         | 0.01em         |
+| `subtitle-2`    | 13px         | 14px          | 500    | 1.5         | 0.015em        |
+| `body-1`        | 14px         | 16px          | 400    | 1.6         | normal         |
+| `body-2`        | 13px         | 14px          | 400    | 1.5         | 0.01em         |
+| `button-text`   | 13px         | 14px          | 600    | 1           | 0.05em         |
+| `caption`       | 12px         | 13px          | 400    | 1.5         | 0.02em         |
+| `overline-text` | 12px         | 13px          | 500    | 1.5         | 0.15em         |
 
 **DO:**
 
-- Use `border` (1px) for standard borders
-- Use `border-2` (2px) for featured or active states
-- Use borders to define boundaries
-- Prefer surface elevation over borders for hierarchy
-- Use `border-color-{semantic}` utilities for colors
+- Use semantic HTML headings for document structure
+- Use typography utilities for visual styling
+- Override with Tailwind classes when needed: `cn("headline-1", "text-sm")`
+- Let fluid typography scale naturally — no manual breakpoints
+- Trust the component utilities defined in `@utility`
 
 **DON'T:**
 
-- Create borders thicker than 2px
-- Use borders for purely decorative purposes
-- Mix 1px and 2px borders on same component
-- Try to create custom border-width utilities (causes conflicts)
+- Choose `<h3>` because you want that visual size
+- Add manual responsive classes to typography
+- Create custom font sizes outside the system
+- Use fixed pixel values for type
 
 ---
 
 ## Shadow System
 
-**Philosophy:** Minimize shadow use. Prefer surface elevation for hierarchy. Reserve shadows for floating elements and high-priority overlays.
+**Philosophy:** Minimize shadow use. Prefer surface elevation for hierarchy. Reserve shadows for floating elements.
 
 ### The Five-Level System
 
@@ -465,19 +524,17 @@ Q: What am I rounding?
 
 ### Semantic Glow Shadows
 
-Special shadows that use brand colors for emphasis:
+Built from primitive color palettes:
 
-- `shadow-glow-primary` — Electric cyan glow
-- `shadow-glow-accent` — Vaporwave fuchsia glow
-- `shadow-glow-success` — Matrix teal glow
-- `shadow-glow-warning` — Hot coral glow
+- `shadow-glow-primary` — Electric cyan glow (cyan-400/cyan-700)
+- `shadow-glow-accent` — Vaporwave fuchsia glow (fuchsia-400/fuchsia-700)
+- `shadow-glow-success` — Matrix teal glow (teal-400/teal-700)
+- `shadow-glow-warning` — Hot coral glow (coral-400/coral-700)
 
 **DO:**
 
 - Default to NO shadow (use `bg-surface-1`, `bg-surface-2`, etc.)
 - Use `shadow-low` for subtle card lift (if needed)
-- Use `shadow-medium` for dropdowns and sticky elements
-- Use `shadow-high` for modals and critical overlays
 - Use semantic glows sparingly for hero moments
 - Prefer surface elevation over shadows for hierarchy
 
@@ -486,7 +543,6 @@ Special shadows that use brand colors for emphasis:
 - Add shadows to every card (creates visual noise)
 - Use shadows inside panels (use surface elevation)
 - Combine multiple shadow levels on same element
-- Use shadows as primary hierarchy method
 
 ---
 
@@ -497,10 +553,14 @@ Special shadows that use brand colors for emphasis:
 ### Focus Ring Specification
 
 - **Width:** 3px (thick for maximum visibility)
-- **Color:** Bright cyan (`oklch(75% 0.19 195)` light / `oklch(88% 0.22 195)` dark)
+- **Color:** Bright cyan (built from `--sandbox-primitive-color-cyan-400` / `cyan-300`)
 - **Offset:** 2px (clear separation from element)
 - **Visibility:** Keyboard-only (not on mouse click)
 - **Contrast:** WCAG AAA compliant in both themes
+
+**Automatic Application:**
+
+Focus rings are automatically applied to all interactive elements via `:focus-visible`.
 
 **DO:**
 
@@ -508,7 +568,6 @@ Special shadows that use brand colors for emphasis:
 - Ensure 3px width for visibility
 - Maintain 2px offset from elements
 - Test keyboard navigation in both themes
-- Respect element's border radius
 
 **DON'T:**
 
@@ -517,92 +576,93 @@ Special shadows that use brand colors for emphasis:
 - Reduce ring width below 3px
 - Show focus ring on mouse click
 
-**Automatic Application:**
-
-Focus rings are automatically applied to:
-
-- `a:focus-visible`
-- `button:focus-visible`
-- `input:focus-visible`
-- `textarea:focus-visible`
-- `select:focus-visible`
-- `[tabindex]:focus-visible`
-
 ---
 
 ## Grid System
 
-**Philosophy:** Fluid grid that scales with spacing system. Grid gap aligns with `spacing-section` for visual rhythm.
+**Philosophy:** Fluid grid that scales with spacing system. Grid gap aligns with `spacing-section`.
 
-### The Four-Grid System
+### Component-Level Grid Utilities
 
-| Grid        | Columns | Max Width | Usage                                  |
-| ----------- | ------- | --------- | -------------------------------------- |
-| `basic`     | 12      | 1440px    | Main content (default)                 |
-| `extended`  | 14      | 1600px    | Stretched containers, immersive images |
-| `wide`      | 16      | 1920px    | With persistent sidebar/navigation     |
-| `fullbleed` | 1       | 100vw     | Hero backgrounds (immersive moments)   |
-
-**Grid Gap:** Aligned with `spacing-section` (24px → 40px fluid)
+| Grid        | Columns | Max Width | Gap           | Usage                                |
+| ----------- | ------- | --------- | ------------- | ------------------------------------ |
+| `basic`     | 12      | 1440px    | `gap-section` | Main content (default)               |
+| `extended`  | 14      | 1600px    | `gap-section` | Stretched containers                 |
+| `wide`      | 16      | 1920px    | `gap-section` | With persistent sidebar              |
+| `fullbleed` | 1       | 100vw     | —             | Hero backgrounds (immersive moments) |
 
 ### Responsive Behavior
 
 - **Desktop (≥640px):** Uses full column count
 - **Mobile (<640px):** All grids collapse to **6 columns**
 
-### Decision Tree
-
-```
-Q: What kind of layout?
-
-├─ Main content area?
-│  └─ Use: grid-basic (12 col)
-│
-├─ Immersive image moment?
-│  └─ Use: grid-extended (14 col)
-│
-├─ Interactive part of app with persistent sidebar?
-│  └─ Use: grid-wide (16 col)
-│
-└─ Hero background only?
-   └─ Use: grid-fullbleed
-```
-
 **DO:**
 
 - Use `grid-basic` for main content (default)
-- Align left-edge of text to same vertical line
-- Use `grid-extended` for stretched containers
-- Use `grid-wide` for apps with sidebar
-- Use `grid-fullbleed` only for backgrounds
+- Use grid utilities as base, override with Tailwind: `cn("grid-wide", "gap-8")`
 - Let gap scale with `spacing-section`
+- Trust component utilities for consistent layouts
 
 **DON'T:**
 
 - Scale elements beyond 1920px max width
 - Use different grids on same page level
 - Break grid alignment for decoration
-- Use custom gap values (use `gap-section`)
+- Create custom grid utilities (use Tailwind classes to override)
+
+---
+
+## Z-Index System
+
+**Philosophy:** Z-index values align with surface elevation levels.
+
+| Level | Z-Index | Surface    | Usage                                |
+| ----- | ------- | ---------- | ------------------------------------ |
+| `0`   | `0`     | background | Default page content                 |
+| `1`   | `10`    | surface-1  | Cards, primary containers            |
+| `2`   | `20`    | surface-2  | Nested panels, elevated cards        |
+| `3`   | `30`    | surface-3  | Dropdowns, popovers, tooltips        |
+| `4`   | `40`    | surface-4  | Modals, dialogs                      |
+| `5`   | `50`    | —          | Toast notifications, critical alerts |
+
+**DO:**
+
+- Match z-index to surface level
+- Use next higher level for nested elements
+- Keep z-index jumps consistent (increments of 10)
+- Reserve z-50 for temporary, critical overlays only
+
+**DON'T:**
+
+- Use arbitrary z-index values (e.g., `z-[999]`)
+- Skip z-index levels
+- Create z-index values above 50
 
 ---
 
 ## Quick Reference
 
+### Three-Layer System
+
+1. **Primitives** (`--sandbox-primitive-*`) → Raw values, never change
+2. **Semantics** (`--{name}`) → Design decisions mapped to primitives
+3. **Components** (`@utility`) → Composite utilities, overridable via `cn()`
+
 ### Color Hues
 
 - **Brand:** Cyan 195° • Fuchsia 325°
-- **Semantic:** Teal 160° • Coral 10° • Steel 315° • Blue-Gray 240°
-- **Neutral:** Cool Blue 200°
+- **Semantic:** Teal 160° • Coral 10° • Steel 315° • Slate 240°
+- **Neutral:** Gray 220°
 - **Surface Shift:** 200° → 192° (progressive cyan tint)
 
 ### Token Patterns
 
-- **Colors:** 6 tokens per semantic (base, foreground, on-background, border, background, hover)
-- **Flow Spacing:** 4 tokens (inline, stack, section, layout)
-- **Inset Spacing:** 6 tokens (inset-sm, inset, inset-lg, inset-xl, inset-2xl, inset-3xl)
-- **Radius:** 6 tokens (interactive, nested, container, large, icon, full)
+- **Colors:** Full 50-950 palettes → 6 semantic tokens each
+- **Spacing:** Primitive scale (1-24) → 10 semantic tokens (4 flow + 6 inset)
+- **Radius:** Primitive scale (0-full) → 6 semantic tokens
 - **Shadows:** 5 levels (none, low, medium, high, glow-\*)
-- **Grid:** 4 variants (basic, extended, wide, fullbleed)
+- **Grid:** 4 component utilities (basic, extended, wide, fullbleed)
+- **Typography:** 13 component utilities (headlines, subtitles, body, UI)
 
 ### Contrast Requirements
 
@@ -610,17 +670,22 @@ Q: What kind of layout?
 - **On-background tokens:** ≥4.5:1 on tinted backgrounds (WCAG AA)
 - **Focus rings:** ≥7:1 contrast in both themes (WCAG AAA)
 
-### Dark Mode
+### Tailwind Merge Support
 
-- **Semantic borders:** 80-88% lightness (glow effect)
-- **Surface elevation:** Increasing chroma (0.025 → 0.055)
-- **Hover states:** +15-17% lightness with enhanced glow
+All component utilities properly conflict with standard Tailwind classes:
 
-### Typography
+- Typography utilities conflict with font-size, font-weight, etc.
+- Grid utilities conflict with display, grid-template-columns, gap, padding
+- Spacing utilities conflict with gap/padding classes
+- Radius utilities conflict with rounded classes
 
-- **Fluid scaling:** All sizes use `clamp()` (no breakpoints)
-- **Scale range:** 32px → 48px (headline-1) down to 12px → 13px (caption)
-- **Line heights:** 1.1 (large headings) to 1.6 (body text)
+**Example:**
+
+```typescript
+cn("headline-1", "text-sm"); // text-sm wins
+cn("grid-wide", "px-12"); // px-12 overrides grid padding
+cn("p-inset-lg", "pt-2"); // pt-2 overrides top padding only
+```
 
 ---
 
@@ -630,8 +695,9 @@ Q: What kind of layout?
 - [ ] Focus indicators visible on all interactive elements
 - [ ] Focus ring width ≥3px with high contrast
 - [ ] Typography respects user font-size preferences
-- [ ] Touch targets ≥44x44px
+- [ ] Touch targets ≥24x24px (use `hit-target` utility)
 - [ ] Keyboard navigation works everywhere
 - [ ] No content loss with 200% zoom
 - [ ] Screen readers announce semantic structure correctly
 - [ ] Color is not the only indicator of state
+- [ ] Prefer surface elevation over shadows for hierarchy
