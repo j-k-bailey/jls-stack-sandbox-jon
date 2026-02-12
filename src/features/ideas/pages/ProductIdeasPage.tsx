@@ -10,7 +10,7 @@ import {
   canReadProductIdeas,
   canCreateProductIdea,
 } from "@/lib/permissions/productIdeas";
-import { IdeasListSkeleton } from "@/components/states/skeletons/IdeasListSkeleton";
+import { IdeasListSkeleton } from "@/features/ideas/components/skeletons/IdeasListSkeleton";
 import { ErrorState } from "@/components/states/ErrorState";
 import { EmptyState } from "@/components/states/EmptyState";
 import {

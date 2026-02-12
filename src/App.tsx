@@ -16,13 +16,12 @@ import { SettingsPage } from "@/pages/SettingsPage";
 import { ChangeLogPage } from "@/pages/ChangeLog";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import ContrastCheckPage from "@/pages/ContrastCheckPage";
-import SeedProductIdeasPage from "@/pages/dev/SeedProductIdeasPage";
-import { ProductIdeasPage } from "@/pages/ideas/ProductIdeasPage";
+import SeedProductIdeasPage from "@/features/ideas/pages/dev/SeedProductIdeasPage";
+import { ProductIdeasPage } from "@/features/ideas/pages/ProductIdeasPage";
 import { LoginPage } from "@/pages/LoginPage";
-import { CreateIdeaPage } from "@/pages/ideas/CreateIdeaPage";
-import { IdeaDetailPage } from "@/pages/ideas/IdeaDetailPage";
-import { ArchivedIdeasPage } from "@/pages/ideas/ArchivedIdeasPage";
-import { IdeaNotesPage } from "./pages/ideas/IdeaNotesPage";
+import { CreateIdeaPage } from "@/features/ideas/pages/CreateIdeaPage";
+import { IdeaDetailPage } from "@/features/ideas/pages/IdeaDetailPage";
+import { IdeaNotesPage } from "./features/ideas/pages/IdeaNotesPage";
 
 function App() {
   return (
@@ -48,9 +47,6 @@ function App() {
 
           <Route path="/ideas/:ideaId" element={<IdeaDetailPage />} />
           <Route path="/ideas/:ideaId/notes" element={<IdeaNotesPage />} />
-          {/* TODO: Refactor idea page to show not have redirect when toggling between archived or not */}
-          <Route path="/ideas/archived" element={<ArchivedIdeasPage />} />
-          <Route path="/ideas/archived/:ideaId" element={<IdeaDetailPage />} />
         </Route>
 
         {/* "/layout-sandbox" → layout sandbox page */}

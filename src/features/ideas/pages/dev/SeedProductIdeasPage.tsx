@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { seedProductIdeas } from "@/lib/productIdeaSeed";
+import { seedProductIdeas } from "@/features/ideas/scripts/productIdeaSeed";
 import { Button } from "@/components/ui/BrandButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/common/PageHeader";

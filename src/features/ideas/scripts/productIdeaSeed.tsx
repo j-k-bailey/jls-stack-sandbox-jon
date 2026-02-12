@@ -7,11 +7,11 @@ import {
   PRODUCT_IDEAS_2,
   PRODUCT_IDEA_NOTES,
   getIdeaSlug,
-} from "@/constants/productIdeas";
+} from "@/features/ideas/constants/productIdeas";
 import type {
   ProductIdeaPriority,
   ProductIdeaStatus,
-} from "./types/productIdeas";
+} from "../../../lib/types/productIdeas";
 
 export async function seedProductIdeas(
   currentUserId: string,

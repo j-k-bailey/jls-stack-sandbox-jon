@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FetchErrorBanner } from "@/components/retired/FetchErrorBanner";
+import { FetchErrorBanner } from "@/retired/FetchErrorBanner";
 import { ArchivedIdeaBanner } from "@/components/productIdea/ArchivedIdeaBanner";
 import { EmptyState } from "@/components/productIdea/EmptyState";
 import {

@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { IDEA_STATUSES } from "@/lib/zodSchemas/productIdea";
-import { ideaTagOptions } from "@/constants/productIdeaTags";
+import { ideaTagOptions } from "@/features/ideas/constants/productIdeaTags";
 import type { IdeasFilterState } from "@/features/ideas/hooks/useIdeasFilters";
 
 // ============================================================================

@@ -28,5 +28,11 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "src/lib/fakerApi.tsx",
+    "retired/usePageData.tsx",
+    "retired/useArchivedIdeas.tsx",
+    "retired"
+  ]
 }

@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/BrandButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { IdeaDetailSkeleton } from "@/components/states/skeletons/IdeaDetailSkeleton";
+import { IdeaDetailSkeleton } from "@/features/ideas/components/skeletons/IdeaDetailSkeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,7 +36,7 @@ import {
   IdeaStatusDisplay,
   IdeaPriorityDisplay,
 } from "@/components/productIdea/IdeaStatusDisplay";
-import { IdeaNotesSection } from "@/pages/ideas/IdeaNotesSection";
+import { IdeaNotesSection } from "@/features/ideas/pages/IdeaNotesSection";
 import { ResponsiveGrid } from "@/components/layout/ResponsiveGrid";
 import {
   FormInput,
