@@ -7,3 +7,4 @@ This file exists so you can practice Git safely without touching app logic.
 - Created this file.
 - Practiced working on a branch.
 - Third practice note.
+- Fourth practice note.
