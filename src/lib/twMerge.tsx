@@ -5,6 +5,8 @@ type AdditionalClassGroupIds =
   | "grid-layout"
   | "spacing-flow"
   | "spacing-inset"
+  | "spacing-inset-x"
+  | "spacing-inset-y"
   | "radius-semantic"
   | "shadow-semantic"
   | "hit-target"
@@ -55,6 +57,7 @@ export const twMergeExtended = extendTailwindMerge<
       "spacing-flow": ["gap-inline", "gap-stack", "gap-section", "gap-layout"],
 
       // Inset spacing utilities - conflicts with p-*, px-*, py-*
+      // All sides
       "spacing-inset": [
         "p-inset-xs",
         "p-inset-sm",
@@ -62,12 +65,20 @@ export const twMergeExtended = extendTailwindMerge<
         "p-inset-lg",
         "p-inset-xl",
         "p-inset-2xl",
+      ],
+
+      // Horizontal only
+      "spacing-inset-x": [
         "px-inset-xs",
         "px-inset-sm",
         "px-inset",
         "px-inset-lg",
         "px-inset-xl",
         "px-inset-2xl",
+      ],
+
+      // Vertical only
+      "spacing-inset-y": [
         "py-inset-xs",
         "py-inset-sm",
         "py-inset",
@@ -148,7 +159,25 @@ export const twMergeExtended = extendTailwindMerge<
       "spacing-flow": ["gap", "gap-x", "gap-y"],
 
       // Inset spacing conflicts with padding
-      "spacing-inset": ["p", "px", "py", "pt", "pr", "pb", "pl"],
+      // p-* conflicts with all padding
+      "spacing-inset": [
+        "p",
+        "px",
+        "py",
+        "pt",
+        "pr",
+        "pb",
+        "pl",
+        "spacing-inset",
+        "spacing-inset-x",
+        "spacing-inset-y",
+      ],
+
+      // px-* conflicts with horizontal padding only
+      "spacing-inset-x": ["px", "pl", "pr", "spacing-inset-x"],
+
+      // py-* conflicts with vertical padding only
+      "spacing-inset-y": ["py", "pt", "pb", "spacing-inset-y"],
 
       // Radius conflicts with border-radius
       "radius-semantic": ["rounded"],
