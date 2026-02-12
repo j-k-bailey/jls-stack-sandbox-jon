@@ -9,3 +9,4 @@ This file exists so you can practice Git safely without touching app logic.
 - This note should be committed.
 - Next good commit line.
 - And another good commit.
+- A line for a soft reset commit.
