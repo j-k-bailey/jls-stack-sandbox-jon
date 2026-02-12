@@ -10,6 +10,8 @@ export type ProductIdeaStatusFilter = ProductIdeaStatus | "all";
 
 export type ProductIdeaPriority = "now" | "next" | "later";
 
+export type ProductIdeaPriorityFilter = ProductIdeaPriority | "all";
+
 export interface ProductIdea {
   ideaId: string;
   title: string;
@@ -63,7 +65,7 @@ export interface ProductIdeaFilters {
   status?: ProductIdeaStatusFilter;
   ownerId?: string;
   tag?: string;
-  priority?: ProductIdeaPriority;
+  priority?: ProductIdeaPriorityFilter;
   q?: string;
   archived?: boolean;
 }

@@ -1,5 +1,5 @@
-import { useReducer, useEffect, useRef, useCallback, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Plus,
   Lightbulb,
@@ -23,12 +23,6 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SimpleSignIn } from "@/components/common/SimpleSignIn";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchIdeasPage } from "@/lib/firestore/productIdeas";
-import type {
-  ProductIdea,
-  ProductIdeaFilters,
-  ProductIdeaStatus,
-} from "@/lib/types/productIdeas";
 import { IDEA_STATUSES } from "@/lib/zodSchemas/productIdea";
 import { ideaTagOptions } from "@/constants/productIdeaTags";
 import {
@@ -36,7 +30,6 @@ import {
   canCreateProductIdea,
 } from "@/lib/permissions/productIdeas";
 import { ProgressBar } from "@/components/common/ProgressBar";
-import type { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import {
   Popover,
   PopoverContent,
@@ -60,127 +53,24 @@ import {
   DevStateControls,
   applyDevStateOverrides,
 } from "@/hooks/useDevState";
+import { useIdeasFilters } from "@/features/ideas/hooks/useIdeasFilters";
+import { useIdeasList } from "@/features/ideas/hooks/useIdeasList";
 // import { ErrorBoundaryTester } from "@/components/dev/ErrorBoundaryTester";
 
 // ============================================================================
 // CONSTANTS
 // ============================================================================
 
-const MIN_SKELETON_MS = 400;
-const MIN_FILTER_MS = 400;
 const PAGE_SIZE = 15;
-const SCROLL_THRESHOLD = 400; // px from bottom to trigger load
-
-// ============================================================================
-// STATE MANAGEMENT
-// ============================================================================
-
-type PageState = {
-  ideas: ProductIdea[];
-  cursor: QueryDocumentSnapshot<DocumentData> | null;
-  hasMore: boolean;
-  initialLoading: boolean;
-  filtering: boolean;
-  loadingMore: boolean;
-  fetchError: string | null;
-  isClearing: boolean;
-};
-
-type PageAction =
-  | { type: "FETCH_START_INITIAL" }
-  | { type: "FETCH_START_FILTER" }
-  | { type: "FETCH_START_MORE" }
-  | { type: "CLEAR_FILTERS_START" }
-  | {
-      type: "FETCH_SUCCESS";
-      ideas: ProductIdea[];
-      cursor: QueryDocumentSnapshot<DocumentData> | null;
-      append?: boolean;
-    }
-  | { type: "ERROR"; message: string }
-  | { type: "AUTH_UNAVAILABLE" };
-
-const initialState: PageState = {
-  ideas: [],
-  cursor: null,
-  hasMore: false,
-  initialLoading: true,
-  filtering: false,
-  loadingMore: false,
-  fetchError: null,
-  isClearing: false,
-};
-
-function pageReducer(state: PageState, action: PageAction): PageState {
-  switch (action.type) {
-    case "FETCH_START_INITIAL":
-      return {
-        ...state,
-        initialLoading: true,
-        filtering: false,
-        loadingMore: false,
-        fetchError: null,
-      };
-    case "FETCH_START_FILTER":
-      return {
-        ...state,
-        initialLoading: false,
-        filtering: true,
-        loadingMore: false,
-        fetchError: null,
-      };
-    case "FETCH_START_MORE":
-      return {
-        ...state,
-        initialLoading: false,
-        filtering: false,
-        loadingMore: true,
-        fetchError: null,
-      };
-    case "CLEAR_FILTERS_START":
-      return {
-        ...state,
-        isClearing: true,
-        fetchError: null,
-      };
-    case "FETCH_SUCCESS":
-      return {
-        ideas: action.append ? [...state.ideas, ...action.ideas] : action.ideas,
-        cursor: action.cursor,
-        hasMore: action.ideas.length === PAGE_SIZE,
-        initialLoading: false,
-        filtering: false,
-        loadingMore: false,
-        fetchError: null,
-        isClearing: false,
-      };
-    case "ERROR":
-      return {
-        ...state,
-        initialLoading: false,
-        filtering: false,
-        loadingMore: false,
-        fetchError: action.message,
-      };
-    case "AUTH_UNAVAILABLE":
-      return {
-        ...state,
-        initialLoading: false,
-        filtering: false,
-        loadingMore: false,
-      };
-    default:
-      return state;
-  }
-}
 
 // ============================================================================
 // COMPONENT
 // ============================================================================
 
 export const ProductIdeasPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [devState, setDevState] = useDevState();
+  const { filters, hasActiveFilters, updateFilter, resetFilters } =
+    useIdeasFilters();
 
   const { user, userProfile } = useAuth();
 
@@ -190,98 +80,73 @@ export const ProductIdeasPage = () => {
   const canReadIdeas = canReadProductIdeas(isSignedIn);
   const canCreateIdeas = canCreateProductIdea(role, user?.uid);
 
-  const [state, dispatch] = useReducer(pageReducer, initialState);
+  // ─── Ideas List Data ──────────────────────────────────────────────────────
+
   const {
-    ideas,
-    cursor,
+    items: ideas,
     hasMore,
     initialLoading,
     filtering,
     loadingMore,
-    fetchError,
-    isClearing,
-  } = state;
+    error: fetchError,
+    reload,
+  } = useIdeasList({
+    filters,
+    userId: user?.uid,
+    pageSize: PAGE_SIZE,
+    enabled: canReadIdeas && devState === "normal",
+    enableInfiniteScroll: true,
+  });
 
-  const hasLoadedOnce = useRef(false);
+  // ─── Local Search Input State (debounced) ─────────────────────────────────
 
-  // ─── URL Filter State ─────────────────────────────────────────────────────
+  const [searchInput, setSearchInput] = useState(filters.q);
 
-  const statusFilter = searchParams.get("status") || undefined;
-  const tagFilter = searchParams.get("tag") || undefined;
-  const myIdeasFilter = searchParams.get("mine") === "true";
-  const archivedFilter = searchParams.get("archived") === "true";
-
-  const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
-  const searchQuery = searchParams.get("q") || undefined;
-
-  const hasActiveFilters = !!(
-    statusFilter ||
-    tagFilter ||
-    myIdeasFilter ||
-    archivedFilter ||
-    searchQuery
-  );
-
-  // ─── Debounced Search ─────────────────────────────────────────────────────
-
+  // Debounce search input to URL params
   useEffect(() => {
     const t = setTimeout(() => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-
-          const trimmed = searchInput.trim();
-          if (trimmed) next.set("q", trimmed);
-          else next.delete("q");
-
-          return next;
-        },
-        { replace: true },
-      );
+      if (searchInput !== filters.q) {
+        updateFilter("q", searchInput);
+      }
     }, 300);
 
     return () => clearTimeout(t);
-  }, [searchInput, setSearchParams]);
+  }, [searchInput, filters.q, updateFilter]);
 
-  // ─── Data Fetching ────────────────────────────────────────────────────────
+  // ─── Dev State Override ───────────────────────────────────────────────────
 
   const displayState = applyDevStateOverrides(
     devState,
-    { initialLoading, filtering, fetchError, ideas, isClearing },
+    { initialLoading, filtering, fetchError, ideas },
     {
       loading: {
         initialLoading: true,
         filtering: false,
         fetchError: null,
         ideas: [],
-        isClearing: false,
       },
       filtering: {
         initialLoading: false,
         filtering: true,
         fetchError: null,
-        isClearing: false,
       },
       error: {
         initialLoading: false,
         filtering: false,
         fetchError: "Failed to load ideas. Please try again.",
         ideas: [],
-        isClearing: false,
       },
       empty: {
         initialLoading: false,
         filtering: false,
         fetchError: null,
         ideas: [],
-        isClearing: false,
       },
       "empty-filtered": {
         initialLoading: false,
         filtering: false,
         fetchError: null,
         ideas: [],
-        isClearing: false,
       },
     },
   );
@@ -289,148 +154,20 @@ export const ProductIdeasPage = () => {
   const displayHasActiveFilters =
     devState === "empty-filtered" ? true : hasActiveFilters;
 
-  const fetchIdeas = useCallback(
-    async (loadMore = false) => {
-      if (!user || !canReadIdeas) {
-        dispatch({ type: "AUTH_UNAVAILABLE" });
-        return;
-      }
-
-      const isCold = !hasLoadedOnce.current;
-      if (isCold) {
-        dispatch({ type: "FETCH_START_INITIAL" });
-      } else if (loadMore) {
-        dispatch({ type: "FETCH_START_MORE" });
-      } else {
-        dispatch({ type: "FETCH_START_FILTER" });
-      }
-
-      try {
-        const filters: ProductIdeaFilters = {
-          archived: archivedFilter,
-        };
-        if (statusFilter) filters.status = statusFilter as ProductIdeaStatus;
-        if (tagFilter) filters.tag = tagFilter;
-        if (myIdeasFilter) filters.ownerId = user.uid;
-        if (searchQuery) filters.q = searchQuery;
-
-        const minDelay = isCold ? MIN_SKELETON_MS : MIN_FILTER_MS;
-
-        const [result] = await Promise.all([
-          fetchIdeasPage({
-            filters,
-            pageSize: PAGE_SIZE,
-            cursor: loadMore ? cursor : null,
-          }),
-          new Promise<void>((resolve) => setTimeout(resolve, minDelay)),
-        ]);
-
-        hasLoadedOnce.current = true;
-
-        dispatch({
-          type: "FETCH_SUCCESS",
-          ideas: result.items,
-          cursor: result.nextCursor,
-          append: loadMore,
-        });
-      } catch (err) {
-        console.error("Failed to fetch ideas:", err);
-        dispatch({
-          type: "ERROR",
-          message: "Failed to load ideas. Please try again.",
-        });
-      }
-    },
-    [
-      user,
-      canReadIdeas,
-      statusFilter,
-      tagFilter,
-      myIdeasFilter,
-      archivedFilter,
-      searchQuery,
-      cursor,
-    ],
-  );
-
-  useEffect(() => {
-    if (devState === "normal") {
-      fetchIdeas(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    statusFilter,
-    tagFilter,
-    myIdeasFilter,
-    archivedFilter,
-    searchQuery,
-    devState,
-  ]);
-
-  // ─── Infinite Scroll ──────────────────────────────────────────────────────
-
-  const isLoadingRef = useRef(false);
-
-  useEffect(() => {
-    isLoadingRef.current = loadingMore;
-  }, [loadingMore]);
-
-  useEffect(() => {
-    // Don't attach scroll listener if we can't load more or still loading initial data
-    if (!hasMore || initialLoading || filtering) {
-      return;
-    }
-
-    const handleScroll = () => {
-      // Don't trigger if already loading
-      if (isLoadingRef.current) {
-        return;
-      }
-
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight;
-      const clientHeight = window.innerHeight;
-
-      const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
-
-      // Trigger load when within threshold of bottom
-      if (distanceFromBottom < SCROLL_THRESHOLD) {
-        fetchIdeas(true);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [hasMore, initialLoading, filtering, fetchIdeas]);
+  // ─── UI State ─────────────────────────────────────────────────────────────
 
   const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
 
-  // ─── Filter Helpers ───────────────────────────────────────────────────────
+  // ─── Filter Handlers ──────────────────────────────────────────────────────
 
-  const handleFilterChange = (key: string, value: string | null) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (value) {
-      newParams.set(key, value);
-    } else {
-      newParams.delete(key);
-    }
-    setSearchParams(newParams);
-  };
-
-  const clearFilters = () => {
-    dispatch({ type: "CLEAR_FILTERS_START" });
-    setSearchParams({});
+  const handleClearFilters = () => {
+    resetFilters();
     setSearchInput("");
   };
 
-  const clearSearch = () => {
+  const handleClearSearch = () => {
     setSearchInput("");
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete("q");
-    setSearchParams(newParams);
+    updateFilter("q", "");
   };
 
   // ─── Auth Gate ────────────────────────────────────────────────────────────
@@ -467,8 +204,8 @@ export const ProductIdeasPage = () => {
           ) : undefined
         }
       />
-      {/* 
-      <ErrorBoundaryTester /> */}
+
+      {/* <ErrorBoundaryTester /> */}
 
       <DevStateControls currentState={devState} onStateChange={setDevState} />
 
@@ -488,7 +225,7 @@ export const ProductIdeasPage = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={clearSearch}
+                onClick={handleClearSearch}
                 className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
                 aria-label="Clear search"
               >
@@ -497,19 +234,19 @@ export const ProductIdeasPage = () => {
             )}
           </div>
 
-          {/* Filter Controls */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Filter Controls - Responsive Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2">
             {/* Status Filter */}
             <Select
-              value={statusFilter || "all"}
+              value={filters.status}
               onValueChange={(value) =>
-                handleFilterChange("status", value === "all" ? null : value)
+                updateFilter("status", value as typeof filters.status)
               }
             >
               <SelectTrigger
                 className={cn(
-                  "h-9 w-auto min-w-30",
-                  statusFilter &&
+                  "h-9 w-full",
+                  filters.status !== "all" &&
                     "border-primary/50 bg-primary-background text-primary",
                 )}
               >
@@ -525,19 +262,45 @@ export const ProductIdeasPage = () => {
               </SelectContent>
             </Select>
 
+            {/* Priority Filter */}
+            <Select
+              value={filters.priority}
+              onValueChange={(value) =>
+                updateFilter("priority", value as typeof filters.priority)
+              }
+            >
+              <SelectTrigger
+                className={cn(
+                  "h-9 w-full",
+                  filters.priority !== "all" &&
+                    "border-primary/50 bg-primary-background text-primary",
+                )}
+              >
+                <SelectValue placeholder="Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All priorities</SelectItem>
+                <SelectItem value="now">Now</SelectItem>
+                <SelectItem value="next">Next</SelectItem>
+                <SelectItem value="later">Later</SelectItem>
+              </SelectContent>
+            </Select>
+
             {/* Tag Filter */}
             <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "h-9 justify-between font-normal min-w-30 border-input hover:border-primary body-2 capitalize",
-                    "border-input hover:border-primary text-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex w-fit items-center justify-between gap-inline rounded-interactive border bg-background px-inset-sm py-inset-xs text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px]",
-                    tagFilter &&
+                    "h-9 justify-between font-normal w-full capitalize",
+                    "border-input hover:border-primary text-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex items-center gap-inline rounded-interactive border bg-background px-inset-sm py-inset-xs text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px]",
+                    filters.tag !== "all" &&
                       "border-primary/50 bg-primary-background text-primary",
                   )}
                 >
-                  <span className="truncate">{tagFilter || "Tag"}</span>
+                  <span className="truncate">
+                    {filters.tag !== "all" ? filters.tag : "Tag"}
+                  </span>
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
@@ -550,14 +313,14 @@ export const ProductIdeasPage = () => {
                       <CommandItem
                         value="all"
                         onSelect={() => {
-                          handleFilterChange("tag", null);
+                          updateFilter("tag", "all");
                           setTagPopoverOpen(false);
                         }}
                       >
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            !tagFilter ? "opacity-100" : "opacity-0",
+                            filters.tag === "all" ? "opacity-100" : "opacity-0",
                           )}
                         />
                         All tags
@@ -567,17 +330,14 @@ export const ProductIdeasPage = () => {
                           key={tag}
                           value={tag}
                           onSelect={(value) => {
-                            handleFilterChange(
-                              "tag",
-                              value === tagFilter ? null : value,
-                            );
+                            updateFilter("tag", value);
                             setTagPopoverOpen(false);
                           }}
                         >
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              tagFilter === tag ? "opacity-100" : "opacity-0",
+                              filters.tag === tag ? "opacity-100" : "opacity-0",
                             )}
                           />
                           {tag}
@@ -592,20 +352,20 @@ export const ProductIdeasPage = () => {
             {/* All Ideas / My Ideas Toggle Group */}
             <ToggleGroup
               type="single"
-              value={myIdeasFilter ? "mine" : "all"}
+              value={filters.mine ? "mine" : "all"}
               onValueChange={(value) => {
                 if (value) {
-                  handleFilterChange("mine", value === "mine" ? "true" : null);
+                  updateFilter("mine", value === "mine");
                 }
               }}
               variant="outline"
               spacing={0}
-              className="h-9"
+              className="h-9 w-full sm:col-span-2 lg:col-span-1"
             >
-              <ToggleGroupItem value="all" className="px-4">
+              <ToggleGroupItem value="all" className="px-4 flex-1">
                 All Ideas
               </ToggleGroupItem>
-              <ToggleGroupItem value="mine" className="px-4">
+              <ToggleGroupItem value="mine" className="px-4 flex-1">
                 My Ideas
               </ToggleGroupItem>
             </ToggleGroup>
@@ -613,34 +373,31 @@ export const ProductIdeasPage = () => {
             {/* Active/Archived Toggle Group */}
             <ToggleGroup
               type="single"
-              value={archivedFilter ? "archived" : "active"}
+              value={filters.archived ? "archived" : "active"}
               onValueChange={(value) => {
                 if (value) {
-                  handleFilterChange(
-                    "archived",
-                    value === "archived" ? "true" : null,
-                  );
+                  updateFilter("archived", value === "archived");
                 }
               }}
               variant="outline"
               spacing={0}
-              className="h-9"
+              className="h-9 w-full sm:col-span-2 lg:col-span-1"
             >
-              <ToggleGroupItem value="active" className="px-4">
+              <ToggleGroupItem value="active" className="px-4 flex-1">
                 Active
               </ToggleGroupItem>
-              <ToggleGroupItem value="archived" className="px-4">
+              <ToggleGroupItem value="archived" className="px-4 flex-1">
                 Archived
               </ToggleGroupItem>
             </ToggleGroup>
 
-            {/* Clear All */}
+            {/* Clear All - Spans full width on mobile, auto on larger screens */}
             {hasActiveFilters && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={clearFilters}
-                className="ml-auto text-muted-foreground hover:text-foreground"
+                onClick={handleClearFilters}
+                className="text-muted-foreground hover:text-foreground sm:col-span-2 lg:col-span-3 xl:col-span-6 justify-center lg:justify-start"
               >
                 Clear all
               </Button>
@@ -648,44 +405,59 @@ export const ProductIdeasPage = () => {
           </div>
 
           {/* Active Filter Badges */}
-          {(searchQuery || statusFilter || tagFilter) && (
+          {(filters.q ||
+            filters.status !== "all" ||
+            filters.priority !== "all" ||
+            filters.tag !== "all") && (
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <span className="text-xs text-muted-foreground">
                 Active filters:
               </span>
 
               {/* Search Query Badge */}
-              {searchQuery && (
+              {filters.q && (
                 <Badge
                   variant="accent"
                   className="gap-1 cursor-pointer hover:bg-secondary/80"
-                  onClick={clearSearch}
+                  onClick={handleClearSearch}
                 >
-                  Search: "{searchQuery}"
+                  Search: "{filters.q}"
                   <X className="h-3 w-3" />
                 </Badge>
               )}
 
               {/* Status Badge */}
-              {statusFilter && (
+              {filters.status !== "all" && (
                 <Badge
                   variant="accent"
                   className="gap-1 cursor-pointer hover:bg-secondary/80"
-                  onClick={() => handleFilterChange("status", null)}
+                  onClick={() => updateFilter("status", "all")}
                 >
-                  {statusFilter}
+                  {filters.status}
+                  <X className="h-3 w-3" />
+                </Badge>
+              )}
+
+              {/* Priority Badge */}
+              {filters.priority !== "all" && (
+                <Badge
+                  variant="accent"
+                  className="gap-1 cursor-pointer hover:bg-secondary/80 capitalize"
+                  onClick={() => updateFilter("priority", "all")}
+                >
+                  {filters.priority}
                   <X className="h-3 w-3" />
                 </Badge>
               )}
 
               {/* Tag Badge */}
-              {tagFilter && (
+              {filters.tag !== "all" && (
                 <Badge
                   variant="accent"
                   className="gap-1 cursor-pointer hover:bg-secondary/80"
-                  onClick={() => handleFilterChange("tag", null)}
+                  onClick={() => updateFilter("tag", "all")}
                 >
-                  {tagFilter}
+                  {filters.tag}
                   <X className="h-3 w-3" />
                 </Badge>
               )}
@@ -699,13 +471,10 @@ export const ProductIdeasPage = () => {
       {/* ─── Ideas List ────────────────────────────────────────────── */}
       <div className="flex flex-col gap-stack">
         {displayState.fetchError && !displayState.initialLoading && (
-          <ErrorState
-            message={displayState.fetchError}
-            onRetry={() => fetchIdeas(false)}
-          />
+          <ErrorState message={displayState.fetchError} onRetry={reload} />
         )}
 
-        {displayState.initialLoading || displayState.isClearing ? (
+        {displayState.initialLoading ? (
           <IdeasListSkeleton />
         ) : displayState.ideas.length === 0 && !displayState.fetchError ? (
           displayHasActiveFilters ? (
@@ -714,7 +483,7 @@ export const ProductIdeasPage = () => {
               title="No ideas match filters"
               description="Try adjusting your filters or search to see more ideas"
               actionLabel="Clear filters"
-              onAction={clearFilters}
+              onAction={handleClearFilters}
             />
           ) : (
             <EmptyState

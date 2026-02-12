@@ -327,6 +327,11 @@ export async function fetchIdeasPage(options: {
     clauses.push(where("status", "==", filters.status));
   }
 
+  // Priority filter
+  if (filters.priority && filters.priority !== "all") {
+    clauses.push(where("priority", "==", filters.priority));
+  }
+
   // Tag filter (single tag)
   if (filters.tag && filters.tag !== "all") {
     clauses.push(where("tags", "array-contains", filters.tag.toLowerCase()));
