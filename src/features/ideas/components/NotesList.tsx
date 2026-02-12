@@ -46,10 +46,7 @@ export function NotesList({
         <Card className="overflow-hidden">
           <CardContent className="p-0">
             <p className="body-2 text-center text-muted-foreground p-inset-xl py-inset-lg">
-              No notes yet.
-              {showForm
-                ? " Add the first one above."
-                : " Notes will appear as users with permission to add them write notes."}
+              No notes yet.{showForm && " Add the first one above."}
             </p>
           </CardContent>
         </Card>
@@ -71,6 +68,7 @@ export function NotesList({
                 onUpdate={onUpdate}
                 onArchive={onArchive}
                 isParentArchived={isParentArchived}
+                //   className="bg-surface-2"
               />
             );
           })}
