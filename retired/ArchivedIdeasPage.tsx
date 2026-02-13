@@ -9,12 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FetchErrorBanner } from "@/retired/FetchErrorBanner";
-import { ArchivedIdeaBanner } from "@/components/productIdea/ArchivedIdeaBanner";
-import { EmptyState } from "@/components/productIdea/EmptyState";
+import { ArchivedIdeaBanner } from "@/features/ideas/components/ArchivedIdeaBanner";
+import { EmptyState } from "@/features/ideas/components/EmptyState";
 import {
   IdeaStatusBadge,
   IdeaPriorityBadge,
-} from "@/components/productIdea/IdeaBadges";
+} from "@/features/ideas/components/IdeaBadges";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useArchivedIdeas } from "@/hooks/useArchivedIdeas";

@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/BrandButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { IdeaDetailSkeleton } from "@/features/ideas/components/skeletons/IdeaDetailSkeleton";
-import { ArchivedIdeaBanner } from "@/components/productIdea/ArchivedIdeaBanner";
+import { ArchivedIdeaBanner } from "@/features/ideas/components/ArchivedIdeaBanner";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import {
   IdeaStatusDisplay,
   IdeaPriorityDisplay,
-} from "@/components/productIdea/IdeaStatusDisplay";
+} from "@/features/ideas/components/IdeaStatusDisplay";
 import { IdeaNotesSection } from "@/features/ideas/pages/IdeaNotesSection";
 import { ErrorState } from "@/components/states/ErrorState";
 import { useAuth } from "@/contexts/AuthContext";

@@ -34,7 +34,7 @@ import {
 } from "@/lib/zodSchemas/productIdea";
 import type { ProductIdea, ProductIdeaNote } from "@/lib/types/productIdeas";
 import { format } from "date-fns";
-import { EditIdeaDialog } from "@/components/productIdea/EditIdeaDialog";
+import { EditIdeaDialog } from "@/features/ideas/components/EditIdeaDialog";
 import {
   AlertDialog,
   AlertDialogAction,
