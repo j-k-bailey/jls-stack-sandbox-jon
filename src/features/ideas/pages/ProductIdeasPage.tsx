@@ -3,7 +3,7 @@ import { Plus, Lightbulb } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IdeaCard } from "@/components/productIdea/IdeaCard";
+import { IdeaCard } from "@/features/ideas/components/IdeaCard";
 import { SimpleSignIn } from "@/components/common/SimpleSignIn";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -173,7 +173,7 @@ export const ProductIdeasPage = () => {
               title="No ideas yet"
               description={
                 canCreateIdeas
-                  ? "Create your first product idea to get started"
+                  ? "Create your first product idea to get started with tracking your product ideas"
                   : "You don't have permission to create product ideas"
               }
               customAction={
